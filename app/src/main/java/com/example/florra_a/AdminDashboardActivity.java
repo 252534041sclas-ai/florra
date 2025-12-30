@@ -12,23 +12,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 
 public class AdminDashboardActivity extends AppCompatActivity {
-
-    // Bottom Navigation Buttons
-    private Button btnDashboard, btnCatalog, btnEnquiries, btnAccount;
-    private ImageView btnMenu;
-
-    // Dashboard Cards
-    private CardView cardTotalTiles, cardEnquiries, cardQuotations, cardLowStock;
-    private CardView cardInventory, cardProduct, cardEnquiriesMgmt, cardQuotationsMgmt, cardSalesPrediction, cardStockAlerts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set fullscreen and edge-to-edge
+        // Set fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -44,198 +35,71 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_admin_dashboard);
 
-        // Initialize all views
-        initViews();
+        // Show toast
+        Toast.makeText(this, "Admin Dashboard", Toast.LENGTH_SHORT).show();
 
-        // Setup click listeners
-        setupClickListeners();
+        // Setup navigation
+        setupNavigation();
     }
 
-    private void initViews() {
-        // Header menu button
-        btnMenu = findViewById(R.id.btnMenu);
+    private void setupNavigation() {
+        // Account button
+        Button btnAccount = findViewById(R.id.btnAccount);
+        if (btnAccount != null) {
+            btnAccount.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AdminDashboardActivity.this, AdminAccountActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
 
-        // Dashboard cards
-        cardTotalTiles = findViewById(R.id.cardTotalTiles);
-        cardEnquiries = findViewById(R.id.cardEnquiries);
-        cardQuotations = findViewById(R.id.cardQuotations);
-        cardLowStock = findViewById(R.id.cardLowStock);
+        // Catalog button
+        Button btnCatalog = findViewById(R.id.btnCatalog);
+        if (btnCatalog != null) {
+            btnCatalog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(AdminDashboardActivity.this, "Catalog", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
-        // Management cards
-        cardInventory = findViewById(R.id.cardInventory);
-        cardProduct = findViewById(R.id.cardProduct);
-        cardEnquiriesMgmt = findViewById(R.id.cardEnquiriesMgmt);
-        cardQuotationsMgmt = findViewById(R.id.cardQuotationsMgmt);
-        cardSalesPrediction = findViewById(R.id.cardSalesPrediction);
-        cardStockAlerts = findViewById(R.id.cardStockAlerts);
+        // Dashboard button
+        Button btnDashboard = findViewById(R.id.btnDashboard);
+        if (btnDashboard != null) {
+            btnDashboard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(AdminDashboardActivity.this, "Dashboard", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
-        // Bottom navigation
-        btnDashboard = findViewById(R.id.btnDashboard);
-        btnCatalog = findViewById(R.id.btnCatalog);
-        btnEnquiries = findViewById(R.id.btnEnquiries);
-        btnAccount = findViewById(R.id.btnAccount);
-
-        // Set Dashboard as active initially
-        setActiveTab(btnDashboard);
+        // Logout button
+        Button btnLogout = findViewById(R.id.btnLogout);
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    performLogout();
+                }
+            });
+        }
     }
 
-    private void setupClickListeners() {
-        // Menu button
-        btnMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "Menu clicked", Toast.LENGTH_SHORT).show();
-                // TODO: Open navigation drawer or menu
-            }
-        });
-
-        // Dashboard cards click listeners
-        cardTotalTiles.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "View Total Tiles", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to tiles inventory
-            }
-        });
-
-        // ENQUIRIES DASHBOARD CARD (with number 12)
-        cardEnquiries.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "View Enquiries", Toast.LENGTH_SHORT).show();
-                // Navigate to Enquiries screen
-                Intent intent = new Intent(AdminDashboardActivity.this, EnquiriesActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        cardQuotations.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "View Quotations", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to quotations
-            }
-        });
-
-        cardLowStock.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "View Low Stock Items", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to low stock items
-            }
-        });
-
-        // Management cards click listeners
-        cardInventory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "Manage Inventory", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to inventory management
-            }
-        });
-
-        cardProduct.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "Organize Products", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to product management
-            }
-        });
-
-        // ENQUIRIES MANAGEMENT CARD (Customer chats) - MOST IMPORTANT
-        cardEnquiriesMgmt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "Manage Customer Enquiries", Toast.LENGTH_SHORT).show();
-                // Navigate to Enquiries screen
-                Intent intent = new Intent(AdminDashboardActivity.this, EnquiriesActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        cardQuotationsMgmt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "Manage Quotations", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to quotations management
-            }
-        });
-
-        cardSalesPrediction.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "View Sales Predictions", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to analytics
-            }
-        });
-
-        cardStockAlerts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(AdminDashboardActivity.this, "View Stock Alerts", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to stock alerts
-            }
-        });
-
-        // Bottom navigation click listeners
-        btnDashboard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setActiveTab(btnDashboard);
-                // Already on dashboard, no navigation needed
-            }
-        });
-
-        btnCatalog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setActiveTab(btnCatalog);
-                Toast.makeText(AdminDashboardActivity.this, "Catalog clicked", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to catalog
-            }
-        });
-
-        // BOTTOM NAVIGATION ENQUIRIES BUTTON
-        btnEnquiries.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setActiveTab(btnEnquiries);
-                Toast.makeText(AdminDashboardActivity.this, "Enquiries clicked", Toast.LENGTH_SHORT).show();
-                // Navigate to Enquiries screen
-                Intent intent = new Intent(AdminDashboardActivity.this, EnquiriesActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        // UPDATED: ACCOUNT BUTTON WITH NAVIGATION
-        btnAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setActiveTab(btnAccount);
-                Toast.makeText(AdminDashboardActivity.this, "Opening Account...", Toast.LENGTH_SHORT).show();
-                // Navigate to Admin Account screen
-                Intent intent = new Intent(AdminDashboardActivity.this, AdminAccountActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    private void setActiveTab(Button activeButton) {
-        // Reset all buttons
-        btnDashboard.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
-        btnCatalog.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
-        btnEnquiries.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
-        btnAccount.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
-
-        // Set active button color
-        activeButton.setTextColor(ContextCompat.getColor(this, R.color.primary_color));
+    private void performLogout() {
+        getSharedPreferences("user_prefs", MODE_PRIVATE).edit().clear().apply();
+        Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
     public void onBackPressed() {
-        // Ask for confirmation before exiting
-        Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
-        // You can implement double press to exit if needed
         super.onBackPressed();
     }
 }
