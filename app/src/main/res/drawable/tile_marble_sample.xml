@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="80"
+    android:viewportHeight="80">
+
+    <!-- Background - White/Gray Marble Base -->
+    <path
+        android:fillColor="#F8F9FA"
+        android:pathData="M0,0H80V80H0z" />
+
+    <!-- Marble Vein 1 -->
+    <path
+        android:fillColor="#E9ECEF"
+        android:pathData="M20,10Q30,15 25,25Q20,35 30,40Q40,45 35,55Q30,65 40,70z" />
+
+    <!-- Marble Vein 2 -->
+    <path
+        android:fillColor="#DEE2E6"
+        android:pathData="M50,15Q55,20 60,25Q65,30 55,35Q45,40 50,45Q55,50 45,55Q35,60 50,65z" />
+
+    <!-- Marble Vein 3 -->
+    <path
+        android:fillColor="#CED4DA"
+        android:pathData="M10,30Q15,35 20,40Q25,45 15,50Q5,55 20,60Q35,65 25,70z" />
+
+    <!-- Marble Spot 1 -->
+    <path
+        android:fillColor="#ADB5BD"
+        android:pathData="M60,20a5,5 0 1,1 -10,0a5,5 0 1,1 10,0" />
+
+    <!-- Marble Spot 2 -->
+    <path
+        android:fillColor="#6C757D"
+        android:pathData="M35,25a3,3 0 1,1 -6,0a3,3 0 1,1 6,0" />
+
+    <!-- Marble Spot 3 -->
+    <path
+        android:fillColor="#495057"
+        android:pathData="M65,50a4,4 0 1,1 -8,0a4,4 0 1,1 8,0" />
+
+    <!-- Border -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="@color/zinc_200"
+        android:strokeWidth="1"
+        android:pathData="M0.5,0.5H79.5V79.5H0.5z" />
+
+</vector>

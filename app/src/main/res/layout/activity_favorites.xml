@@ -1,0 +1,927 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fitsSystemWindows="true">
+
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:elevation="4dp">
+
+        <!-- Status Bar Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="@color/white" />
+
+        <!-- Toolbar -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:gravity="center_vertical"
+            android:background="@color/white"
+            android:paddingTop="4dp">
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Favorites"
+                android:textColor="@color/primary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:letterSpacing="-0.02" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Filter Button -->
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Main Content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header"
+        android:layout_above="@+id/bottomNav"
+        android:fillViewport="true"
+        android:paddingBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- View Toggle -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/bg_view_toggle"
+                    android:padding="2dp">
+
+                    <!-- Grid Button (Active) -->
+                    <LinearLayout
+                        android:id="@+id/btnGridView"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_toggle_active"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_grid_view"
+                            android:tint="@color/black"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Grid"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- List Button -->
+                    <LinearLayout
+                        android:id="@+id/btnListView"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_view_list"
+                            android:tint="@color/slate_500"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="List"
+                            android:textColor="@color/slate_500"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Items Count and Compare -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="12dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4 items saved"
+                        android:textColor="@color/slate_500"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <!-- Select to Compare -->
+                    <TextView
+                        android:id="@+id/btnSelectCompare"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Select to Compare"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="4dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Tiles Grid -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="4dp">
+
+                <!-- Row 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <!-- Tile 1 -->
+                    <LinearLayout
+                        android:id="@+id/tile1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_tile_card"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <!-- Tile Image -->
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="180dp"
+                            android:background="@color/slate_100">
+
+                            <!-- Favorite Button -->
+                            <RelativeLayout
+                                android:id="@+id/btnFavorite1"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentEnd="true"
+                                android:layout_margin="8dp"
+                                android:background="@drawable/bg_favorite_button"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:src="@drawable/ic_favorite_filled"
+                                    android:tint="@color/black"
+                                    android:layout_centerInParent="true" />
+                            </RelativeLayout>
+
+                            <!-- Finish Type Badge -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_alignParentStart="true"
+                                android:layout_margin="8dp"
+                                android:background="@drawable/bg_finish_badge"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="GLOSSY"
+                                    android:textColor="@color/white"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.05" />
+                            </LinearLayout>
+                        </RelativeLayout>
+
+                        <!-- Tile Details -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <!-- Name and Size -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Statuario Venato"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:maxLines="2"
+                                android:ellipsize="end" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="600×1200 mm"
+                                android:textColor="@color/slate_500"
+                                android:textSize="12sp"
+                                android:layout_marginTop="2dp" />
+
+                            <!-- Price -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="$4.50 / sq.ft"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="8dp" />
+
+                            <!-- Buttons -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="12dp">
+
+                                <!-- Details Button -->
+                                <TextView
+                                    android:id="@+id/btnDetails1"
+                                    android:layout_width="0dp"
+                                    android:layout_height="36dp"
+                                    android:layout_weight="1"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@drawable/bg_outline_button"
+                                    android:text="Details"
+                                    android:textColor="@color/black"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:gravity="center"
+                                    android:clickable="true"
+                                    android:focusable="true" />
+
+                                <!-- Add Comment Button -->
+                                <RelativeLayout
+                                    android:id="@+id/btnAddComment1"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:background="@drawable/bg_black_button"
+                                    android:clickable="true"
+                                    android:focusable="true">
+
+                                    <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_add_comment"
+                                        android:tint="@color/white"
+                                        android:layout_centerInParent="true" />
+                                </RelativeLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Tile 2 -->
+                    <LinearLayout
+                        android:id="@+id/tile2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_tile_card"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <!-- Tile Image -->
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="180dp"
+                            android:background="@color/slate_200">
+
+                            <!-- Favorite Button -->
+                            <RelativeLayout
+                                android:id="@+id/btnFavorite2"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentEnd="true"
+                                android:layout_margin="8dp"
+                                android:background="@drawable/bg_favorite_button"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:src="@drawable/ic_favorite_filled"
+                                    android:tint="@color/black"
+                                    android:layout_centerInParent="true" />
+                            </RelativeLayout>
+
+                            <!-- Finish Type Badge -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_alignParentStart="true"
+                                android:layout_margin="8dp"
+                                android:background="@drawable/bg_finish_badge"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="MATTE"
+                                    android:textColor="@color/white"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.05" />
+                            </LinearLayout>
+                        </RelativeLayout>
+
+                        <!-- Tile Details -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <!-- Name and Size -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nero Marquina"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:maxLines="2"
+                                android:ellipsize="end" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="600×600 mm"
+                                android:textColor="@color/slate_500"
+                                android:textSize="12sp"
+                                android:layout_marginTop="2dp" />
+
+                            <!-- Price -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="$3.80 / sq.ft"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="8dp" />
+
+                            <!-- Buttons -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="12dp">
+
+                                <!-- Details Button -->
+                                <TextView
+                                    android:id="@+id/btnDetails2"
+                                    android:layout_width="0dp"
+                                    android:layout_height="36dp"
+                                    android:layout_weight="1"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@drawable/bg_outline_button"
+                                    android:text="Details"
+                                    android:textColor="@color/black"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:gravity="center"
+                                    android:clickable="true"
+                                    android:focusable="true" />
+
+                                <!-- Add Comment Button -->
+                                <RelativeLayout
+                                    android:id="@+id/btnAddComment2"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:background="@drawable/bg_black_button"
+                                    android:clickable="true"
+                                    android:focusable="true">
+
+                                    <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_add_comment"
+                                        android:tint="@color/white"
+                                        android:layout_centerInParent="true" />
+                                </RelativeLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Row 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+
+                    <!-- Tile 3 -->
+                    <LinearLayout
+                        android:id="@+id/tile3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_tile_card"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <!-- Tile Image -->
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="180dp"
+                            android:background="@color/slate_300">
+
+                            <!-- Favorite Button -->
+                            <RelativeLayout
+                                android:id="@+id/btnFavorite3"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentEnd="true"
+                                android:layout_margin="8dp"
+                                android:background="@drawable/bg_favorite_button"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:src="@drawable/ic_favorite_filled"
+                                    android:tint="@color/black"
+                                    android:layout_centerInParent="true" />
+                            </RelativeLayout>
+
+                            <!-- Finish Type Badge -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_alignParentStart="true"
+                                android:layout_margin="8dp"
+                                android:background="@drawable/bg_finish_badge"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="SATIN"
+                                    android:textColor="@color/white"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.05" />
+                            </LinearLayout>
+                        </RelativeLayout>
+
+                        <!-- Tile Details -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <!-- Name and Size -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Travertine Beige"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:maxLines="2"
+                                android:ellipsize="end" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="300×600 mm"
+                                android:textColor="@color/slate_500"
+                                android:textSize="12sp"
+                                android:layout_marginTop="2dp" />
+
+                            <!-- Price -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="$2.90 / sq.ft"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="8dp" />
+
+                            <!-- Buttons -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="12dp">
+
+                                <!-- Details Button -->
+                                <TextView
+                                    android:id="@+id/btnDetails3"
+                                    android:layout_width="0dp"
+                                    android:layout_height="36dp"
+                                    android:layout_weight="1"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@drawable/bg_outline_button"
+                                    android:text="Details"
+                                    android:textColor="@color/black"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:gravity="center"
+                                    android:clickable="true"
+                                    android:focusable="true" />
+
+                                <!-- Add Comment Button -->
+                                <RelativeLayout
+                                    android:id="@+id/btnAddComment3"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:background="@drawable/bg_black_button"
+                                    android:clickable="true"
+                                    android:focusable="true">
+
+                                    <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_add_comment"
+                                        android:tint="@color/white"
+                                        android:layout_centerInParent="true" />
+                                </RelativeLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Tile 4 -->
+                    <LinearLayout
+                        android:id="@+id/tile4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_tile_card"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <!-- Tile Image -->
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="180dp"
+                            android:background="@color/slate_400">
+
+                            <!-- Favorite Button -->
+                            <RelativeLayout
+                                android:id="@+id/btnFavorite4"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignParentEnd="true"
+                                android:layout_margin="8dp"
+                                android:background="@drawable/bg_favorite_button"
+                                android:clickable="true"
+                                android:focusable="true">
+
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:src="@drawable/ic_favorite_filled"
+                                    android:tint="@color/black"
+                                    android:layout_centerInParent="true" />
+                            </RelativeLayout>
+
+                            <!-- Finish Type Badge -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_alignParentStart="true"
+                                android:layout_margin="8dp"
+                                android:background="@drawable/bg_finish_badge"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="MATTE"
+                                    android:textColor="@color/white"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.05" />
+                            </LinearLayout>
+                        </RelativeLayout>
+
+                        <!-- Tile Details -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <!-- Name and Size -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Urban Concrete"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:maxLines="2"
+                                android:ellipsize="end" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="800×800 mm"
+                                android:textColor="@color/slate_500"
+                                android:textSize="12sp"
+                                android:layout_marginTop="2dp" />
+
+                            <!-- Price -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="$5.10 / sq.ft"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:layout_marginTop="8dp" />
+
+                            <!-- Buttons -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_marginTop="12dp">
+
+                                <!-- Details Button -->
+                                <TextView
+                                    android:id="@+id/btnDetails4"
+                                    android:layout_width="0dp"
+                                    android:layout_height="36dp"
+                                    android:layout_weight="1"
+                                    android:layout_marginEnd="8dp"
+                                    android:background="@drawable/bg_outline_button"
+                                    android:text="Details"
+                                    android:textColor="@color/black"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:gravity="center"
+                                    android:clickable="true"
+                                    android:focusable="true" />
+
+                                <!-- Add Comment Button -->
+                                <RelativeLayout
+                                    android:id="@+id/btnAddComment4"
+                                    android:layout_width="36dp"
+                                    android:layout_height="36dp"
+                                    android:background="@drawable/bg_black_button"
+                                    android:clickable="true"
+                                    android:focusable="true">
+
+                                    <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_add_comment"
+                                        android:tint="@color/white"
+                                        android:layout_centerInParent="true" />
+                                </RelativeLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Bottom Spacer -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp" />
+
+                <!-- Request Quotation Button -->
+                <RelativeLayout
+                    android:id="@+id/btnRequestQuotation"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_black_button_large"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:elevation="4dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_request_quote"
+                        android:tint="@color/white"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Request Quotation (4)"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_centerInParent="true" />
+                </RelativeLayout>
+
+                <!-- Bottom Spacer -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bottom_nav"
+        android:layout_alignParentBottom="true"
+        android:elevation="8dp">
+
+        <!-- Navigation Items -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="12dp">
+
+            <!-- Home -->
+            <LinearLayout
+                android:id="@+id/btnNavHome"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <!-- Use ic_home_filled or create ic_home_outline -->
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_home_filled"
+                    android:tint="@color/slate_400" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textColor="@color/slate_400"
+                    android:textSize="10sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Catalog -->
+            <LinearLayout
+                android:id="@+id/btnNavCatalog"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_menu_book"
+                    android:tint="@color/slate_400" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Catalog"
+                    android:textColor="@color/slate_400"
+                    android:textSize="10sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Enquiries -->
+            <LinearLayout
+                android:id="@+id/btnNavEnquiries"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chat_bubble"
+                    android:tint="@color/slate_400" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Enquiries"
+                    android:textColor="@color/slate_400"
+                    android:textSize="10sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <!-- Account -->
+            <LinearLayout
+                android:id="@+id/btnNavAccount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_person_outline"
+                    android:tint="@color/slate_400" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Account"
+                    android:textColor="@color/slate_400"
+                    android:textSize="10sp"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Bottom Safe Area Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:background="@color/white" />
+    </LinearLayout>
+
+</RelativeLayout>

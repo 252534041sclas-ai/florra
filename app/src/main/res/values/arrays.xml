@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tile_sizes">
+        <item>600 x 600 mm (2x2 ft)</item>
+        <item>600 x 1200 mm (2x4 ft)</item>
+        <item>800 x 800 mm</item>
+        <item>1200 x 1200 mm</item>
+        <item>Custom Dimensions</item>
+    </string-array>
+</resources>

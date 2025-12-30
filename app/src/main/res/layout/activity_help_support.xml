@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/calc_gray_50"
+    android:fitsSystemWindows="true">
+
+    <!-- Header with Back Button and Title -->
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/calc_gray_50"
+        android:elevation="4dp">
+
+        <!-- Status Bar Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:background="@color/calc_gray_50" />
+
+        <!-- Toolbar with Back and Title -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:paddingHorizontal="16dp"
+            android:background="@color/calc_gray_50"
+            android:gravity="center_vertical">
+
+            <!-- Back Button -->
+            <RelativeLayout
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_icon_circle_grey"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_back"
+                    android:tint="@color/slate_600"
+                    android:layout_centerInParent="true" />
+            </RelativeLayout>
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Help &amp; Support"
+                android:textColor="@color/slate_900"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:letterSpacing="-0.015"
+                android:layout_centerInParent="true" />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!-- Main Content ScrollView -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/header"
+        android:layout_above="@+id/bottomNav"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Search Bar -->
+
+            <!-- Quick Access Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
+
+                <!-- Section Title -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="QUICK ACCESS"
+                    android:textColor="@color/slate_400"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginLeft="4dp" />
+
+                <!-- Quick Access Cards -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_settings_card"
+                    android:elevation="1dp">
+
+                    <!-- FAQs Button -->
+                    <RelativeLayout
+                        android:id="@+id/btnFaqs"
+                        android:layout_width="match_parent"
+                        android:layout_height="72dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="16dp"
+                            android:gravity="center_vertical">
+
+                            <!-- Icon Container -->
+                            <RelativeLayout
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_icon_circle_help"
+                                android:layout_marginEnd="16dp">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_help_center"
+                                    android:tint="@color/slate_600"
+                                    android:layout_centerInParent="true" />
+                            </RelativeLayout>
+
+                            <!-- Text Container -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="FAQs"
+                                    android:textColor="@color/slate_900"
+                                    android:textSize="16sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Common questions answered"
+                                    android:textColor="@color/slate_500"
+                                    android:textSize="12sp"
+                                    android:layout_marginTop="4dp" />
+                            </LinearLayout>
+
+                            <!-- Chevron -->
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_chevron_right"
+                                android:tint="@color/slate_300" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/slate_100"
+                        android:layout_marginHorizontal="16dp" />
+
+                    <!-- Video Tutorials Button -->
+                    <RelativeLayout
+                        android:id="@+id/btnVideoTutorials"
+                        android:layout_width="match_parent"
+                        android:layout_height="72dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="16dp"
+                            android:gravity="center_vertical">
+
+                            <!-- Icon Container -->
+                            <RelativeLayout
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_icon_circle_video"
+                                android:layout_marginEnd="16dp">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_video"
+                                    android:tint="@color/slate_600"
+                                    android:layout_centerInParent="true" />
+                            </RelativeLayout>
+
+                            <!-- Text Container -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Video Tutorials"
+                                    android:textColor="@color/slate_900"
+                                    android:textSize="16sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Guides for showroom tools"
+                                    android:textColor="@color/slate_500"
+                                    android:textSize="12sp"
+                                    android:layout_marginTop="4dp" />
+                            </LinearLayout>
+
+                            <!-- Chevron -->
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_chevron_right"
+                                android:tint="@color/slate_300" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/slate_100"
+                        android:layout_marginHorizontal="16dp" />
+
+                    <!-- User Manual Button -->
+                    <RelativeLayout
+                        android:id="@+id/btnUserManual"
+                        android:layout_width="match_parent"
+                        android:layout_height="72dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="16dp"
+                            android:gravity="center_vertical">
+
+                            <!-- Icon Container -->
+                            <RelativeLayout
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_icon_circle_manual"
+                                android:layout_marginEnd="16dp">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_book"
+                                    android:tint="@color/slate_600"
+                                    android:layout_centerInParent="true" />
+                            </RelativeLayout>
+
+                            <!-- Text Container -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="User Manual"
+                                    android:textColor="@color/slate_900"
+                                    android:textSize="16sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Documentation &amp; guides"
+                                    android:textColor="@color/slate_500"
+                                    android:textSize="12sp"
+                                    android:layout_marginTop="4dp" />
+                            </LinearLayout>
+
+                            <!-- Chevron -->
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_chevron_right"
+                                android:tint="@color/slate_300" />
+                        </LinearLayout>
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Contact Support Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
+
+                <!-- Section Title -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CONTACT SUPPORT"
+                    android:textColor="@color/slate_400"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginLeft="4dp" />
+
+                <!-- Contact Support Cards -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_settings_card"
+                    android:elevation="1dp">
+
+                    <!-- Call Customer Service Button -->
+                    <RelativeLayout
+                        android:id="@+id/btnCallService"
+                        android:layout_width="match_parent"
+                        android:layout_height="72dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="16dp"
+                            android:gravity="center_vertical">
+
+                            <!-- Icon Container -->
+                            <RelativeLayout
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_icon_circle_call"
+                                android:layout_marginEnd="16dp">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_call"
+                                    android:tint="@color/slate_600"
+                                    android:layout_centerInParent="true" />
+                            </RelativeLayout>
+
+                            <!-- Text Container -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Call Customer Service"
+                                    android:textColor="@color/slate_900"
+                                    android:textSize="16sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Available Mon-Fri, 9am - 6pm"
+                                    android:textColor="@color/slate_500"
+                                    android:textSize="12sp"
+                                    android:layout_marginTop="4dp" />
+                            </LinearLayout>
+
+                            <!-- Chevron -->
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_chevron_right"
+                                android:tint="@color/slate_300" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/slate_100"
+                        android:layout_marginHorizontal="16dp" />
+
+                    <!-- Email Support Button -->
+                    <RelativeLayout
+                        android:id="@+id/btnEmailSupport"
+                        android:layout_width="match_parent"
+                        android:layout_height="72dp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="16dp"
+                            android:gravity="center_vertical">
+
+                            <!-- Icon Container -->
+                            <RelativeLayout
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_icon_circle_email"
+                                android:layout_marginEnd="16dp">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_mail"
+                                    android:tint="@color/slate_600"
+                                    android:layout_centerInParent="true" />
+                            </RelativeLayout>
+
+                            <!-- Text Container -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Email Support"
+                                    android:textColor="@color/slate_900"
+                                    android:textSize="16sp"
+                                    android:textStyle="normal" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Get a response within 24h"
+                                    android:textColor="@color/slate_500"
+                                    android:textSize="12sp"
+                                    android:layout_marginTop="4dp" />
+                            </LinearLayout>
+
+                            <!-- Chevron -->
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_chevron_right"
+                                android:tint="@color/slate_300" />
+                        </LinearLayout>
+                    </RelativeLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Feedback Section -->
+
+            <!-- Version Info -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="80dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Made for Florra Tile Showrooms"
+                    android:textColor="@color/slate_400"
+                    android:textSize="10sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Navigation (Same as other screens) -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_bottom_nav"
+        android:layout_alignParentBottom="true"
+        android:elevation="8dp">
+
+        <!-- Navigation Items -->
+
+        <!-- Bottom Safe Area Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:background="@color/white" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:fitsSystemWindows="true">
+
+    <!-- Simple gradient background -->
+    <View
+        android:id="@+id/backgroundGradient"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:background="@drawable/bg_login_gradient" />
+
+    <!-- Main container -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:id="@+id/mainContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="60dp"
+            android:paddingBottom="24dp"
+            android:fitsSystemWindows="true">
+
+            <!-- Logo container -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginBottom="24dp"
+                android:gravity="center">
+
+                <!-- Gradient background for logo -->
+                <View
+                    android:id="@+id/logoBackground"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/bg_logo_container"
+                    android:elevation="8dp" />
+
+                <!-- Logo icon -->
+                <ImageView
+                    android:id="@+id/logoIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_dashboard"
+                    android:tint="@color/primary"
+                    android:layout_centerInParent="true" />
+
+            </RelativeLayout>
+
+            <!-- Title for Customer Login -->
+
+            <!-- Title for Admin Login -->
+            <TextView
+                android:id="@+id/txtWelcomeCustomer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:letterSpacing="-0.02"
+                android:lineSpacingExtra="4sp"
+                android:text="Welcome to Florra"
+                android:textColor="@color/primary"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/txtWelcomeAdmin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Welcome, Administrator"
+                android:textColor="@color/primary"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:letterSpacing="-0.02"
+                android:lineSpacingExtra="4sp"
+                android:layout_marginBottom="8dp"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+            <!-- Description for Customer Login -->
+            <TextView
+                android:id="@+id/txtDescCustomer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manage your tile choices, view design details, and stay updated."
+            android:textColor="@color/slate_500"
+                android:textSize="14sp"
+                android:lineSpacingExtra="6sp"
+                android:gravity="center"
+                android:maxWidth="280dp"
+                android:layout_marginBottom="32dp"
+                android:layout_gravity="center"
+                android:paddingHorizontal="16dp"
+                android:visibility="visible" />
+
+            <!-- Description for Admin Login -->
+            <TextView
+                android:id="@+id/txtDescAdmin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manage your tile collections, customers, and invoices in one place."
+                android:textColor="@color/slate_500"
+                android:textSize="14sp"
+                android:lineSpacingExtra="6sp"
+                android:gravity="center"
+                android:maxWidth="280dp"
+                android:layout_marginBottom="32dp"
+                android:layout_gravity="center"
+                android:paddingHorizontal="16dp"
+                android:visibility="gone" />
+
+            <!-- Login type selector -->
+            <LinearLayout
+                android:id="@+id/loginTypeSelector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tab_selector"
+                android:orientation="horizontal"
+                android:padding="4dp"
+                android:layout_marginBottom="32dp"
+                android:elevation="2dp">
+
+                <Button
+                    android:id="@+id/btnCustomerLogin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Customer login"
+                    android:textColor="@color/slate_500"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:background="@android:color/transparent"
+                    android:paddingVertical="12dp"
+                    android:textAllCaps="false"
+                    android:stateListAnimator="@null" />
+
+                <Button
+                    android:id="@+id/btnAdminLogin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Admin login"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="normal"
+                    android:background="@drawable/bg_active_tab"
+                    android:paddingVertical="12dp"
+                    android:textAllCaps="false"
+                    android:stateListAnimator="@null" />
+
+            </LinearLayout>
+
+            <!-- CUSTOMER LOGIN FIELDS (Visible by default) -->
+            <LinearLayout
+                android:id="@+id/customerLoginLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <!-- Email or Username -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email or Username"
+                    android:textColor="@color/primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="4dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_input_field"
+                    android:layout_marginBottom="20dp"
+                    android:elevation="2dp">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_mail"
+                        android:tint="@color/slate_500"
+                        android:scaleType="center" />
+
+                    <EditText
+                        android:id="@+id/edtCustomerEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="48dp"
+                        android:layout_marginEnd="16dp"
+                        android:hint="sales@showroom.com"
+                        android:textColor="@color/primary"
+                        android:textSize="16sp"
+                        android:inputType="textEmailAddress"
+                        android:background="@android:color/transparent"
+                        android:paddingVertical="0dp"
+                        android:paddingHorizontal="0dp"
+                        android:maxLines="1" />
+
+                </RelativeLayout>
+
+                <!-- Password -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Password"
+                    android:textColor="@color/primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="4dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_input_field"
+                    android:layout_marginBottom="8dp"
+                    android:elevation="2dp">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_lock"
+                        android:tint="@color/slate_500"
+                        android:scaleType="center" />
+
+                    <EditText
+                        android:id="@+id/edtCustomerPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="48dp"
+                        android:layout_marginEnd="56dp"
+                        android:hint="••••••••"
+                        android:textColor="@color/primary"
+                        android:textSize="16sp"
+                        android:inputType="textPassword"
+                        android:background="@android:color/transparent"
+                        android:paddingVertical="0dp"
+                        android:paddingHorizontal="0dp"
+                        android:maxLines="1" />
+
+                    <ImageView
+                        android:id="@+id/btnToggleCustomerPassword"
+                        android:layout_width="56dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_visibility"
+                        android:tint="@color/slate_500"
+                        android:scaleType="center"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                </RelativeLayout>
+
+                <!-- Forgot password -->
+                <TextView
+                    android:id="@+id/btnForgotPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Forgot Password?"
+                    android:textColor="@color/slate_500"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_gravity="end"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+            <!-- ADMIN LOGIN FIELDS (Hidden by default) -->
+            <LinearLayout
+                android:id="@+id/adminLoginLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <!-- Email -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:textColor="@color/primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="4dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_input_field"
+                    android:layout_marginBottom="20dp"
+                    android:elevation="2dp">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_mail"
+                        android:tint="@color/slate_500"
+                        android:scaleType="center" />
+
+                    <EditText
+                        android:id="@+id/edtAdminEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="48dp"
+                        android:layout_marginEnd="16dp"
+                        android:hint="Email Address"
+                        android:textColor="@color/primary"
+                        android:textSize="16sp"
+                        android:inputType="textEmailAddress"
+                        android:background="@android:color/transparent"
+                        android:paddingVertical="0dp"
+                        android:paddingHorizontal="0dp"
+                        android:maxLines="1" />
+
+                </RelativeLayout>
+
+                <!-- Password -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Password"
+                    android:textColor="@color/primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="4dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_input_field"
+                    android:layout_marginBottom="8dp"
+                    android:elevation="2dp">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_lock"
+                        android:tint="@color/slate_500"
+                        android:scaleType="center" />
+
+                    <EditText
+                        android:id="@+id/edtAdminPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="48dp"
+                        android:layout_marginEnd="56dp"
+                        android:hint="password"
+                        android:textColor="@color/primary"
+                        android:textSize="16sp"
+                        android:inputType="textPassword"
+                        android:background="@android:color/transparent"
+                        android:paddingVertical="0dp"
+                        android:paddingHorizontal="0dp"
+                        android:maxLines="1" />
+
+                    <ImageView
+                        android:id="@+id/btnToggleAdminPassword"
+                        android:layout_width="56dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_visibility"
+                        android:tint="@color/slate_500"
+                        android:scaleType="center"
+                        android:clickable="true"
+                        android:focusable="true" />
+
+                </RelativeLayout>
+
+                <!-- Forgot password (Admin) -->
+                <TextView
+                    android:id="@+id/btnForgotPasswordAdmin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Forgot Password?"
+                    android:textColor="@color/slate_500"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_gravity="end"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+            <!-- Login button -->
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Log in"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@drawable/bg_login_button"
+                android:textAllCaps="false"
+                android:letterSpacing="0.015"
+                android:layout_marginBottom="24dp"
+                android:elevation="4dp" />
+
+            <!-- OR divider (Only for Customer) -->
+            <LinearLayout
+                android:id="@+id/orDivider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginBottom="24dp"
+                android:visibility="gone">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/slate_300" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OR"
+                    android:textColor="@color/slate_500"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="16dp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:background="@color/slate_300" />
+
+            </LinearLayout>
+
+            <!-- Create account button (Only for Customer) -->
+            <Button
+                android:id="@+id/btnCreateAccount"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Create new account"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:background="@drawable/bg_create_account_button"
+                android:textAllCaps="false"
+                android:letterSpacing="0.015"
+                android:layout_marginBottom="32dp"
+                android:elevation="2dp"
+                android:visibility="gone" />
+
+            <!-- Admin footer (Only for Admin) -->
+            <LinearLayout
+                android:id="@+id/adminFooter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginTop="16dp"
+                android:visibility="visible">
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/slate_200"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Contact Support -->
+                <TextView
+                    android:id="@+id/btnContactSupport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Contact IT Support"
+                    android:textColor="@color/slate_500"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <!-- Version info -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Version 1.0.2 | Enterprise Edition"
+                    android:textColor="@color/slate_400"
+                    android:textSize="12sp"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Bottom version info (Only for Customer) -->
+    <LinearLayout
+        android:id="@+id/customerFooter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:background="@color/slate_100"
+        android:paddingVertical="16dp"
+        android:fitsSystemWindows="true"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Florra App v1.0.2"
+            android:textColor="@color/slate_500"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</RelativeLayout>

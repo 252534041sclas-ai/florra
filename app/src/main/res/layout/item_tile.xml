@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tileCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_tile_card"
+    android:padding="8dp"
+    android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:elevation="2dp">
+
+    <!-- Image Container -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/slate_100"
+        android:clipToPadding="false"
+        android:clipChildren="false">
+
+        <!-- Tile Image -->
+        <ImageView
+            android:id="@+id/tileImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/tile_placeholder" />
+
+        <!-- Stock Badge -->
+        <LinearLayout
+            android:id="@+id/stockBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_stock_badge"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:layout_margin="8dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true">
+
+            <TextView
+                android:id="@+id/stockBadgeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IN STOCK"
+                android:textColor="@color/primary"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <!-- Tile Info -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Name -->
+        <TextView
+            android:id="@+id/tileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Carrara White"
+            android:textColor="@color/slate_900"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <!-- Tags -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+
+            <TextView
+                android:id="@+id/tileSize"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tag"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
+                android:text="60x60"
+                android:textColor="@color/slate_600"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="4dp" />
+
+            <TextView
+                android:id="@+id/tileFinish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tag"
+                android:paddingHorizontal="6dp"
+                android:paddingVertical="2dp"
+                android:text="Glossy"
+                android:textColor="@color/slate_600"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/slate_100"
+            android:layout_marginTop="12dp" />
+
+        <!-- Price and Add Button -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp">
+
+            <!-- Price -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tilePrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$3.50"
+                    android:textColor="@color/primary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tileDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="/sq.ft"
+                    android:textColor="@color/slate_400"
+                    android:textSize="12sp"
+                    android:layout_marginStart="2dp" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Add to Cart Button -->
+            <LinearLayout
+                android:id="@+id/btnAddToCart"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_add_button"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_add"
+                    android:tint="@color/primary" />
+            </LinearLayout>
+            <!-- Bookmark Button (Add this near your add to cart button) -->
+            <LinearLayout
+                android:id="@+id/btnBookmark"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:background="@drawable/bg_circle_icon"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_favorite_border"
+                    android:tint="@color/slate_600" />
+            </LinearLayout>
+
+            <!-- Icon Container -->
+            <LinearLayout
+                android:id="@+id/iconContainer"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_circle_slate"
+                android:gravity="center">
+
+                <!-- ... -->
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

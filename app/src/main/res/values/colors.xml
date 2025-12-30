@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material Design Colors -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Base Colors -->
+    <color name="primary_color">#FF000000</color>
+    <color name="secondary_color">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="status_bar_color">#09090b</color>
+
+    <!-- Zinc Color Palette (from HTML) -->
+    <color name="zinc_50">#fafafa</color>
+    <color name="zinc_100">#f4f4f5</color>
+    <color name="zinc_200">#e4e4e7</color>
+    <color name="zinc_300">#d4d4d8</color>
+    <color name="zinc_400">#a1a1aa</color>
+    <color name="zinc_500">#71717a</color>
+    <color name="zinc_600">#52525b</color>
+    <color name="zinc_700">#3f3f46</color>
+    <color name="zinc_800">#27272a</color>
+    <color name="zinc_900">#18181b</color>
+    <color name="zinc_950">#09090b</color>
+
+    <!-- ===== CALCULATOR SCREEN COLORS ===== -->
+    <!-- Primary Colors for Calculator (from your HTML theme) -->
+    <color name="primary">#0F0F0F</color>
+    <color name="primary_light">#27272A</color>
+    <color name="accent">#52525B</color>
+
+    <!-- Background Colors for Calculator -->
+    <color name="background_base">#F9FAFB</color>
+    <color name="surface">#FFFFFF</color>
+
+    <!-- Text Colors for Calculator -->
+    <color name="text_main">#09090B</color>
+    <color name="text_muted">#71717A</color>
+
+    <!-- Calculator Specific Colors -->
+    <color name="grey_50">#F9FAFB</color>
+    <color name="grey_100">#F4F4F5</color>
+    <color name="grey_200">#E4E4E7</color>
+    <color name="grey_300">#D4D4D8</color>
+    <color name="grey_400">#A1A1AA</color>
+    <color name="grey_500">#71717A</color>
+    <color name="grey_600">#52525B</color>
+    <color name="grey_700">#3F3F46</color>
+    <color name="grey_800">#27272A</color>
+    <color name="grey_900">#18181B</color>
+
+    <!-- ===== ABOUT FLORRA SCREEN COLORS ===== -->
+    <color name="about_background">#09090b</color>
+    <color name="about_header_background">#09090b</color>
+    <color name="about_text_primary">#ffffff</color>
+    <color name="about_text_secondary">#a1a1aa</color>
+    <color name="about_text_tertiary">#52525b</color>
+    <color name="about_card_background">#18181b</color>
+    <color name="about_card_border">#27272a</color>
+    <color name="about_icon_background">#27272a</color>
+    <color name="about_chevron_color">#71717a</color>
+    <color name="about_divider_color">#27272a</color>
+
+    <!-- ===== BOTTOM NAVIGATION COLORS ===== -->
+    <color name="bottom_nav_background_dark">#18181b</color>
+    <color name="bottom_nav_icon_inactive">#71717a</color>
+    <color name="bottom_nav_icon_active">#ffffff</color>
+    <color name="bottom_nav_text_inactive">#71717a</color>
+    <color name="bottom_nav_text_active">#ffffff</color>
+
+    <!-- ===== APP ICON GRADIENT COLORS ===== -->
+    <color name="gradient_start">#27272a</color>
+    <color name="gradient_end">#000000</color>
+
+    <!-- ===== GLOW EFFECT COLORS ===== -->
+    <color name="glow_start">#71717a</color>
+    <color name="glow_middle">#71717a</color>
+    <color name="glow_end">#71717a</color>
+
+    <!-- ===== SLATE COLOR PALETTE ===== -->
+    <color name="slate_50">#F8FAFC</color>
+    <color name="slate_100">#F1F5F9</color>
+    <color name="slate_200">#E2E8F0</color>
+    <color name="slate_300">#CBD5E1</color>
+    <color name="slate_400">#94A3B8</color>
+    <color name="slate_500">#64748B</color>
+    <color name="slate_600">#475569</color>
+    <color name="slate_700">#334155</color>
+    <color name="slate_800">#1E293B</color>
+    <color name="slate_900">#0F172A</color>
+
+    <!-- ===== RED COLORS ===== -->
+    <color name="red_500">#EF4444</color>
+    <color name="red_600">#DC2626</color>
+
+    <!-- ===== CALCULATOR SPECIFIC COLORS (for direct reference) ===== -->
+    <!-- You can use these if you want more specific naming -->
+    <color name="calculator_primary">#0F0F0F</color>
+    <color name="calculator_primary_light">#27272A</color>
+    <color name="calculator_accent">#52525B</color>
+    <color name="calculator_background_base">#F9FAFB</color>
+    <color name="calculator_surface">#FFFFFF</color>
+    <color name="calculator_text_main">#09090B</color>
+    <color name="calculator_text_muted">#71717A</color>
+    <color name="calculator_grey_300">#E4E4E7</color>
+    <color name="calculator_grey_400">#A1A1AA</color>
+    <color name="calculator_grey_500">#71717A</color>
+
+    <!-- ===== BACKGROUND COLORS ===== -->
+    <color name="background_dark">#09090b</color>
+    <color name="background_light">#ffffff</color>
+    <color name="calc_gray_50">#FAFAFA</color>
+
+    <!-- ====== ADDITIONAL MISSING COLORS (FROM ERROR MESSAGES) ====== -->
+    <color name="text_secondary">#71717A</color>
+    <color name="border_light">#E4E4E7</color>
+    <color name="gray_50">#FAFAFA</color>
+    <color name="gray_100">#F5F5F5</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_300">#D4D4D8</color>
+    <color name="gray_400">#BDBDBD</color>
+    <color name="gray_500">#71717A</color>
+    <color name="gray_700">#3F3F46</color>
+    <color name="red_100">#FEE2E2</color>
+    <color name="info_light">#E0F2FE</color>
+    <color name="info">#0284C7</color>
+
+    <!-- Additional colors from current error messages -->
+    <color name="bottom_nav_active">#0F0F0F</color>
+    <color name="green_600">#16A34A</color>
+    <color name="green_700">#15803D</color>
+    <color name="orange_100">#FFEDD5</color>
+    <color name="orange_600">#EA580C</color>
+    <color name="primary_dark">#0F0F0F</color>
+    <color name="text_primary">#09090B</color>
+    <color name="bottom_nav_inactive">#71717A</color>
+    <color name="green_500">#22C55E</color>
+    <color name="indicator_inactive">#A1A1AA</color>
+    <color name="red_50">#FEF2F2</color>
+    <color name="red_200">#FECACA</color>
+    <color name="green_50">#F0FDF4</color>
+    <color name="green_100">#DCFCE7</color>
+    <color name="green_200">#BBF7D0</color>
+    <color name="tag_instock_bg">#F0FDF4</color>
+    <color name="tag_instock_border">#BBF7D0</color>
+    <color name="tag_lowstock_bg">#FEF2F2</color>
+    <color name="tag_lowstock_border">#FECACA</color>
+    <color name="text_light">#A1A1AA</color>
+
+    <!-- Additional helpful colors -->
+    <color name="border_dark">#27272A</color>
+    <color name="shadow_light">#20000000</color>
+    <color name="shadow_dark">#40000000</color>
+    <!-- Additional missing colors -->
+    <color name="green_800">#166534</color>
+    <color name="gray_600">#52525B</color>
+    <color name="surface_light">#FFFFFF</color>
+
+
+</resources>

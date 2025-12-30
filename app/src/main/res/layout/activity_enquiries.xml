@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:fitsSystemWindows="true">
+
+    <!-- Main Scroll View -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true"
+        android:paddingBottom="80dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Header Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/background_light"
+                android:elevation="4dp"
+                android:paddingTop="8dp">
+
+                <!-- Header with Back and Title -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="16dp"
+                    android:background="@color/background_light">
+
+                    <!-- Back Button -->
+                    <ImageView
+                        android:id="@+id/btnBack"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_arrow_back"
+                        android:tint="@color/primary_color"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="8dp"
+                        android:layout_centerVertical="true" />
+
+                    <!-- Title -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Enquiries"
+                        android:textColor="@color/primary_color"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_centerInParent="true" />
+
+                    <!-- Empty View for symmetry -->
+                    <View
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true" />
+
+                </RelativeLayout>
+
+                <!-- Search Bar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_search_bar"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="12dp"
+                        android:elevation="1dp">
+
+                        <!-- Search Icon -->
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_search"
+                            android:tint="@color/zinc_500"
+                            android:layout_marginEnd="8dp" />
+
+                        <!-- Search Input -->
+                        <EditText
+                            android:id="@+id/etSearch"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:hint="Search by name, ID or tile..."
+                            android:textColor="@color/primary_color"
+                            android:textColorHint="@color/zinc_400"
+                            android:textSize="16sp"
+                            android:maxLines="1"
+                            android:imeOptions="actionSearch" />
+
+                        <!-- Filter Button -->
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Filter Chips Horizontal Scroll -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- All Filter -->
+                        <TextView
+                            android:id="@+id/tvFilterAll"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="All"
+                            android:textSize="14sp"
+                            android:textStyle="normal"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_filter_active"
+                            android:textColor="@color/white"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <!-- New Filter -->
+                        <TextView
+                            android:id="@+id/tvFilterNew"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="New"
+                            android:textSize="14sp"
+                            android:textStyle="normal"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_filter_inactive"
+                            android:textColor="@color/zinc_600"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <!-- Quoted Filter -->
+                        <TextView
+                            android:id="@+id/tvFilterQuoted"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Quoted"
+                            android:textSize="14sp"
+                            android:textStyle="normal"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_filter_inactive"
+                            android:textColor="@color/zinc_600"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <!-- Follow-up Filter -->
+                        <TextView
+                            android:id="@+id/tvFilterFollowup"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Follow-up"
+                            android:textSize="14sp"
+                            android:textStyle="normal"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="@drawable/bg_filter_inactive"
+                            android:textColor="@color/zinc_600"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <!-- Resolved Filter -->
+                        <TextView
+                            android:id="@+id/tvFilterResolved"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Resolved"
+                            android:textSize="14sp"
+                            android:textStyle="normal"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="8dp"
+                            android:background="@drawable/bg_filter_inactive"
+                            android:textColor="@color/zinc_600"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <!-- Enquiries List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewEnquiries"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="24dp"
+                android:clipToPadding="false"
+                android:overScrollMode="never" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Bottom Navigation -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingHorizontal="24dp">
+
+            <!-- Dashboard -->
+            <Button
+                android:id="@+id/btnDashboard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:textColor="@color/zinc_400"
+                android:textSize="11sp"
+                android:drawableTop="@drawable/ic_dashboard"
+                android:drawablePadding="4dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="Dashboard"
+                android:gravity="center"
+                android:stateListAnimator="@null" />
+
+            <!-- Catalog -->
+            <Button
+                android:id="@+id/btnCatalog"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:textColor="@color/zinc_400"
+                android:textSize="11sp"
+                android:drawableTop="@drawable/ic_menu_book"
+                android:drawablePadding="4dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="Catalog"
+                android:gravity="center"
+                android:stateListAnimator="@null" />
+
+            <!-- Enquiries -->
+            <Button
+                android:id="@+id/btnEnquiries"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:textColor="@color/primary_color"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:drawableTop="@drawable/bg_filter_active"
+                android:drawablePadding="4dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="Enquiries"
+                android:gravity="center"
+                android:stateListAnimator="@null" />
+
+            <!-- Account -->
+            <Button
+                android:id="@+id/btnAccount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:textColor="@color/zinc_400"
+                android:textSize="11sp"
+                android:drawableTop="@drawable/ic_person_outline"
+                android:drawablePadding="4dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:text="Account"
+                android:gravity="center"
+                android:stateListAnimator="@null" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
