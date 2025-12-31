@@ -11,6 +11,7 @@
 
     <!-- Base Colors -->
     <color name="primary_color">#FF000000</color>
+    <color name="primary_dark">#111111</color>
     <color name="secondary_color">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
     <color name="status_bar_color">#09090b</color>
@@ -28,17 +29,55 @@
     <color name="zinc_900">#18181b</color>
     <color name="zinc_950">#09090b</color>
 
+    <!-- Emerald Colors (for stock status) -->
+    <color name="emerald_50">#ECFDF5</color>
+    <color name="emerald_100">#D1FAE5</color>
+    <color name="emerald_500">#10B981</color>
+    <color name="emerald_600">#059669</color>
+    <color name="emerald_700">#047857</color>
+    <color name="emerald_800">#065F46</color>
+
+    <!-- Amber Colors (for low stock) -->
+    <color name="amber_50">#FFFBEB</color>
+    <color name="amber_100">#FEF3C7</color>
+    <color name="amber_500">#F59E0B</color>
+    <color name="amber_600">#D97706</color>
+    <color name="amber_700">#B45309</color>
+    <color name="amber_800">#92400E</color>
+
+    <!-- Red Colors (for out of stock) -->
+    <color name="red_50">#FEF2F2</color>
+    <color name="red_100">#FEE2E2</color>
+    <color name="red_200">#FECACA</color>
+    <color name="red_500">#EF4444</color>
+    <color name="red_600">#DC2626</color>
+    <color name="red_700">#B91C1C</color>
+
+    <!-- Green Colors (for success/stock) -->
+    <color name="green_50">#F0FDF4</color>
+    <color name="green_100">#DCFCE7</color>
+    <color name="green_200">#BBF7D0</color>
+    <color name="green_500">#22C55E</color>
+    <color name="green_600">#16A34A</color>
+    <color name="green_700">#15803D</color>
+    <color name="green_800">#166534</color>
+
+    <!-- Orange Colors -->
+    <color name="orange_100">#FFEDD5</color>
+    <color name="orange_500">#FF9800</color>
+    <color name="orange_600">#EA580C</color>
+
+    <!-- Blue Colors (for info) -->
+    <color name="info_light">#E0F2FE</color>
+    <color name="info">#0284C7</color>
+    <color name="blue_300">#64B5F6</color>
+
     <!-- ===== CALCULATOR SCREEN COLORS ===== -->
-    <!-- Primary Colors for Calculator (from your HTML theme) -->
     <color name="primary">#0F0F0F</color>
     <color name="primary_light">#27272A</color>
     <color name="accent">#52525B</color>
-
-    <!-- Background Colors for Calculator -->
     <color name="background_base">#F9FAFB</color>
     <color name="surface">#FFFFFF</color>
-
-    <!-- Text Colors for Calculator -->
     <color name="text_main">#09090B</color>
     <color name="text_muted">#71717A</color>
 
@@ -72,6 +111,8 @@
     <color name="bottom_nav_icon_active">#ffffff</color>
     <color name="bottom_nav_text_inactive">#71717a</color>
     <color name="bottom_nav_text_active">#ffffff</color>
+    <color name="bottom_nav_active">#0F0F0F</color>
+    <color name="bottom_nav_inactive">#71717A</color>
 
     <!-- ===== APP ICON GRADIENT COLORS ===== -->
     <color name="gradient_start">#27272a</color>
@@ -94,12 +135,7 @@
     <color name="slate_800">#1E293B</color>
     <color name="slate_900">#0F172A</color>
 
-    <!-- ===== RED COLORS ===== -->
-    <color name="red_500">#EF4444</color>
-    <color name="red_600">#DC2626</color>
-
-    <!-- ===== CALCULATOR SPECIFIC COLORS (for direct reference) ===== -->
-    <!-- You can use these if you want more specific naming -->
+    <!-- ===== CALCULATOR SPECIFIC COLORS ===== -->
     <color name="calculator_primary">#0F0F0F</color>
     <color name="calculator_primary_light">#27272A</color>
     <color name="calculator_accent">#52525B</color>
@@ -116,50 +152,90 @@
     <color name="background_light">#ffffff</color>
     <color name="calc_gray_50">#FAFAFA</color>
 
-    <!-- ====== ADDITIONAL MISSING COLORS (FROM ERROR MESSAGES) ====== -->
+    <!-- ===== TEXT COLORS ===== -->
+    <color name="text_primary">#09090B</color>
     <color name="text_secondary">#71717A</color>
+    <color name="text_light">#A1A1AA</color>
+
+    <!-- ===== BORDER COLORS ===== -->
     <color name="border_light">#E4E4E7</color>
+    <color name="border_dark">#27272A</color>
+
+    <!-- ===== GRAY COLORS ===== -->
     <color name="gray_50">#FAFAFA</color>
     <color name="gray_100">#F5F5F5</color>
     <color name="gray_200">#EEEEEE</color>
     <color name="gray_300">#D4D4D8</color>
     <color name="gray_400">#BDBDBD</color>
     <color name="gray_500">#71717A</color>
+    <color name="gray_600">#52525B</color>
     <color name="gray_700">#3F3F46</color>
-    <color name="red_100">#FEE2E2</color>
-    <color name="info_light">#E0F2FE</color>
-    <color name="info">#0284C7</color>
 
-    <!-- Additional colors from current error messages -->
-    <color name="bottom_nav_active">#0F0F0F</color>
-    <color name="green_600">#16A34A</color>
-    <color name="green_700">#15803D</color>
-    <color name="orange_100">#FFEDD5</color>
-    <color name="orange_600">#EA580C</color>
-    <color name="primary_dark">#0F0F0F</color>
-    <color name="text_primary">#09090B</color>
-    <color name="bottom_nav_inactive">#71717A</color>
-    <color name="green_500">#22C55E</color>
-    <color name="indicator_inactive">#A1A1AA</color>
-    <color name="red_50">#FEF2F2</color>
-    <color name="red_200">#FECACA</color>
-    <color name="green_50">#F0FDF4</color>
-    <color name="green_100">#DCFCE7</color>
-    <color name="green_200">#BBF7D0</color>
+    <!-- ===== SURFACE COLORS ===== -->
+    <color name="surface_light">#FFFFFF</color>
+    <color name="surface_dark">#18181B</color>
+
+    <!-- ===== TAG/STATUS COLORS ===== -->
     <color name="tag_instock_bg">#F0FDF4</color>
     <color name="tag_instock_border">#BBF7D0</color>
     <color name="tag_lowstock_bg">#FEF2F2</color>
     <color name="tag_lowstock_border">#FECACA</color>
-    <color name="text_light">#A1A1AA</color>
+    <color name="tag_outofstock_bg">#FEF2F2</color>
+    <color name="tag_outofstock_border">#FECACA</color>
 
-    <!-- Additional helpful colors -->
-    <color name="border_dark">#27272A</color>
+    <!-- ===== SHADOW COLORS ===== -->
     <color name="shadow_light">#20000000</color>
     <color name="shadow_dark">#40000000</color>
-    <!-- Additional missing colors -->
-    <color name="green_800">#166534</color>
-    <color name="gray_600">#52525B</color>
-    <color name="surface_light">#FFFFFF</color>
 
+    <!-- ===== INDICATOR COLORS ===== -->
+    <color name="indicator_active">#0F0F0F</color>
+    <color name="indicator_inactive">#A1A1AA</color>
 
+    <!-- ===== MISC COLORS ===== -->
+
+    <!-- ===== PRODUCT DETAILS SPECIFIC COLORS ===== -->
+    <!-- For stock status backgrounds -->
+    <color name="bg_stock_in">#ECFDF5</color>
+    <color name="bg_stock_in_border">#10B981</color>
+
+    <color name="bg_stock_low">#FFFBEB</color>
+    <color name="bg_stock_low_border">#F59E0B</color>
+
+    <color name="bg_stock_out">#FEF2F2</color>
+    <color name="bg_stock_out_border">#EF4444</color>
+
+    <!-- For dot indicators -->
+    <color name="dot_green">#10B981</color>
+    <color name="dot_amber">#F59E0B</color>
+    <color name="dot_red">#EF4444</color>
+    <color name="dot_gray">#71717A</color>
+
+    <!-- For price section -->
+    <color name="price_highlight">#059669</color>
+    <color name="price_background">#FFFFFF</color>
+
+    <!-- For button backgrounds -->
+    <color name="btn_edit_bg">#FFFFFF</color>
+    <color name="btn_edit_border">#D4D4D8</color>
+    <color name="btn_edit_text">#09090B</color>
+
+    <color name="btn_update_bg">#000000</color>
+    <color name="btn_update_text">#FFFFFF</color>
+    <color name="btn_update_shadow">#33000000</color>
+
+    <!-- For image labels -->
+    <color name="image_label_bg">#80000000</color>
+    <color name="image_label_text">#FFFFFF</color>
+
+    <!-- For divider lines -->
+    <color name="divider_light">#E4E4E7</color>
+    <color name="divider_dark">#27272A</color>
+
+    <!-- For specification cards -->
+    <color name="spec_bg">#F8FAFC</color>
+    <color name="spec_border">#E2E8F0</color>
+
+    <!-- For card shadows -->
+    <color name="card_shadow_light">#0A000000</color>
+    <color name="card_shadow_dark">#1A000000</color>
 </resources>

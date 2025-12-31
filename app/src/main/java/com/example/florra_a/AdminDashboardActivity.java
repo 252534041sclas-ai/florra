@@ -43,6 +43,42 @@ public class AdminDashboardActivity extends AppCompatActivity {
     }
 
     private void setupNavigation() {
+        // Dashboard button - Already on this screen
+        Button btnDashboard = findViewById(R.id.btnDashboard);
+        if (btnDashboard != null) {
+            btnDashboard.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Already on dashboard, just show toast
+                    Toast.makeText(AdminDashboardActivity.this, "You are already on Dashboard", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Catalog button
+        Button btnCatalog = findViewById(R.id.btnCatalog);
+        if (btnCatalog != null) {
+            btnCatalog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // For now show toast, you can change later
+                    Toast.makeText(AdminDashboardActivity.this, "Catalog screen coming soon", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Enquiries button (bottomQuotes)
+        Button bottomQuotes = findViewById(R.id.bottomQuotes);
+        if (bottomQuotes != null) {
+            bottomQuotes.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AdminDashboardActivity.this, EnquiriesActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
         // Account button
         Button btnAccount = findViewById(R.id.btnAccount);
         if (btnAccount != null) {
@@ -55,28 +91,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
             });
         }
 
-        // Catalog button
-        Button btnCatalog = findViewById(R.id.btnCatalog);
-        if (btnCatalog != null) {
-            btnCatalog.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(AdminDashboardActivity.this, "Catalog", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-        // Dashboard button
-        Button btnDashboard = findViewById(R.id.btnDashboard);
-        if (btnDashboard != null) {
-            btnDashboard.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(AdminDashboardActivity.this, "Dashboard", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
         // Logout button
         Button btnLogout = findViewById(R.id.btnLogout);
         if (btnLogout != null) {
@@ -84,6 +98,65 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     performLogout();
+                }
+            });
+        }
+
+        // ADD THIS: Enquiries card click listener
+        CardView cardEnquiries = findViewById(R.id.cardEnquiries);
+        if (cardEnquiries != null) {
+            cardEnquiries.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AdminDashboardActivity.this, EnquiriesActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
+        // ADD THIS: Enquiries management card
+        CardView cardEnquiriesMgmt = findViewById(R.id.cardEnquiriesMgmt);
+        if (cardEnquiriesMgmt != null) {
+            cardEnquiriesMgmt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AdminDashboardActivity.this, EnquiriesActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
+        // ADD THIS: Product card click listener
+        CardView cardProduct = findViewById(R.id.cardProduct);
+        if (cardProduct != null) {
+            cardProduct.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AdminDashboardActivity.this, ProductsActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
+        // ADD THIS: Sales Prediction card click listener
+        CardView cardSalesPrediction = findViewById(R.id.cardSalesPrediction);
+        if (cardSalesPrediction != null) {
+            cardSalesPrediction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(AdminDashboardActivity.this, SalesPredictionActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }
+
+        // ADD THIS: Menu button (top left)
+        ImageView btnMenu = findViewById(R.id.btnMenu);
+        if (btnMenu != null) {
+            btnMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(AdminDashboardActivity.this, "Menu", Toast.LENGTH_SHORT).show();
                 }
             });
         }
