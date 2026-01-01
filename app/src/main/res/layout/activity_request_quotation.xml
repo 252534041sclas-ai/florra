@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FAFAFA"
+    android:fitsSystemWindows="true">
+
+    <!-- Background Pattern -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FAFAFA"
+        android:alpha="0.03" />
+
+    <!-- Main Container -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="80dp">
+
+            <!-- Header -->
+            <LinearLayout
+                android:id="@+id/header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_header_blur"
+                android:paddingVertical="12dp"
+                android:elevation="4dp"
+                android:layout_marginBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_circle_button"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_arrow_back"
+                    android:tint="@color/primary_dark" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Request Quotation"
+                    android:textColor="@color/primary_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textAlignment="center"
+                    android:letterSpacing="0.5"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:id="@+id/btnClear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_button_gray"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    android:text="Clear"
+                    android:textColor="@color/gray_600"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.5"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </LinearLayout>
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/txtDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fill in the details below to receive a personalized price estimate for your selected tile."
+                android:textColor="@color/gray_600"
+                android:textSize="14sp"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Product Info Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:background="@color/white">
+
+                    <!-- Product Image -->
+                    <ImageView
+                        android:id="@+id/imgProduct"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:layout_marginEnd="16dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/tile_placeholder"
+                        android:background="@color/gray_200" />
+
+                    <!-- Product Details -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <!-- Stock Badge -->
+                        <TextView
+                            android:id="@+id/stockBadge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="IN STOCK"
+                            android:textColor="@color/green_800"
+                            android:textSize="10sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.5"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="2dp"
+                            android:background="@drawable/bg_tag_green"
+                            android:layout_marginBottom="8dp" />
+
+                        <!-- Product Name -->
+                        <TextView
+                            android:id="@+id/txtProductName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Carrara White Marble Tile"
+                            android:textColor="@color/primary_dark"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:maxLines="2"
+                            android:ellipsize="end"
+                            android:layout_marginBottom="4dp" />
+
+                        <!-- Product Details -->
+                        <TextView
+                            android:id="@+id/txtProductDetails"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="60×120cm • Polished • SKU: FLR-992"
+                            android:textColor="@color/gray_600"
+                            android:textSize="12sp"
+                            android:maxLines="1"
+                            android:ellipsize="end" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Contact Information Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:background="@color/white">
+
+                    <!-- Card Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/ic_person"
+                            android:tint="@color/primary_dark" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Contact Information"
+                            android:textColor="@color/primary_dark"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Full Name -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FULL NAME"
+                        android:textColor="@color/gray_600"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.5"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/etFullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="e.g. John Doe"
+                        android:textColor="@color/primary_dark"
+                        android:textSize="14sp"
+                        android:padding="16dp"
+                        android:background="@drawable/bg_edittext"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Phone Number -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PHONE NUMBER"
+                        android:textColor="@color/gray_600"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.5"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/etPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="+1 (555) 000-0000"
+                        android:textColor="@color/primary_dark"
+                        android:textSize="14sp"
+                        android:inputType="phone"
+                        android:padding="16dp"
+                        android:background="@drawable/bg_edittext"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Email Address -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="EMAIL ADDRESS"
+                        android:textColor="@color/gray_600"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.5"
+                        android:layout_marginBottom="4dp" />
+
+                    <EditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="you@example.com"
+                        android:textColor="@color/primary_dark"
+                        android:textSize="14sp"
+                        android:inputType="textEmailAddress"
+                        android:padding="16dp"
+                        android:background="@drawable/bg_edittext" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Project Details Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:background="@color/white">
+
+                    <!-- Card Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/ic_architecture"
+                            android:tint="@color/primary_dark" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Project Details"
+                            android:textColor="@color/primary_dark"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <!-- Project Type -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PROJECT TYPE"
+                        android:textColor="@color/gray_600"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.5"
+                        android:layout_marginBottom="8dp" />
+
+                    <RadioGroup
+                        android:id="@+id/rgProjectType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp">
+
+                        <!-- Residential -->
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="8dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="1dp">
+
+                            <RadioButton
+                                android:id="@+id/rbResidential"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:button="@null"
+                                android:background="@drawable/bg_radio_selector"
+                                android:gravity="center"
+                                android:padding="16dp"
+                                android:text="Residential"
+                                android:textColor="@color/gray_600"
+                                android:textSize="14sp"
+                                android:checked="true" />
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Commercial -->
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="1dp">
+
+                            <RadioButton
+                                android:id="@+id/rbCommercial"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:button="@null"
+                                android:background="@drawable/bg_radio_selector"
+                                android:gravity="center"
+                                android:padding="16dp"
+                                android:text="Commercial"
+                                android:textColor="@color/gray_600"
+                                android:textSize="14sp" />
+                        </androidx.cardview.widget.CardView>
+                    </RadioGroup>
+
+                    <!-- Room Type and Total Area -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <!-- Room Type -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="ROOM TYPE"
+                                android:textColor="@color/gray_600"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="0.5"
+                                android:layout_marginBottom="4dp" />
+
+                            <Spinner
+                                android:id="@+id/spinnerRoomType"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_edittext"
+                                android:padding="16dp"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <!-- Total Area -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="TOTAL AREA"
+                                android:textColor="@color/gray_600"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="0.5"
+                                android:layout_marginBottom="4dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <EditText
+                                    android:id="@+id/etTotalArea"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:hint="0"
+                                    android:textColor="@color/primary_dark"
+                                    android:textSize="14sp"
+                                    android:inputType="number"
+                                    android:padding="16dp"
+                                    android:background="@drawable/bg_edittext_left" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="sq.ft"
+                                    android:textColor="@color/gray_600"
+                                    android:textSize="14sp"
+                                    android:paddingVertical="16dp"
+                                    android:paddingHorizontal="12dp"
+                                    android:background="@drawable/bg_edittext_right"
+                                    android:gravity="center" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Additional Notes Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:background="@color/white">
+
+                    <!-- Card Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="12dp"
+                            android:src="@drawable/ic_notes"
+                            android:tint="@color/primary_dark" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Additional Notes"
+                            android:textColor="@color/primary_dark"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/etAdditionalNotes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Describe any specific cutting requirements, deadline constraints, or questions..."
+                        android:textColor="@color/primary_dark"
+                        android:textSize="14sp"
+                        android:inputType="textMultiLine"
+                        android:padding="16dp"
+                        android:background="@drawable/bg_edittext"
+                        android:minHeight="120dp"
+                        android:gravity="top" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Send Enquiry Button -->
+            <Button
+                android:id="@+id/btnSendEnquiry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Send Enquiry"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:padding="16dp"
+                android:background="@drawable/bg_button_primary"
+                android:letterSpacing="0.5"
+                android:drawableEnd="@drawable/ic_send"
+                android:drawablePadding="8dp"
+                android:drawableTint="@color/white"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Response Time -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_schedule"
+                    android:tint="@color/gray_500"
+                    android:layout_marginEnd="4dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="We usually respond within 24 hours."
+                    android:textColor="@color/gray_600"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</RelativeLayout>

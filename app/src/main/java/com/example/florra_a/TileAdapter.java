@@ -166,7 +166,6 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
             tileFinish = itemView.findViewById(R.id.tileFinish);
             stockBadgeText = itemView.findViewById(R.id.stockBadgeText);
             stockBadge = itemView.findViewById(R.id.stockBadge);
-            btnAddToCart = itemView.findViewById(R.id.btnAddToCart);
             btnBookmark = itemView.findViewById(R.id.btnBookmark); // NEW: Initialize bookmark button
         }
     }

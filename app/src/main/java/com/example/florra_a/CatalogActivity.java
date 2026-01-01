@@ -68,16 +68,7 @@ public class CatalogActivity extends AppCompatActivity {
         // Bottom Navigation
         setupBottomNavigation();
 
-        // Floating Action Button
-        LinearLayout fab = findViewById(R.id.fab);
-        if (fab != null) {
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(CatalogActivity.this, "Add New", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+
     }
 
     private void setupFilterButtons() {

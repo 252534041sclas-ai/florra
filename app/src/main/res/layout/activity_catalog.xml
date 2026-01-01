@@ -93,15 +93,6 @@
                     android:focusable="true" />
 
                 <!-- Filter -->
-                <ImageView
-                    android:id="@+id/btnFilter"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_tune"
-                    android:tint="@color/slate_600"
-                    android:background="@drawable/bg_circle_icon"
-                    android:clickable="true"
-                    android:focusable="true" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -258,38 +249,23 @@
     </HorizontalScrollView>
 
     <!-- Tiles Grid -->
+
+    <!-- Floating Action Button -->
+
+    <!-- Bottom Navigation -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewTiles"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/filterTabs"
         android:layout_above="@+id/bottomNav"
-        android:padding="12dp"
+        android:layout_below="@id/filterTabs"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
         android:clipToPadding="false"
+        android:padding="12dp"
         android:scrollbars="vertical" />
 
-    <!-- Floating Action Button -->
-    <LinearLayout
-        android:id="@+id/fab"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_above="@+id/bottomNav"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:background="@drawable/bg_fab"
-        android:gravity="center"
-        android:clickable="true"
-        android:focusable="true"
-        android:elevation="8dp">
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_add"
-            android:tint="@color/white" />
-    </LinearLayout>
-
-    <!-- Bottom Navigation -->
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
@@ -348,7 +324,7 @@
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_grid_view_filled"
+                    android:src="@drawable/ic_grid_view"
                     android:tint="@color/primary_dark" />
 
                 <TextView

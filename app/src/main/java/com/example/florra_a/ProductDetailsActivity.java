@@ -280,7 +280,17 @@ public class ProductDetailsActivity extends AppCompatActivity {
             btnAskQuote.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(ProductDetailsActivity.this, "Ask for Quote", Toast.LENGTH_SHORT).show();
+                    // Launch RequestQuotationActivity
+                    Intent intent = new Intent(ProductDetailsActivity.this, RequestQuotationActivity.class);
+
+                    // Pass product data
+                    intent.putExtra("productName", productName.getText().toString());
+                    intent.putExtra("productDetails", specSize.getText().toString() + " • " +
+                            specFinish.getText().toString() + " • SKU: FLR-992");
+                    intent.putExtra("stockStatus", stockBadgeText.getText().toString());
+
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
             });
         }

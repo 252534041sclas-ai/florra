@@ -96,14 +96,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+                    <!-- Gradient Overlay -->
                     <ImageView
                         android:id="@+id/productImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/tile_placeholder" />
+                        android:src="@drawable/ti" />
 
-                    <!-- Gradient Overlay -->
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
@@ -241,13 +241,13 @@
 
                             <TextView
                                 android:id="@+id/productName"
-                                android:layout_width="wrap_content"
+                                android:layout_width="109dp"
                                 android:layout_height="wrap_content"
+                                android:letterSpacing="-0.5"
                                 android:text="Statuario White"
                                 android:textColor="@color/primary_dark"
                                 android:textSize="24sp"
-                                android:textStyle="bold"
-                                android:letterSpacing="-0.5" />
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/productModel"

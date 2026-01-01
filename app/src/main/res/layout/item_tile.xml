@@ -21,14 +21,15 @@
         android:clipChildren="false">
 
         <!-- Tile Image -->
+
+        <!-- Stock Badge -->
         <ImageView
             android:id="@+id/tileImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/tile_placeholder" />
+            android:src="@drawable/ti" />
 
-        <!-- Stock Badge -->
         <LinearLayout
             android:id="@+id/stockBadge"
             android:layout_width="wrap_content"
@@ -154,22 +155,6 @@
                 android:layout_weight="1" />
 
             <!-- Add to Cart Button -->
-            <LinearLayout
-                android:id="@+id/btnAddToCart"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:orientation="horizontal"
-                android:background="@drawable/bg_add_button"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/ic_add"
-                    android:tint="@color/primary" />
-            </LinearLayout>
             <!-- Bookmark Button (Add this near your add to cart button) -->
             <LinearLayout
                 android:id="@+id/btnBookmark"
@@ -189,15 +174,6 @@
             </LinearLayout>
 
             <!-- Icon Container -->
-            <LinearLayout
-                android:id="@+id/iconContainer"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_circle_slate"
-                android:gravity="center">
-
-                <!-- ... -->
-            </LinearLayout>
 
         </LinearLayout>
 
