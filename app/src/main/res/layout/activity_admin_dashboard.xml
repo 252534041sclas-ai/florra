@@ -649,7 +649,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Quotations"
+                                android:text="Savad Bills"
                                 android:textColor="@color/primary_color"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
@@ -658,7 +658,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Estimates"
+                                android:text="Reorder levels"
                                 android:textColor="@color/zinc_500"
                                 android:textSize="12sp" />
 
@@ -773,7 +773,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Stock Alerts"
+                                android:text="Generate Bill"
                                 android:textColor="@color/primary_color"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
@@ -822,14 +822,18 @@
                 android:paddingHorizontal="20dp"
                 android:paddingBottom="24dp">
 
-                <!-- Activity Item 1 -->
+                <!-- Activity Item 1 - New Enquiry -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/cardActivityNewEnquiry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardBackgroundColor="@color/zinc_100"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="1dp"
-                    android:layout_marginBottom="12dp">
+                    android:layout_marginBottom="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -883,14 +887,18 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <!-- Activity Item 2 -->
+                <!-- Activity Item 2 - Quotation Approved -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/cardActivityQuotationApproved"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardBackgroundColor="@color/zinc_100"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="1dp"
-                    android:layout_marginBottom="12dp">
+                    android:layout_marginBottom="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -944,13 +952,17 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <!-- Activity Item 3 -->
+                <!-- Activity Item 3 - Stock Updated -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/cardActivityStockUpdated"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardBackgroundColor="@color/zinc_100"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="1dp">
+                    app:cardElevation="1dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -1055,7 +1067,7 @@
                 android:background="@android:color/transparent"
                 android:textColor="@color/zinc_400"
                 android:textSize="11sp"
-                android:drawableTop="@drawable/ic_menu_book"
+                android:drawableTop="@drawable/ic_grid_viewic_grid_view_filled"
                 android:drawablePadding="4dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"

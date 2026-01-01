@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/background_light"
+    android:fitsSystemWindows="true">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/background_light"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp"
+        android:gravity="center_vertical"
+        android:elevation="2dp">
+
+        <!-- Back Button -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back_arrow"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:tint="@color/primary_color" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Inventory"
+            android:textColor="@color/primary_color"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:letterSpacing="-0.02" />
+
+        <!-- Empty space for symmetry -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/zinc_200" />
+
+    <!-- Main Content ScrollView -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
+
+            <!-- Stats Cards Grid -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp">
+
+                <!-- First Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="12dp">
+
+                    <!-- Total Card -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <!-- Icon and Title -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="8dp">
+
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_inventory_2"
+                                    android:tint="@color/primary_color" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="TOTAL"
+                                    android:textColor="@color/zinc_500"
+                                    android:textSize="10sp"
+                                    android:textStyle="normal"
+                                    android:letterSpacing="0.05"
+                                    android:layout_marginStart="8dp" />
+
+                            </LinearLayout>
+
+                            <!-- Value -->
+                            <TextView
+                                android:id="@+id/tvTotal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1,240"
+                                android:textColor="@color/primary_color"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="-0.02" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- In Stock Card -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <!-- Title with indicator -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="8dp">
+
+                                <View
+                                    android:layout_width="8dp"
+                                    android:layout_height="8dp"
+                                    android:background="@drawable/bg_green_dot" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="IN STOCK"
+                                    android:textColor="@color/zinc_500"
+                                    android:textSize="10sp"
+                                    android:textStyle="normal"
+                                    android:letterSpacing="0.05"
+                                    android:layout_marginStart="8dp" />
+
+                            </LinearLayout>
+
+                            <!-- Value -->
+                            <TextView
+                                android:id="@+id/tvInStock"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="980"
+                                android:textColor="@color/emerald_600"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="-0.02" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+                <!-- Second Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- Low Stock Card -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <!-- Title with indicator -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="8dp">
+
+                                <View
+                                    android:layout_width="8dp"
+                                    android:layout_height="8dp"
+                                    android:background="@drawable/bg_amber_dot" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="LOW STOCK"
+                                    android:textColor="@color/zinc_500"
+                                    android:textSize="10sp"
+                                    android:textStyle="normal"
+                                    android:letterSpacing="0.05"
+                                    android:layout_marginStart="8dp" />
+
+                            </LinearLayout>
+
+                            <!-- Value -->
+                            <TextView
+                                android:id="@+id/tvLowStock"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="12"
+                                android:textColor="@color/amber_600"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="-0.02" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Empty Card -->
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <!-- Title with indicator -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="8dp">
+
+                                <View
+                                    android:layout_width="8dp"
+                                    android:layout_height="8dp"
+                                    android:background="@drawable/bg_red_dot" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="EMPTY"
+                                    android:textColor="@color/zinc_500"
+                                    android:textSize="10sp"
+                                    android:textStyle="normal"
+                                    android:letterSpacing="0.05"
+                                    android:layout_marginStart="8dp" />
+
+                            </LinearLayout>
+
+                            <!-- Value -->
+                            <TextView
+                                android:id="@+id/tvEmpty"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="248"
+                                android:textColor="@color/red_600"
+                                android:textSize="24sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="-0.02" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Search Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="16dp">
+
+                        <!-- Search Icon -->
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_search"
+                            android:tint="@color/zinc_400" />
+
+                        <!-- Search Input -->
+                        <EditText
+                            android:id="@+id/etSearch"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:hint="Search by name, SKU or category..."
+                            android:textColor="@color/primary_color"
+                            android:textSize="16sp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:maxLines="1" />
+
+                        <!-- Filter Button -->
+                        <ImageButton
+                            android:id="@+id/btnFilter"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_filter"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:tint="@color/zinc_400" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+            <!-- Category Filter Buttons -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="16dp"
+                android:fadeScrollbars="false">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <!-- All Items Button (Active) -->
+                    <Button
+                        android:id="@+id/btnAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:text="All Items"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_primary_button"
+                        android:paddingHorizontal="16dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <!-- Floor Button -->
+                    <Button
+                        android:id="@+id/btnFloor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:text="Floor"
+                        android:textColor="@color/zinc_600"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_outline_button"
+                        android:paddingHorizontal="16dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <!-- Wall Button -->
+                    <Button
+                        android:id="@+id/btnWall"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:text="Wall"
+                        android:textColor="@color/zinc_600"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_outline_button"
+                        android:paddingHorizontal="16dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <!-- Kitchen Button -->
+                    <Button
+                        android:id="@+id/btnKitchen"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:text="Kitchen"
+                        android:textColor="@color/zinc_600"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_outline_button"
+                        android:paddingHorizontal="16dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <!-- Bathroom Button -->
+                    <Button
+                        android:id="@+id/btnBathroom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:text="Bathroom"
+                        android:textColor="@color/zinc_600"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_outline_button"
+                        android:paddingHorizontal="16dp" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <!-- Product List Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp">
+
+                <!-- Section Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="PRODUCT LIST"
+                        android:textColor="@color/zinc_500"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sorted by Name"
+                        android:textColor="@color/zinc_400"
+                        android:textSize="11sp" />
+
+                </LinearLayout>
+
+                <!-- Products List -->
+                <LinearLayout
+                    android:id="@+id/layoutProducts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Product items will be added dynamically here -->
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -12,7 +12,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
-import androidx.appcompat.app.AlertDialog; // Add this import
+import androidx.appcompat.app.AlertDialog;
 
 public class AdminProductDetailsActivity extends AppCompatActivity {
 
@@ -138,7 +138,6 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
                 editProductDetails();
             }
         });
-
 
         // Image click listeners
         ImageView ivMainView = findViewById(R.id.ivMainView);
@@ -333,24 +332,10 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
     private void editProductDetails() {
         Toast.makeText(this, "Editing " + currentProductName, Toast.LENGTH_SHORT).show();
 
-        // Open Edit Product screen (you'll need to create this activity)
-        // For now, just show a toast
-    }
-
-    private void updateStock() {
-        Toast.makeText(this, "Updating Stock for " + currentProductName, Toast.LENGTH_SHORT).show();
-
-        // Show stock update dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("Update Stock")
-                .setMessage("Enter new stock quantity for " + currentProductName)
-                .setPositiveButton("Update", (dialog, which) -> {
-                    // Update stock logic here
-                    Toast.makeText(AdminProductDetailsActivity.this, "Stock updated successfully!", Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+        // Open Edit Product Details Activity
+        Intent intent = new Intent(AdminProductDetailsActivity.this, EditProductDetailsActivity.class);
+        intent.putExtra("product_name", currentProductName);
+        startActivityForResult(intent, 100);
     }
 
     private void shareProduct() {
@@ -398,6 +383,25 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
     private void viewAnalytics() {
         Toast.makeText(this, "Viewing analytics for " + currentProductName, Toast.LENGTH_SHORT).show();
         // Implementation for viewing analytics
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
+            if (data.getBooleanExtra("product_deleted", false)) {
+                Toast.makeText(this, "Product deleted", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                String updatedName = data.getStringExtra("updated_product_name");
+                if (updatedName != null) {
+                    currentProductName = updatedName;
+                    tvProductName.setText(updatedName);
+                    Toast.makeText(this, "Product updated successfully", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     @Override

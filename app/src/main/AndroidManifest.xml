@@ -150,6 +150,11 @@
         <activity
             android:name=".HelpSupportActivity"
             android:exported="false" />
+        <activity
+            android:name=".CalculatorActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
 
         <!-- Admin Dashboard Activity -->
         <activity
@@ -182,6 +187,21 @@
             android:name=".AdminProductDetailsActivity"
             android:exported="false"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".EditProductDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".InventoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GenerateBillActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".PreviewBillActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="false" />
+        <activity android:name=".SavedBillsActivity" />
     </application>
 
 </manifest>

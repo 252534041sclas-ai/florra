@@ -760,7 +760,7 @@
             android:textStyle="bold"
             android:drawableStart="@drawable/ic_edit"
             android:drawablePadding="8dp"
-            android:background="@drawable/bg_action_button_outline"
+            android:background="@drawable/bg_action_button_filled"
             android:gravity="center"
             android:stateListAnimator="@null" />
 
