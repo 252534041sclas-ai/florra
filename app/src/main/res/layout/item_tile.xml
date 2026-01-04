@@ -157,7 +157,7 @@
             <!-- Add to Cart Button -->
             <!-- Bookmark Button (Add this near your add to cart button) -->
             <LinearLayout
-                android:id="@+id/btnBookmark"
+                android:id="@+id/btnFavorite"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:orientation="horizontal"

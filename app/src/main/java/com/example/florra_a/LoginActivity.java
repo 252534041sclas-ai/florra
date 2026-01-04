@@ -18,10 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class LoginActivity extends AppCompatActivity {
 
     // Views
@@ -60,15 +56,15 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
+        // Initialize all views FIRST
+        initViews();
+
         // Initialize progress dialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
 
         // Check if user is already logged in
         checkLoginStatus();
-
-        // Initialize all views
-        initViews();
 
         // Set initial state to Admin login (as per your requirement)
         setAdminLoginMode();
@@ -108,11 +104,13 @@ public class LoginActivity extends AppCompatActivity {
         txtDescCustomer = findViewById(R.id.txtDescCustomer);
         txtDescAdmin = findViewById(R.id.txtDescAdmin);
 
-        // Layouts
+        // Layouts - Check if these IDs exist in your XML
         customerLoginLayout = findViewById(R.id.customerLoginLayout);
         adminLoginLayout = findViewById(R.id.adminLoginLayout);
+
+        // These might not exist in your XML
         orDivider = findViewById(R.id.orDivider);
-        adminFooter = findViewById(R.id.adminFooter);
+        //adminFooter = findViewById(R.id.adminFooter);
         customerFooter = findViewById(R.id.customerFooter);
 
         // Login button
@@ -126,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
         btnForgotPasswordAdmin = findViewById(R.id.btnForgotPasswordAdmin);
 
         // Contact support
-        btnContactSupport = findViewById(R.id.btnContactSupport);
+        //btnContactSupport = findViewById(R.id.btnContactSupport);
 
         // Password toggle buttons
         btnToggleCustomerPassword = findViewById(R.id.btnToggleCustomerPassword);
@@ -141,224 +139,220 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupClickListeners() {
         // Toggle customer password visibility
-        btnToggleCustomerPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isCustomerPasswordVisible = !isCustomerPasswordVisible;
+        if (btnToggleCustomerPassword != null) {
+            btnToggleCustomerPassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isCustomerPasswordVisible = !isCustomerPasswordVisible;
 
-                if (isCustomerPasswordVisible) {
-                    edtCustomerPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    btnToggleCustomerPassword.setImageResource(R.drawable.ic_visibility_off);
-                } else {
-                    edtCustomerPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    btnToggleCustomerPassword.setImageResource(R.drawable.ic_visibility);
+                    if (isCustomerPasswordVisible) {
+                        edtCustomerPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        btnToggleCustomerPassword.setImageResource(R.drawable.ic_visibility_off);
+                    } else {
+                        edtCustomerPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        btnToggleCustomerPassword.setImageResource(R.drawable.ic_visibility);
+                    }
+                    edtCustomerPassword.setSelection(edtCustomerPassword.getText().length());
                 }
-                edtCustomerPassword.setSelection(edtCustomerPassword.getText().length());
-            }
-        });
+            });
+        }
 
         // Toggle admin password visibility
-        btnToggleAdminPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isAdminPasswordVisible = !isAdminPasswordVisible;
+        if (btnToggleAdminPassword != null) {
+            btnToggleAdminPassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isAdminPasswordVisible = !isAdminPasswordVisible;
 
-                if (isAdminPasswordVisible) {
-                    edtAdminPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-                    btnToggleAdminPassword.setImageResource(R.drawable.ic_visibility_off);
-                } else {
-                    edtAdminPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    btnToggleAdminPassword.setImageResource(R.drawable.ic_visibility);
+                    if (isAdminPasswordVisible) {
+                        edtAdminPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                        btnToggleAdminPassword.setImageResource(R.drawable.ic_visibility_off);
+                    } else {
+                        edtAdminPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                        btnToggleAdminPassword.setImageResource(R.drawable.ic_visibility);
+                    }
+                    edtAdminPassword.setSelection(edtAdminPassword.getText().length());
                 }
-                edtAdminPassword.setSelection(edtAdminPassword.getText().length());
-            }
-        });
+            });
+        }
 
         // Customer login tab
-        btnCustomerLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setCustomerLoginMode();
-            }
-        });
+        if (btnCustomerLogin != null) {
+            btnCustomerLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setCustomerLoginMode();
+                }
+            });
+        }
 
         // Admin login tab
-        btnAdminLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setAdminLoginMode();
-            }
-        });
+        if (btnAdminLogin != null) {
+            btnAdminLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setAdminLoginMode();
+                }
+            });
+        }
 
         // Login button
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isAdminMode) {
-                    // Admin login
-                    String email = edtAdminEmail.getText().toString().trim();
-                    String password = edtAdminPassword.getText().toString().trim();
+        if (btnLogin != null) {
+            btnLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (isAdminMode) {
+                        // Admin login
+                        String email = edtAdminEmail.getText().toString().trim();
+                        String password = edtAdminPassword.getText().toString().trim();
 
-                    if (email.isEmpty()) {
-                        Toast.makeText(LoginActivity.this, "Please enter admin email", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                        if (email.isEmpty()) {
+                            Toast.makeText(LoginActivity.this, "Please enter admin email", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
-                    if (password.isEmpty()) {
-                        Toast.makeText(LoginActivity.this, "Please enter admin password", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                        if (password.isEmpty()) {
+                            Toast.makeText(LoginActivity.this, "Please enter admin password", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
-                    // Call API for admin login
-                    performLogin(email, password, true);
+                        // Show loading
+                        progressDialog.setMessage("Logging in as Admin...");
+                        progressDialog.show();
 
-                } else {
-                    // Customer login
-                    String email = edtCustomerEmail.getText().toString().trim();
-                    String password = edtCustomerPassword.getText().toString().trim();
+                        // Simulate API call with delay
+                        new android.os.Handler().postDelayed(
+                                new Runnable() {
+                                    public void run() {
+                                        progressDialog.dismiss();
 
-                    if (email.isEmpty()) {
-                        Toast.makeText(LoginActivity.this, "Please enter email or username", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    if (password.isEmpty()) {
-                        Toast.makeText(LoginActivity.this, "Please enter password", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    // Call API for customer login
-                    performLogin(email, password, false);
-                }
-            }
-        });
-
-        // Create account button
-        btnCreateAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Navigate to CreateAccountActivity
-                Intent intent = new Intent(LoginActivity.this, CreateAccountActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }
-        });
-
-        // For Customer forgot password:
-        btnForgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-                // Pass email if available
-                String email = edtCustomerEmail.getText().toString().trim();
-                if (!email.isEmpty()) {
-                    intent.putExtra("email", email);
-                }
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }
-        });
-
-        // For Admin forgot password:
-        btnForgotPasswordAdmin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
-                // Pass email if available
-                String email = edtAdminEmail.getText().toString().trim();
-                if (!email.isEmpty()) {
-                    intent.putExtra("email", email);
-                }
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }
-        });
-
-        // Contact IT Support
-        btnContactSupport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Open email intent or contact support screen
-                Intent emailIntent = new Intent(Intent.ACTION_SEND);
-                emailIntent.setType("message/rfc822");
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@florra.com"});
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Support Request - Florra App");
-                emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Support Team,\n\n");
-
-                try {
-                    startActivity(Intent.createChooser(emailIntent, "Send email..."));
-                } catch (android.content.ActivityNotFoundException ex) {
-                    Toast.makeText(LoginActivity.this, "No email client installed.", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void performLogin(String email, String password, boolean isAdmin) {
-        // Show loading dialog
-        progressDialog.setMessage(isAdmin ? "Logging in as Admin..." : "Logging in...");
-        progressDialog.show();
-
-        // Create API service
-        ApiService apiService = RetrofitClient.getApiService();
-
-        // Create login request
-        LoginRequest request = new LoginRequest(email, password, isAdmin ? "admin" : "customer");
-
-        // Make API call
-        Call<LoginResponse> call = apiService.loginUser(request);
-        call.enqueue(new Callback<LoginResponse>() {
-            @Override
-            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                progressDialog.dismiss();
-
-                if (response.isSuccessful() && response.body() != null) {
-                    LoginResponse loginResponse = response.body();
-
-                    if ("success".equals(loginResponse.getStatus())) {
-                        // Login successful
-                        Toast.makeText(LoginActivity.this, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
-
-                        // Save user data to SharedPreferences
-                        saveUserData(loginResponse.getData(), email, isAdmin);
-
-                        // Navigate to appropriate screen
-                        navigateAfterLogin(isAdmin);
+                                        // Test credentials for demo
+                                        if (email.equals("admin@florra.com") && password.equals("admin123")) {
+                                            // Save login status
+                                            saveUserData(email, true);
+                                            // Navigate to admin dashboard
+                                            navigateAfterLogin(true);
+                                        } else {
+                                            Toast.makeText(LoginActivity.this, "Invalid admin credentials", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                },
+                                1500 // 1.5 second delay
+                        );
 
                     } else {
-                        // Login failed
-                        Toast.makeText(LoginActivity.this, loginResponse.getMessage(), Toast.LENGTH_SHORT).show();
+                        // Customer login
+                        String email = edtCustomerEmail.getText().toString().trim();
+                        String password = edtCustomerPassword.getText().toString().trim();
+
+                        if (email.isEmpty()) {
+                            Toast.makeText(LoginActivity.this, "Please enter email or username", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (password.isEmpty()) {
+                            Toast.makeText(LoginActivity.this, "Please enter password", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        // Show loading
+                        progressDialog.setMessage("Logging in...");
+                        progressDialog.show();
+
+                        // Simulate API call with delay
+                        new android.os.Handler().postDelayed(
+                                new Runnable() {
+                                    public void run() {
+                                        progressDialog.dismiss();
+
+                                        // For demo, accept any non-empty credentials
+                                        if (!email.isEmpty() && !password.isEmpty()) {
+                                            // Save login status
+                                            saveUserData(email, false);
+                                            // Navigate to customer home
+                                            navigateAfterLogin(false);
+                                        } else {
+                                            Toast.makeText(LoginActivity.this, "Please enter valid credentials", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                },
+                                1500 // 1.5 second delay
+                        );
                     }
-                } else {
-                    // Handle API error
-                    Toast.makeText(LoginActivity.this, "Login failed. Please try again.", Toast.LENGTH_SHORT).show();
                 }
-            }
+            });
+        }
 
-            @Override
-            public void onFailure(Call<LoginResponse> call, Throwable t) {
-                progressDialog.dismiss();
-
-                // Handle network error
-                if (t.getMessage().contains("Failed to connect")) {
-                    Toast.makeText(LoginActivity.this,
-                            "Cannot connect to server. Please check your internet connection or server URL.",
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(LoginActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+        // Create account button
+        if (btnCreateAccount != null) {
+            btnCreateAccount.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Navigate to CreateAccountActivity
+                    Intent intent = new Intent(LoginActivity.this, CreateAccountActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
+            });
+        }
 
-                // For testing without backend, use mock login
-                if (isAdmin && email.equals("admin@florra.com") && password.equals("admin123")) {
-                    mockLoginForTesting(email, isAdmin);
-                } else if (!isAdmin && !email.isEmpty() && !password.isEmpty()) {
-                    mockLoginForTesting(email, isAdmin);
+        // For Customer forgot password:
+        if (btnForgotPassword != null) {
+            btnForgotPassword.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+                    // Pass email if available
+                    String email = edtCustomerEmail.getText().toString().trim();
+                    if (!email.isEmpty()) {
+                        intent.putExtra("email", email);
+                    }
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
-            }
-        });
+            });
+        }
+
+        // For Admin forgot password:
+        if (btnForgotPasswordAdmin != null) {
+            btnForgotPasswordAdmin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+                    // Pass email if available
+                    String email = edtAdminEmail.getText().toString().trim();
+                    if (!email.isEmpty()) {
+                        intent.putExtra("email", email);
+                    }
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                }
+            });
+        }
+
+        // Contact IT Support
+        if (btnContactSupport != null) {
+            btnContactSupport.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Open email intent or contact support screen
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("message/rfc822");
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@florra.com"});
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Support Request - Florra App");
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, "Dear Support Team,\n\n");
+
+                    try {
+                        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(LoginActivity.this, "No email client installed.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 
-    private void saveUserData(LoginResponse.Data data, String email, boolean isAdmin) {
+    private void saveUserData(String email, boolean isAdmin) {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -366,21 +360,11 @@ public class LoginActivity extends AppCompatActivity {
         editor.putBoolean("is_logged_in", true);
         editor.putString("user_type", isAdmin ? "admin" : "customer");
         editor.putString("email", email);
-
-        if (data != null) {
-            // Save token if available
-            if (data.getToken() != null) {
-                editor.putString("token", data.getToken());
-            }
-
-            // Save user details if available
-            if (data.getUser() != null) {
-                editor.putString("full_name", data.getUser().getFull_name());
-                editor.putInt("user_id", data.getUser().getId());
-            }
-        }
+        editor.putString("full_name", isAdmin ? "Admin User" : "Customer User");
 
         editor.apply();
+
+        Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
     }
 
     private void navigateAfterLogin(boolean isAdmin) {
@@ -397,79 +381,72 @@ public class LoginActivity extends AppCompatActivity {
         finish(); // Close login activity
     }
 
-    // Method for testing without backend
-    private void mockLoginForTesting(String email, boolean isAdmin) {
-        Toast.makeText(this, "Mock login successful for testing", Toast.LENGTH_SHORT).show();
-
-        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("is_logged_in", true);
-        editor.putString("user_type", isAdmin ? "admin" : "customer");
-        editor.putString("email", email);
-        editor.putString("full_name", "Test User");
-        editor.apply();
-
-        navigateAfterLogin(isAdmin);
-    }
-
     private void setCustomerLoginMode() {
         isAdminMode = false;
 
         // Update tab buttons
-        btnCustomerLogin.setBackgroundResource(R.drawable.bg_active_tab);
-        btnCustomerLogin.setTextColor(getResources().getColor(R.color.white));
+        if (btnCustomerLogin != null) {
+            btnCustomerLogin.setBackgroundResource(R.drawable.bg_active_tab);
+            btnCustomerLogin.setTextColor(getResources().getColor(R.color.white));
+        }
 
-        btnAdminLogin.setBackgroundResource(android.R.color.transparent);
-        btnAdminLogin.setTextColor(getResources().getColor(R.color.slate_400));
+        if (btnAdminLogin != null) {
+            btnAdminLogin.setBackgroundResource(android.R.color.transparent);
+            btnAdminLogin.setTextColor(getResources().getColor(R.color.slate_400));
+        }
 
         // Show customer UI elements
-        txtWelcomeCustomer.setVisibility(View.VISIBLE);
-        txtWelcomeAdmin.setVisibility(View.GONE);
+        if (txtWelcomeCustomer != null) txtWelcomeCustomer.setVisibility(View.VISIBLE);
+        if (txtWelcomeAdmin != null) txtWelcomeAdmin.setVisibility(View.GONE);
 
-        txtDescCustomer.setVisibility(View.VISIBLE);
-        txtDescAdmin.setVisibility(View.GONE);
+        if (txtDescCustomer != null) txtDescCustomer.setVisibility(View.VISIBLE);
+        if (txtDescAdmin != null) txtDescAdmin.setVisibility(View.GONE);
 
-        customerLoginLayout.setVisibility(View.VISIBLE);
-        adminLoginLayout.setVisibility(View.GONE);
+        if (customerLoginLayout != null) customerLoginLayout.setVisibility(View.VISIBLE);
+        if (adminLoginLayout != null) adminLoginLayout.setVisibility(View.GONE);
 
-        orDivider.setVisibility(View.VISIBLE);
-        btnCreateAccount.setVisibility(View.VISIBLE);
-
-        adminFooter.setVisibility(View.GONE);
-        customerFooter.setVisibility(View.VISIBLE);
+        // Safely handle optional views
+        if (orDivider != null) orDivider.setVisibility(View.VISIBLE);
+        if (btnCreateAccount != null) btnCreateAccount.setVisibility(View.VISIBLE);
+        if (adminFooter != null) adminFooter.setVisibility(View.GONE);
+        if (customerFooter != null) customerFooter.setVisibility(View.VISIBLE);
 
         // Update login button if needed
-        btnLogin.setText("Log in");
+        if (btnLogin != null) btnLogin.setText("Log in");
     }
 
     private void setAdminLoginMode() {
         isAdminMode = true;
 
         // Update tab buttons
-        btnAdminLogin.setBackgroundResource(R.drawable.bg_active_tab);
-        btnAdminLogin.setTextColor(getResources().getColor(R.color.white));
+        if (btnAdminLogin != null) {
+            btnAdminLogin.setBackgroundResource(R.drawable.bg_active_tab);
+            btnAdminLogin.setTextColor(getResources().getColor(R.color.white));
+        }
 
-        btnCustomerLogin.setBackgroundResource(android.R.color.transparent);
-        btnCustomerLogin.setTextColor(getResources().getColor(R.color.slate_400));
+        if (btnCustomerLogin != null) {
+            btnCustomerLogin.setBackgroundResource(android.R.color.transparent);
+            btnCustomerLogin.setTextColor(getResources().getColor(R.color.slate_400));
+        }
 
         // Show admin UI elements
-        txtWelcomeCustomer.setVisibility(View.GONE);
-        txtWelcomeAdmin.setVisibility(View.VISIBLE);
+        if (txtWelcomeCustomer != null) txtWelcomeCustomer.setVisibility(View.GONE);
+        if (txtWelcomeAdmin != null) txtWelcomeAdmin.setVisibility(View.VISIBLE);
 
-        txtDescCustomer.setVisibility(View.GONE);
-        txtDescAdmin.setVisibility(View.VISIBLE);
+        if (txtDescCustomer != null) txtDescCustomer.setVisibility(View.GONE);
+        if (txtDescAdmin != null) txtDescAdmin.setVisibility(View.VISIBLE);
 
-        customerLoginLayout.setVisibility(View.GONE);
-        adminLoginLayout.setVisibility(View.VISIBLE);
+        if (customerLoginLayout != null) customerLoginLayout.setVisibility(View.GONE);
+        if (adminLoginLayout != null) adminLoginLayout.setVisibility(View.VISIBLE);
 
-        orDivider.setVisibility(View.GONE);
-        btnCreateAccount.setVisibility(View.GONE);
-
-        adminFooter.setVisibility(View.VISIBLE);
-        customerFooter.setVisibility(View.GONE);
+        // Safely handle optional views
+        if (orDivider != null) orDivider.setVisibility(View.GONE);
+        if (btnCreateAccount != null) btnCreateAccount.setVisibility(View.GONE);
+        if (adminFooter != null) adminFooter.setVisibility(View.VISIBLE);
+        if (customerFooter != null) customerFooter.setVisibility(View.GONE);
 
         // Update login button if needed
-        btnLogin.setText("Log in");
+        if (btnLogin != null) btnLogin.setText("Log in");
     }
 
     @Override

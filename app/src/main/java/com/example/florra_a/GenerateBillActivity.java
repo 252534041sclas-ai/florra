@@ -11,23 +11,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
+
+import org.json.JSONObject;
+
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class GenerateBillActivity extends AppCompatActivity {
 
     // TextViews
     private TextView tvCustomerName, tvCustomerPhone, tvCustomerAddress;
     private TextView tvBillNo, tvDate;
-    private TextView tvItem1Price, tvItem2Price;
     private TextView tvSubtotal, tvGSTAmount, tvDiscountAmount, tvLoadingAmount, tvGrandTotal;
 
     // EditTexts
     private EditText etGST, etDiscount, etLoading;
 
     // Buttons
-    private Button btnBack, btnAddItem, btnPreview, btnSaveBill;
+    private Button btnBack, btnPreview, btnSaveBill;
 
     // Calculation variables
     private double subtotal = 47000.0;
@@ -39,241 +45,161 @@ public class GenerateBillActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        // Enable edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        // Handle notch and status bar
-        WindowInsetsControllerCompat windowInsetsController =
+        WindowInsetsControllerCompat controller =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.setAppearanceLightStatusBars(false);
-        windowInsetsController.setAppearanceLightNavigationBars(false);
+        controller.setAppearanceLightStatusBars(false);
 
         setContentView(R.layout.activity_generate_bill);
 
-        // Initialize views
-        initializeViews();
-
-        // Set up listeners
-        setupListeners();
-
-        // Calculate initial totals
+        initViews();
+        setListeners();
         calculateTotals();
     }
 
-    private void initializeViews() {
-        // Customer details
+    private void initViews() {
         tvCustomerName = findViewById(R.id.tvCustomerName);
         tvCustomerPhone = findViewById(R.id.tvCustomerPhone);
         tvCustomerAddress = findViewById(R.id.tvCustomerAddress);
 
-        // Bill info
         tvBillNo = findViewById(R.id.tvBillNo);
         tvDate = findViewById(R.id.tvDate);
 
-        // Item prices
-        tvItem1Price = findViewById(R.id.tvItem1Price);
-        tvItem2Price = findViewById(R.id.tvItem2Price);
-
-        // Payment summary
         tvSubtotal = findViewById(R.id.tvSubtotal);
         tvGSTAmount = findViewById(R.id.tvGSTAmount);
         tvDiscountAmount = findViewById(R.id.tvDiscountAmount);
         tvLoadingAmount = findViewById(R.id.tvLoadingAmount);
         tvGrandTotal = findViewById(R.id.tvGrandTotal);
 
-        // Input fields
         etGST = findViewById(R.id.etGST);
         etDiscount = findViewById(R.id.etDiscount);
         etLoading = findViewById(R.id.etLoading);
 
-        // Buttons
         btnBack = findViewById(R.id.btnBack);
-        btnAddItem = findViewById(R.id.btnAddItem);
         btnPreview = findViewById(R.id.btnPreview);
         btnSaveBill = findViewById(R.id.btnSaveBill);
 
-        // Set initial values
+        // Dummy initial data
         tvCustomerName.setText("Rahul Sharma");
-        tvCustomerPhone.setText("+91 98765 43210");
-        tvCustomerAddress.setText("12, Green Park Avenue, Delhi");
-        tvBillNo.setText("#FL-2023-89");
-        tvDate.setText("24 Oct, 2023");
-        tvItem1Price.setText("₹42,500");
-        tvItem2Price.setText("₹4,500");
+        tvCustomerPhone.setText("9876543210");
+        tvCustomerAddress.setText("Chennai");
+        tvBillNo.setText("FL-" + System.currentTimeMillis());
+        tvDate.setText("Today");
     }
 
-    private void setupListeners() {
-        // Back button
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+    private void setListeners() {
 
-        // Add Item button
-        btnAddItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(GenerateBillActivity.this, "Add Item functionality coming soon", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnBack.setOnClickListener(v -> onBackPressed());
 
-        // Preview button
-        btnPreview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(GenerateBillActivity.this, "Preview functionality coming soon", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnSaveBill.setOnClickListener(v -> confirmSave());
 
-        // Save Bill button
-        btnSaveBill.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveBill();
-            }
-        });
+        etGST.addTextChangedListener(simpleWatcher(value -> {
+            gstPercentage = value;
+            calculateTotals();
+        }));
 
-        // Preview button
-        btnPreview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(GenerateBillActivity.this, PreviewBillActivity.class);
-                // You can pass data from current activity to preview activity
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            }
-        });
+        etDiscount.addTextChangedListener(simpleWatcher(value -> {
+            discount = value;
+            calculateTotals();
+        }));
 
-        // GST input listener
-        etGST.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        etLoading.addTextChangedListener(simpleWatcher(value -> {
+            loading = value;
+            calculateTotals();
+        }));
+    }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
+    private TextWatcher simpleWatcher(ValueCallback callback) {
+        return new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+            public void onTextChanged(CharSequence s, int st, int b, int c) {}
             public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
-                    try {
-                        gstPercentage = Double.parseDouble(s.toString());
-                        calculateTotals();
-                    } catch (NumberFormatException e) {
-                        gstPercentage = 0.0;
-                    }
-                } else {
-                    gstPercentage = 0.0;
+                try {
+                    callback.onChange(s.length() > 0 ? Double.parseDouble(s.toString()) : 0);
+                } catch (Exception e) {
+                    callback.onChange(0);
                 }
-                calculateTotals();
             }
-        });
-
-        // Discount input listener
-        etDiscount.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
-                    try {
-                        discount = Double.parseDouble(s.toString());
-                        calculateTotals();
-                    } catch (NumberFormatException e) {
-                        discount = 0.0;
-                    }
-                } else {
-                    discount = 0.0;
-                }
-                calculateTotals();
-            }
-        });
-
-        // Loading input listener
-        etLoading.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
-                    try {
-                        loading = Double.parseDouble(s.toString());
-                        calculateTotals();
-                    } catch (NumberFormatException e) {
-                        loading = 0.0;
-                    }
-                } else {
-                    loading = 0.0;
-                }
-                calculateTotals();
-            }
-        });
+        };
     }
 
     private void calculateTotals() {
-        // Calculate GST amount
         double gstAmount = (subtotal * gstPercentage) / 100;
-
-        // Calculate grand total
         double grandTotal = subtotal + gstAmount - discount + loading;
 
-        // Update UI with formatted amounts
-        tvSubtotal.setText(formatCurrency(subtotal));
-        tvGSTAmount.setText("+ " + formatCurrency(gstAmount));
-        tvDiscountAmount.setText("- " + formatCurrency(discount));
-        tvLoadingAmount.setText("+ " + formatCurrency(loading));
-        tvGrandTotal.setText(formatCurrency(grandTotal));
+        tvSubtotal.setText("₹" + (int) subtotal);
+        tvGSTAmount.setText("+ ₹" + (int) gstAmount);
+        tvDiscountAmount.setText("- ₹" + (int) discount);
+        tvLoadingAmount.setText("+ ₹" + (int) loading);
+        tvGrandTotal.setText("₹" + (int) grandTotal);
     }
 
-    private String formatCurrency(double amount) {
-        // Format currency with Indian Rupee symbol and commas
-        return "₹" + String.format("%,.0f", amount);
-    }
-
-    private void saveBill() {
-        // Show save confirmation
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle("Save Bill")
-                .setMessage("Are you sure you want to save this bill?")
-                .setPositiveButton("Save", (dialog, which) -> {
-                    // Save logic will be implemented later with backend
-                    Toast.makeText(GenerateBillActivity.this, "Bill saved successfully!", Toast.LENGTH_SHORT).show();
-
-                    // You can navigate back to dashboard or clear form
-                    // finish();
-                })
+    private void confirmSave() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Save Bill")
+                .setMessage("Are you sure?")
+                .setPositiveButton("Save", (d, w) -> saveBillToBackend())
                 .setNegativeButton("Cancel", null)
                 .show();
     }
 
-    @Override
-    public void onBackPressed() {
-        // Check if any changes were made
-        if (gstPercentage != 18.0 || discount != 1000.0 || loading != 500.0) {
-            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-            builder.setTitle("Unsaved Changes")
-                    .setMessage("You have unsaved changes. Do you want to discard them?")
-                    .setPositiveButton("Discard", (dialog, which) -> {
-                        super.onBackPressed();
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
-        } else {
-            super.onBackPressed();
-        }
+    // 🔥 BACKEND INTEGRATION (FINAL)
+    private void saveBillToBackend() {
+        new Thread(() -> {
+            try {
+                URL url = new URL("http://10.0.2.2:8000/api/bills/");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+
+                JSONObject json = new JSONObject();
+                json.put("bill_no", tvBillNo.getText().toString());
+                json.put("customer_name", tvCustomerName.getText().toString());
+                json.put("customer_phone", tvCustomerPhone.getText().toString());
+                json.put("customer_address", tvCustomerAddress.getText().toString());
+
+                json.put("subtotal", subtotal);
+                json.put("gst_percentage", gstPercentage);
+                json.put("gst_amount", (subtotal * gstPercentage) / 100);
+                json.put("discount", discount);
+                json.put("loading", loading);
+
+                double grandTotal =
+                        subtotal + ((subtotal * gstPercentage) / 100) - discount + loading;
+
+                json.put("grand_total", grandTotal);
+                json.put("status", "Unpaid");
+
+                OutputStream os = conn.getOutputStream();
+                os.write(json.toString().getBytes());
+                os.close();
+
+                int code = conn.getResponseCode();
+
+                runOnUiThread(() -> {
+                    if (code == 201) {
+                        Toast.makeText(this, "Bill Saved", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(this, SavedBillsActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Save Failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } catch (Exception e) {
+                runOnUiThread(() ->
+                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show()
+                );
+            }
+        }).start();
+    }
+
+    interface ValueCallback {
+        void onChange(double value);
     }
 }

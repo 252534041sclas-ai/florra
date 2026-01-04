@@ -74,7 +74,6 @@ public class CustomerHomeActivity extends AppCompatActivity {
             btnNavEnquiries.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // Toast.makeText(CustomerHomeActivity.this, "Enquiries", Toast.LENGTH_SHORT).show();
                     openQuotationsScreen(); // Changed from toast to opening screen
                 }
             });
@@ -170,13 +169,15 @@ public class CustomerHomeActivity extends AppCompatActivity {
         }
     }
 
+    // UPDATED: setupCollections() method
     private void setupCollections() {
         LinearLayout btnSeeAll = findViewById(R.id.btnSeeAll);
         if (btnSeeAll != null) {
             btnSeeAll.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(CustomerHomeActivity.this, "See All Collections", Toast.LENGTH_SHORT).show();
+                    // Open Catalog with all tiles
+                    openCatalogWithFilter("all");
                 }
             });
         }
@@ -186,7 +187,8 @@ public class CustomerHomeActivity extends AppCompatActivity {
             cardFloorTiles.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(CustomerHomeActivity.this, "Floor Tiles", Toast.LENGTH_SHORT).show();
+                    // Open Catalog with floor tiles filter
+                    openCatalogWithFilter("floor");
                 }
             });
         }
@@ -196,7 +198,8 @@ public class CustomerHomeActivity extends AppCompatActivity {
             cardWallTiles.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(CustomerHomeActivity.this, "Wall Tiles", Toast.LENGTH_SHORT).show();
+                    // Open Catalog with wall tiles filter
+                    openCatalogWithFilter("wall");
                 }
             });
         }
@@ -206,7 +209,8 @@ public class CustomerHomeActivity extends AppCompatActivity {
             cardBathroom.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(CustomerHomeActivity.this, "Bathroom", Toast.LENGTH_SHORT).show();
+                    // Open Catalog with bathroom tiles filter
+                    openCatalogWithFilter("bathroom");
                 }
             });
         }
@@ -216,11 +220,11 @@ public class CustomerHomeActivity extends AppCompatActivity {
             cardKitchen.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(CustomerHomeActivity.this, "Kitchen", Toast.LENGTH_SHORT).show();
+                    // Open Catalog with kitchen tiles filter
+                    openCatalogWithFilter("kitchen");
                 }
             });
         }
-
 
         LinearLayout cardActiveEnquiries = findViewById(R.id.cardActiveEnquiries);
         if (cardActiveEnquiries != null) {
@@ -228,6 +232,8 @@ public class CustomerHomeActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(CustomerHomeActivity.this, "Active Enquiries", Toast.LENGTH_SHORT).show();
+                    // Optionally open enquiries/quotations screen
+                    openQuotationsScreen();
                 }
             });
         }
@@ -235,13 +241,46 @@ public class CustomerHomeActivity extends AppCompatActivity {
 
     // =============== SCREEN NAVIGATION METHODS ===============
 
+    // UPDATED: openCatalogScreen() to use filter parameter
     private void openCatalogScreen() {
+        openCatalogWithFilter("all"); // Default: show all tiles
+    }
+
+    // NEW METHOD: Open Catalog with specific filter
+    private void openCatalogWithFilter(String filterType) {
         try {
             Intent intent = new Intent(CustomerHomeActivity.this, CatalogActivity.class);
+
+            // Pass the filter type to CatalogActivity
+            intent.putExtra("filter_type", filterType);
+
+            // Show toast message based on filter
+            String message = "";
+            switch (filterType) {
+                case "floor":
+                    message = "Opening Floor Tiles...";
+                    break;
+                case "wall":
+                    message = "Opening Wall Tiles...";
+                    break;
+                case "bathroom":
+                    message = "Opening Bathroom Tiles...";
+                    break;
+                case "kitchen":
+                    message = "Opening Kitchen Tiles...";
+                    break;
+                default:
+                    message = "Opening Catalog...";
+                    break;
+            }
+
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+
             startActivity(intent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } catch (Exception e) {
             Toast.makeText(this, "Cannot open Catalog", Toast.LENGTH_SHORT).show();
+            Log.e("FLORRA", "Error opening Catalog with filter: " + e.getMessage());
         }
     }
 

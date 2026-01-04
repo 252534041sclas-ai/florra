@@ -3,58 +3,38 @@ package com.example.florra_a;
 public class Tile {
     private String name;
     private String price;
-    private String size;  // Just dimensions like "60×60"
-    private String stock;
-    private int image;
-    private String stockType;
+    private String size;
+    private String stockStatus;
+    private int imageResource;
+    private String finish;
+    private String category;
 
-    public Tile(String name, String price, String size, String stock, int image, String stockType) {
+    public Tile(String name, String price, String size, String stockStatus,
+                int imageResource, String finish, String category) {
         this.name = name;
         this.price = price;
         this.size = size;
-        this.stock = stock;
-        this.image = image;
-        this.stockType = stockType;
+        this.stockStatus = stockStatus;
+        this.imageResource = imageResource;
+        this.finish = finish;
+        this.category = category;
     }
 
-    // Getter methods
-    public String getName() {
-        return name;
-    }
+    // Getters
+    public String getName() { return name; }
+    public String getPrice() { return price; }
+    public String getSize() { return size; }
+    public String getStockStatus() { return stockStatus; }
+    public int getImageResource() { return imageResource; }
+    public String getFinish() { return finish; }
+    public String getCategory() { return category; }
 
-    public String getPrice() {
-        return price;
-    }
-
-    public String getSize() {
-        return size;  // This returns just the dimensions
-    }
-
-    public String getStock() {
-        return stock;
-    }
-
-    public int getImage() {
-        return image;
-    }
-
-    public String getStockType() {
-        return stockType;
-    }
-
-    // Optional: Method to get finish type based on name
-    public String getFinish() {
-        String nameLower = name.toLowerCase();
-        if (nameLower.contains("matte") || nameLower.contains("nero")) {
-            return "Matte";
-        } else if (nameLower.contains("rustic") || nameLower.contains("travertine")) {
-            return "Rustic";
-        } else if (nameLower.contains("high gloss") || nameLower.contains("statuario")) {
-            return "High Gloss";
-        } else if (nameLower.contains("wood")) {
-            return "Wood Finish";
-        } else {
-            return "Glossy"; // default
-        }
-    }
+    // Setters (optional)
+    public void setName(String name) { this.name = name; }
+    public void setPrice(String price) { this.price = price; }
+    public void setSize(String size) { this.size = size; }
+    public void setStockStatus(String stockStatus) { this.stockStatus = stockStatus; }
+    public void setImageResource(int imageResource) { this.imageResource = imageResource; }
+    public void setFinish(String finish) { this.finish = finish; }
+    public void setCategory(String category) { this.category = category; }
 }

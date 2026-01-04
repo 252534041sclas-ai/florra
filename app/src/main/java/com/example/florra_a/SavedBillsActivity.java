@@ -8,7 +8,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -21,9 +20,7 @@ public class SavedBillsActivity extends AppCompatActivity {
     private ImageButton btnBack, btnFilter;
     private EditText etSearch;
     private CardView chipAll, chipPaid, chipUnpaid, chipCancelled, chipThisMonth;
-
-    // REMOVE BOTTOM NAVIGATION VARIABLES
-    // private Button btnDashboard, btnCatalog, bottomQuotes, btnAccount;
+    private Button btnViewBill1, btnViewBill2, btnShare1, btnShare2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +47,6 @@ public class SavedBillsActivity extends AppCompatActivity {
 
         // Setup click listeners
         setupClickListeners();
-
-        // REMOVE THIS LINE - No bottom nav in XML
-        // setupBottomNavigation();
     }
 
     private void initializeViews() {
@@ -70,11 +64,11 @@ public class SavedBillsActivity extends AppCompatActivity {
         chipCancelled = findViewById(R.id.chipCancelled);
         chipThisMonth = findViewById(R.id.chipThisMonth);
 
-        // REMOVE BOTTOM NAVIGATION FINDVIEWBYID
-        // btnDashboard = findViewById(R.id.btnDashboard);
-        // btnCatalog = findViewById(R.id.btnCatalog);
-        // bottomQuotes = findViewById(R.id.bottomQuotes);
-        // btnAccount = findViewById(R.id.btnAccount);
+        // View Bill buttons
+        btnViewBill1 = findViewById(R.id.btnViewBill1);
+        btnViewBill2 = findViewById(R.id.btnViewBill2);
+        btnShare1 = findViewById(R.id.btnShare1);
+        btnShare2 = findViewById(R.id.btnShare2);
     }
 
     private void setupClickListeners() {
@@ -134,64 +128,80 @@ public class SavedBillsActivity extends AppCompatActivity {
                 Toast.makeText(SavedBillsActivity.this, "Showing this month's bills", Toast.LENGTH_SHORT).show();
             }
         });
+
+        // View Bill buttons
+        btnViewBill1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open ViewBillActivity for Bill 1
+                Intent intent = new Intent(SavedBillsActivity.this, ViewBillActivity.class);
+
+                // You can pass bill data as extras if needed
+                intent.putExtra("billNumber", "INV-2023-001");
+                intent.putExtra("customerName", "John Doe");
+                intent.putExtra("amount", "$2,450.00");
+                intent.putExtra("date", "Oct 24, 2023");
+                intent.putExtra("status", "Paid");
+
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            }
+        });
+
+        btnViewBill2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open ViewBillActivity for Bill 2
+                Intent intent = new Intent(SavedBillsActivity.this, ViewBillActivity.class);
+
+                // You can pass bill data as extras if needed
+                intent.putExtra("billNumber", "INV-2023-002");
+                intent.putExtra("customerName", "Sarah Smith");
+                intent.putExtra("amount", "$890.00");
+                intent.putExtra("date", "Oct 23, 2023");
+                intent.putExtra("status", "Unpaid");
+
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            }
+        });
+
+        // Share buttons
+        btnShare1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareBill("Bill #1089", "John Doe", "$2,450.00");
+            }
+        });
+
+        btnShare2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareBill("Bill #1088", "Sarah Smith", "$890.00");
+            }
+        });
     }
-
-    // REMOVE ENTIRE setupBottomNavigation() METHOD
-    /*
-    private void setupBottomNavigation() {
-        // Dashboard
-        btnDashboard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SavedBillsActivity.this, AdminDashboardActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                finish();
-            }
-        });
-
-        // Catalog
-        btnCatalog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(SavedBillsActivity.this, "Catalog screen coming soon", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Enquiries
-        bottomQuotes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SavedBillsActivity.this, EnquiriesActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                finish();
-            }
-        });
-
-        // Account
-        btnAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SavedBillsActivity.this, AdminAccountActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                finish();
-            }
-        });
-    }
-    */
 
     private void selectChip(CardView selectedChip) {
-        if (chipAll != null) chipAll.setCardBackgroundColor(getResources().getColor(R.color.white));
-        if (chipPaid != null) chipPaid.setCardBackgroundColor(getResources().getColor(R.color.white));
-        if (chipUnpaid != null) chipUnpaid.setCardBackgroundColor(getResources().getColor(R.color.white));
-        if (chipCancelled != null) chipCancelled.setCardBackgroundColor(getResources().getColor(R.color.white));
-        if (chipThisMonth != null) chipThisMonth.setCardBackgroundColor(getResources().getColor(R.color.white));
+        // Reset all chips to white
+        chipAll.setCardBackgroundColor(getResources().getColor(R.color.white));
+        chipPaid.setCardBackgroundColor(getResources().getColor(R.color.white));
+        chipUnpaid.setCardBackgroundColor(getResources().getColor(R.color.white));
+        chipCancelled.setCardBackgroundColor(getResources().getColor(R.color.white));
+        chipThisMonth.setCardBackgroundColor(getResources().getColor(R.color.white));
+
+        // Change text colors back to black for unselected chips
+        ((android.widget.TextView) chipAll.getChildAt(0)).setTextColor(getResources().getColor(R.color.black));
+        ((android.widget.TextView) chipPaid.getChildAt(0)).setTextColor(getResources().getColor(R.color.black));
+        ((android.widget.TextView) chipUnpaid.getChildAt(0)).setTextColor(getResources().getColor(R.color.black));
+        ((android.widget.TextView) chipCancelled.getChildAt(0)).setTextColor(getResources().getColor(R.color.black));
+        ((android.widget.TextView) chipThisMonth.getChildAt(0)).setTextColor(getResources().getColor(R.color.black));
 
         // Set selected chip
         if (selectedChip != null) {
             selectedChip.setCardBackgroundColor(getResources().getColor(R.color.primary_color));
+            // Change text color to white for selected chip
+            ((android.widget.TextView) selectedChip.getChildAt(0)).setTextColor(getResources().getColor(R.color.white));
         }
     }
 
@@ -228,6 +238,26 @@ public class SavedBillsActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void shareBill(String billNumber, String customerName, String amount) {
+        // Create share intent
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+
+        String shareText = "Bill Details:\n" +
+                "Bill Number: " + billNumber + "\n" +
+                "Customer: " + customerName + "\n" +
+                "Amount: " + amount + "\n\n" +
+                "Shared from Florra Tiles App";
+
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Bill Details: " + billNumber);
+
+        // Start the share activity
+        startActivity(Intent.createChooser(shareIntent, "Share Bill Details"));
+
+        Toast.makeText(this, "Sharing bill details...", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -463,45 +463,6 @@
                 android:visibility="gone" />
 
             <!-- Admin footer (Only for Admin) -->
-            <LinearLayout
-                android:id="@+id/adminFooter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_marginTop="16dp"
-                android:visibility="visible">
-
-                <!-- Divider -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/slate_200"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Contact Support -->
-                <TextView
-                    android:id="@+id/btnContactSupport"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Contact IT Support"
-                    android:textColor="@color/slate_500"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <!-- Version info -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Version 1.0.2 | Enterprise Edition"
-                    android:textColor="@color/slate_400"
-                    android:textSize="12sp"
-                    android:layout_marginTop="8dp" />
-
-            </LinearLayout>
 
         </LinearLayout>
 

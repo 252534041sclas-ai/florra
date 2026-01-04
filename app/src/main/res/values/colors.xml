@@ -34,7 +34,7 @@
     <color name="emerald_100">#D1FAE5</color>
     <color name="emerald_500">#10B981</color>
     <color name="emerald_600">#059669</color>
-    <color name="emerald_700">#047857</color>
+    <color name="emerald_700">#15803d</color>
     <color name="emerald_800">#065F46</color>
 
     <!-- Amber Colors (for low stock) -->
@@ -238,7 +238,51 @@
     <!-- For card shadows -->
     <color name="card_shadow_light">#0A000000</color>
     <color name="card_shadow_dark">#1A000000</color>
+
     <!-- Status Colors -->
     <color name="emerald_200">#A7F3D0</color>
     <color name="text_main_light">#000000</color>
+
+    <!-- ===== VIEW BILL SCREEN COLORS (ADDED) ===== -->
+    <!-- From HTML Design - Exact colors -->
+    <color name="viewbill_primary">#111827</color>
+    <color name="viewbill_primary_fg">#ffffff</color>
+    <color name="viewbill_background">#f3f4f6</color>
+    <color name="viewbill_surface">#ffffff</color>
+    <color name="viewbill_border_dark">#e5e7eb</color>
+    <color name="viewbill_text_main">#111827</color>
+    <color name="viewbill_text_muted">#6b7280</color>
+    <color name="viewbill_green_dark_bg">#dcfce7</color>
+    <color name="viewbill_green_dark_text">#15803d</color>
+
+    <!-- Additional View Bill colors -->
+    <color name="viewbill_border_gray_200">#e5e7eb</color>
+    <color name="viewbill_gray_50">#f9fafb</color>
+    <color name="viewbill_green_600_20">#1ea858</color>
+    <color name="viewbill_black_30">#4d000000</color>
+    <color name="viewbill_white_50">#80ffffff</color>
+    <color name="viewbill_gray_400">#9ca3af</color>
+
+    <!-- For dashed borders -->
+    <color name="viewbill_dashed_border">#e5e7eb</color>
+
+    <!-- For stamp/approval section -->
+    <color name="viewbill_stamp_border">#4d000000</color>
+    <color name="viewbill_stamp_bg">#80ffffff</color>
+
+    <!-- For bottom action buttons -->
+    <color name="viewbill_button_primary_bg">#111827</color>
+    <color name="viewbill_button_outline_border">#d1d5db</color>
+    <color name="viewbill_button_outline_bg">#ffffff</color>
+
+    <!-- Gradient colors for thank you section -->
+    <color name="viewbill_gradient_dot">#000000</color>
+
+    <!-- Shadow colors -->
+    <color name="viewbill_shadow">#1A000000</color>
+
+    <!-- Status badge colors -->
+    <color name="viewbill_status_paid_bg">#dcfce7</color>
+    <color name="viewbill_status_paid_text">#15803d</color>
+    <color name="viewbill_status_paid_border">#1ea858</color>
 </resources>

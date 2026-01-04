@@ -136,7 +136,10 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setCategoryActive(btnAll);
-                Toast.makeText(SearchActivity.this, "All", Toast.LENGTH_SHORT).show();
+                // Filter tiles by category
+                if (tileAdapter != null) {
+                    tileAdapter.filterByCategory("all");
+                }
             }
         });
 
@@ -144,7 +147,10 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setCategoryActive(btnFloorTiles);
-                Toast.makeText(SearchActivity.this, "Floor Tiles", Toast.LENGTH_SHORT).show();
+                // Filter tiles by category
+                if (tileAdapter != null) {
+                    tileAdapter.filterByCategory("floor");
+                }
             }
         });
 
@@ -152,7 +158,10 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setCategoryActive(btnWallTiles);
-                Toast.makeText(SearchActivity.this, "Wall Tiles", Toast.LENGTH_SHORT).show();
+                // Filter tiles by category
+                if (tileAdapter != null) {
+                    tileAdapter.filterByCategory("wall");
+                }
             }
         });
 
@@ -160,7 +169,10 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setCategoryActive(btnBathroom);
-                Toast.makeText(SearchActivity.this, "Bathroom", Toast.LENGTH_SHORT).show();
+                // Filter tiles by category
+                if (tileAdapter != null) {
+                    tileAdapter.filterByCategory("bathroom");
+                }
             }
         });
 
@@ -168,7 +180,10 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setCategoryActive(btnKitchen);
-                Toast.makeText(SearchActivity.this, "Kitchen", Toast.LENGTH_SHORT).show();
+                // Filter tiles by category
+                if (tileAdapter != null) {
+                    tileAdapter.filterByCategory("kitchen");
+                }
             }
         });
 
@@ -176,7 +191,10 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 setCategoryActive(btnOutdoor);
-                Toast.makeText(SearchActivity.this, "Outdoor", Toast.LENGTH_SHORT).show();
+                // Filter tiles by category
+                if (tileAdapter != null) {
+                    tileAdapter.filterByCategory("outdoor");
+                }
             }
         });
     }
@@ -231,24 +249,24 @@ public class SearchActivity extends AppCompatActivity {
             });
         }
 
-        // Enquiries button
+        // Enquiries button - UPDATED to open Quotations
         LinearLayout btnNavEnquiries = findViewById(R.id.btnNavEnquiries);
         if (btnNavEnquiries != null) {
             btnNavEnquiries.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(SearchActivity.this, "Enquiries", Toast.LENGTH_SHORT).show();
+                    openQuotationsScreen();
                 }
             });
         }
 
-        // Account button
+        // Account button - UPDATED to open Account
         LinearLayout btnNavAccount = findViewById(R.id.btnNavAccount);
         if (btnNavAccount != null) {
             btnNavAccount.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(SearchActivity.this, "Account", Toast.LENGTH_SHORT).show();
+                    openAccountScreen();
                 }
             });
         }
@@ -258,15 +276,26 @@ public class SearchActivity extends AppCompatActivity {
         // Create tile list for search results
         tileList = new ArrayList<>();
 
+        // FIXED: Add category parameter (7th parameter) to all Tile objects
         // Add search result tiles - matching the HTML design
         tileList.add(new Tile("Statuario White", "$4.50", "60x120cm • High Gloss", "IN STOCK",
-                R.drawable.tile_placeholder, "stock"));
+                R.drawable.tile_placeholder, "Porcelain", "wall"));
         tileList.add(new Tile("Nero Marquina", "$3.20", "60x60cm • Matte", "IN STOCK",
-                R.drawable.tile_placeholder, "stock"));
+                R.drawable.tile_placeholder, "Porcelain", "floor"));
         tileList.add(new Tile("Travertine Beige", "$2.80", "30x60cm • Rustic", "IN STOCK",
-                R.drawable.tile_placeholder, "stock"));
+                R.drawable.tile_placeholder, "Ceramic", "floor"));
         tileList.add(new Tile("Carrara Grey", "$5.00", "80x80cm • Polished", "IN STOCK",
-                R.drawable.tile_placeholder, "stock"));
+                R.drawable.tile_placeholder, "Porcelain", "floor"));
+
+        // Add more tiles with categories
+        tileList.add(new Tile("Calacatta Gold", "$5.50", "60x120cm • High Gloss", "IN STOCK",
+                R.drawable.tile_placeholder, "Porcelain", "wall"));
+        tileList.add(new Tile("Arabesque White", "$4.20", "Hexagon • Glossy", "IN STOCK",
+                R.drawable.tile_placeholder, "Ceramic", "bathroom"));
+        tileList.add(new Tile("Subway Tile", "$3.00", "10x20cm • Glossy", "IN STOCK",
+                R.drawable.tile_placeholder, "Ceramic", "kitchen"));
+        tileList.add(new Tile("Slate Grey", "$4.80", "30x60cm • Natural", "IN STOCK",
+                R.drawable.tile_placeholder, "Porcelain", "outdoor"));
 
         // Setup RecyclerView
         tileAdapter = new TileAdapter(this, tileList);
@@ -293,13 +322,27 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void openProductDetails(Tile tile) {
-        Intent intent = new Intent(SearchActivity.this, ProductDetailsActivity.class);
-        intent.putExtra("tileName", tile.getName());
-        intent.putExtra("tilePrice", tile.getPrice());
-        intent.putExtra("tileSize", tile.getSize());
-        intent.putExtra("tileStock", tile.getStock());
-        startActivity(intent);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        try {
+            Intent intent = new Intent(SearchActivity.this, ProductDetailsActivity.class);
+
+            // Pass ALL required data
+            intent.putExtra("productName", tile.getName());
+            intent.putExtra("productPrice", tile.getPrice());
+            intent.putExtra("productSize", tile.getSize());
+            intent.putExtra("productStock", tile.getStockStatus());
+            intent.putExtra("productModel", "FL-ST-" + String.format("%03d", tileList.indexOf(tile) + 1));
+            intent.putExtra("productMaterial", tile.getFinish() != null ? tile.getFinish() : "Porcelain");
+            intent.putExtra("productFinish", "High Gloss");
+            intent.putExtra("productThickness", "9mm");
+            intent.putExtra("productCoverage", "1.44m²/box");
+            intent.putExtra("productPacking", "2 Pcs / Box");
+            intent.putExtra("productCategory", tile.getCategory());
+
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        } catch (Exception e) {
+            Toast.makeText(this, "Cannot open product details", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void goToHome() {
@@ -314,6 +357,27 @@ public class SearchActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    // NEW METHODS FOR NAVIGATION
+    private void openQuotationsScreen() {
+        try {
+            Intent intent = new Intent(SearchActivity.this, QuotationsActivity.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        } catch (Exception e) {
+            Toast.makeText(this, "Cannot open Quotations", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void openAccountScreen() {
+        try {
+            Intent intent = new Intent(SearchActivity.this, CustomerAccountActivity.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        } catch (Exception e) {
+            Toast.makeText(this, "Cannot open Account", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -11,14 +11,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
 
     private Context context;
     private List<Tile> tileList;
+    private List<Tile> tileListFull; // For filtering
 
-    // NEW: Interface for click listeners
+    // Interface for click listeners
     public interface OnItemClickListener {
         void onItemClick(Tile tile);
         void onBookmarkClick(Tile tile);
@@ -30,11 +32,37 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
     public TileAdapter(Context context, List<Tile> tileList) {
         this.context = context;
         this.tileList = tileList;
+        this.tileListFull = new ArrayList<>(tileList);
     }
 
-    // NEW: Set click listener
+    // Set click listener
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
+    }
+
+    // Filter method
+    public void filterList(List<Tile> filteredList) {
+        tileList = filteredList;
+        notifyDataSetChanged();
+    }
+
+    // Filter by category
+    public void filterByCategory(String category) {
+        List<Tile> filteredList = new ArrayList<>();
+
+        if (category.equals("all") || category.equals("all_tiles")) {
+            tileList = new ArrayList<>(tileListFull);
+        } else {
+            for (Tile tile : tileListFull) {
+                // Check if tile has category field and it matches
+                if (tile.getCategory() != null && tile.getCategory().equals(category)) {
+                    filteredList.add(tile);
+                }
+            }
+            tileList = filteredList;
+        }
+
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -48,14 +76,16 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Tile tile = tileList.get(position);
 
-        // Set tile data
+        // Set tile data - FIXED: Using correct getter methods
         holder.tileName.setText(tile.getName());
-        holder.tilePrice.setText("$" + tile.getPrice());
+        holder.tilePrice.setText(tile.getPrice());
         holder.tileSize.setText(tile.getSize());
-        holder.stockBadgeText.setText(tile.getStock());
 
-        // Set stock color
-        if (tile.getStock().equals("LOW STOCK")) {
+        // FIX: Use getStockStatus() instead of getStock()
+        holder.stockBadgeText.setText(tile.getStockStatus());
+
+        // Set stock color - FIXED: Check stock status correctly
+        if (tile.getStockStatus().equals("LOW STOCK")) {
             holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.orange_600));
             holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
         } else {
@@ -63,25 +93,23 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
             holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_stock);
         }
 
-        // Set image
-        holder.tileImage.setImageResource(tile.getImage());
+        // Set image - FIXED: Use getImageResource() or getImage()
+        holder.tileImage.setImageResource(tile.getImageResource());
 
         // Set finish text
         if (tile.getFinish() != null && !tile.getFinish().isEmpty()) {
             holder.tileFinish.setText(tile.getFinish());
         } else {
-            holder.tileFinish.setText("Porcelain"); // Default value
+            holder.tileFinish.setText("Porcelain");
         }
 
-        // Handle item click - OPEN PRODUCT DETAILS
+        // Handle item click
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // If listener is set, use it
                 if (onItemClickListener != null) {
                     onItemClickListener.onItemClick(tile);
                 } else {
-                    // Otherwise use the old method
                     openProductDetails(tile);
                 }
             }
@@ -92,27 +120,23 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
             holder.btnAddToCart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // If listener is set, use it
                     if (onItemClickListener != null) {
                         onItemClickListener.onAddToCartClick(tile);
                     } else {
-                        // Otherwise show toast
                         Toast.makeText(context, "Added to cart: " + tile.getName(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
         }
 
-        // NEW: Handle bookmark button click
+        // Handle bookmark button click
         if (holder.btnBookmark != null) {
             holder.btnBookmark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // If listener is set, use it
                     if (onItemClickListener != null) {
                         onItemClickListener.onBookmarkClick(tile);
                     } else {
-                        // Otherwise show toast
                         Toast.makeText(context, "Bookmarked: " + tile.getName(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -125,23 +149,27 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         return tileList.size();
     }
 
-    // Old method for opening product details (for backward compatibility)
     private void openProductDetails(Tile tile) {
-        Intent intent = new Intent(context, ProductDetailsActivity.class);
+        try {
+            Intent intent = new Intent(context, ProductDetailsActivity.class);
 
-        // Pass ALL required data
-        intent.putExtra("productName", tile.getName());
-        intent.putExtra("productPrice", "$" + tile.getPrice());
-        intent.putExtra("productSize", tile.getSize());
-        intent.putExtra("productStock", tile.getStock());
-        intent.putExtra("productModel", "FL-ST-" + String.format("%03d", tileList.indexOf(tile) + 1));
-        intent.putExtra("productMaterial", tile.getFinish() != null ? tile.getFinish() : "Porcelain");
-        intent.putExtra("productFinish", "High Gloss");
-        intent.putExtra("productThickness", "9mm");
-        intent.putExtra("productCoverage", "1.44m²/box");
-        intent.putExtra("productPacking", "2 Pcs / Box");
+            // Pass data - FIXED: Using correct getter methods
+            intent.putExtra("productName", tile.getName());
+            intent.putExtra("productPrice", tile.getPrice());
+            intent.putExtra("productSize", tile.getSize());
+            intent.putExtra("productStock", tile.getStockStatus());
+            intent.putExtra("productModel", "FL-ST-" + String.format("%03d", tileList.indexOf(tile) + 1));
+            intent.putExtra("productMaterial", tile.getFinish() != null ? tile.getFinish() : "Porcelain");
+            intent.putExtra("productFinish", "High Gloss");
+            intent.putExtra("productThickness", "9mm");
+            intent.putExtra("productCoverage", "1.44m²/box");
+            intent.putExtra("productPacking", "2 Pcs / Box");
+            intent.putExtra("productCategory", tile.getCategory());
 
-        context.startActivity(intent);
+            context.startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(context, "Cannot open product details", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -153,7 +181,7 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         TextView stockBadgeText;
         LinearLayout stockBadge;
         LinearLayout btnAddToCart;
-        LinearLayout btnBookmark; // NEW: Bookmark button
+        LinearLayout btnBookmark;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -166,7 +194,8 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
             tileFinish = itemView.findViewById(R.id.tileFinish);
             stockBadgeText = itemView.findViewById(R.id.stockBadgeText);
             stockBadge = itemView.findViewById(R.id.stockBadge);
-            btnBookmark = itemView.findViewById(R.id.btnBookmark); // NEW: Initialize bookmark button
+            //btnAddToCart = itemView.findViewById(R.id.btnAddToCart);
+            btnBookmark = itemView.findViewById(R.id.btnFavorite);
         }
     }
 }
