@@ -1,0 +1,11 @@
+langchain
+sentence-transformers
+faiss-cpu
+fastapi
+uvicorn
+pillow
+python-multipart
+ftfy
+regex
+tqdm
+pymysql

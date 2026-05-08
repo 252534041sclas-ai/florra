@@ -1,0 +1,10 @@
+ID    | Name                 | Image Path
+------------------------------------------------------------
+1     | Statuario Gold Premi | NONE
+2     | tile b               | NONE
+3     | tt                   | NONE
+4     | aa                   | products/JPEG_20260107_132345_1615242809007449275.jpg
+5     | rr                   | products/JPEG_20260107_132606_1443086344625208829.jpg
+6     | brown tiles          | products/JPEG_20260109_085603_334427194804778618.jpg
+7     | as                   | products/JPEG_20260209_070906_364586850737811984.jpg
+8     | Gray pattern         | products/JPEG_20250205_064715_3060922558994538298.jpg

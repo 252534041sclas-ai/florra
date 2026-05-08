@@ -1,0 +1,14 @@
+Target Filename: 'JPEG_20260109_085603_334427194804778618.jpg'
+--------------------------------------------------
+
+1. Testing filter(image__icontains=target_filename)...
+   Found 1 matches.
+   - ID: 6, Name: brown tiles
+
+3. Inspecting Product ID 6 directly:
+   ID: 6
+   Image Field: 'products/JPEG_20260109_085603_334427194804778618.jpg'
+   Image Name:  'products/JPEG_20260109_085603_334427194804778618.jpg'
+   Hex dump of DB filename: 70726f64756374732f4a5045475f32303236303130395f3038353630335f3333343432373139343830343737383631382e6a7067
+   Hex dump of Target:      4a5045475f32303236303130395f3038353630335f3333343432373139343830343737383631382e6a7067
+   [MATCH] Target hex found in DB hex.

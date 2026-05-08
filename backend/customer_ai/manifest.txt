@@ -1,0 +1,4 @@
+[customer_knowledge.txt](file:///c:/Users/suriy/OneDrive/Desktop/my%20app/customer_ai/data/customer_knowledge.txt)
+[ingest.py](file:///c:/Users/suriy/OneDrive/Desktop/my%20app/customer_ai/ingest.py)
+[chatbot_api.py](file:///c:/Users/suriy/OneDrive/Desktop/my%20app/customer_ai/chatbot_api.py)
+[requirements.txt](file:///c:/Users/suriy/OneDrive/Desktop/my%20app/customer_ai/requirements.txt)

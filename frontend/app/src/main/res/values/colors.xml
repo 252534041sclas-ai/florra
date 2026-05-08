@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material Design Colors -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Base Colors -->
+    <color name="primary_color">#FF000000</color>
+    <color name="primary_dark">#111111</color>
+    <color name="secondary_color">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="status_bar_color">#09090b</color>
+
+    <!-- Zinc Color Palette (from HTML) -->
+    <color name="zinc_50">#fafafa</color>
+    <color name="zinc_100">#f4f4f5</color>
+    <color name="zinc_200">#e4e4e7</color>
+    <color name="zinc_300">#d4d4d8</color>
+    <color name="zinc_400">#a1a1aa</color>
+    <color name="zinc_500">#71717a</color>
+    <color name="zinc_600">#52525b</color>
+    <color name="zinc_700">#3f3f46</color>
+    <color name="zinc_800">#27272a</color>
+    <color name="zinc_900">#18181b</color>
+    <color name="zinc_950">#09090b</color>
+
+    <!-- Emerald Colors (for stock status) -->
+    <color name="emerald_50">#ECFDF5</color>
+    <color name="emerald_100">#D1FAE5</color>
+    <color name="emerald_500">#10B981</color>
+    <color name="emerald_600">#059669</color>
+    <color name="emerald_700">#15803d</color>
+    <color name="emerald_800">#065F46</color>
+
+    <!-- Amber Colors (for low stock) -->
+    <color name="amber_50">#FFFBEB</color>
+    <color name="amber_100">#FEF3C7</color>
+    <color name="amber_500">#F59E0B</color>
+    <color name="amber_600">#D97706</color>
+    <color name="amber_700">#B45309</color>
+    <color name="amber_800">#92400E</color>
+
+    <!-- Red Colors (for out of stock) -->
+    <color name="red_50">#FEF2F2</color>
+    <color name="red_100">#FEE2E2</color>
+    <color name="red_200">#FECACA</color>
+    <color name="red_500">#EF4444</color>
+    <color name="red_600">#DC2626</color>
+    <color name="red_700">#B91C1C</color>
+
+    <!-- Green Colors (for success/stock) -->
+    <color name="green_50">#F0FDF4</color>
+    <color name="green_100">#DCFCE7</color>
+    <color name="green_200">#BBF7D0</color>
+    <color name="green_500">#22C55E</color>
+    <color name="green_600">#16A34A</color>
+    <color name="green_700">#15803D</color>
+    <color name="green_800">#166534</color>
+
+    <!-- Orange Colors -->
+    <color name="orange_100">#FFEDD5</color>
+    <color name="orange_500">#FF9800</color>
+    <color name="orange_600">#EA580C</color>
+
+    <!-- Blue Colors (for info) -->
+    <color name="info_light">#E0F2FE</color>
+    <color name="info">#0284C7</color>
+    <color name="blue_300">#64B5F6</color>
+
+    <!-- ===== CALCULATOR SCREEN COLORS ===== -->
+    <color name="primary">#0F0F0F</color>
+    <color name="primary_light">#27272A</color>
+    <color name="accent">#52525B</color>
+    <color name="background_base">#F9FAFB</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="text_main">#09090B</color>
+    <color name="text_muted">#71717A</color>
+
+    <!-- Calculator Specific Colors -->
+    <color name="grey_50">#F9FAFB</color>
+    <color name="grey_100">#F4F4F5</color>
+    <color name="grey_200">#E4E4E7</color>
+    <color name="grey_300">#D4D4D8</color>
+    <color name="grey_400">#A1A1AA</color>
+    <color name="grey_500">#71717A</color>
+    <color name="grey_600">#52525B</color>
+    <color name="grey_700">#3F3F46</color>
+    <color name="grey_800">#27272A</color>
+    <color name="grey_900">#18181B</color>
+
+    <!-- ===== ABOUT FLORRA SCREEN COLORS ===== -->
+    <color name="about_background">#09090b</color>
+    <color name="about_header_background">#09090b</color>
+    <color name="about_text_primary">#ffffff</color>
+    <color name="about_text_secondary">#a1a1aa</color>
+    <color name="about_text_tertiary">#52525b</color>
+    <color name="about_card_background">#18181b</color>
+    <color name="about_card_border">#27272a</color>
+    <color name="about_icon_background">#27272a</color>
+    <color name="about_chevron_color">#71717a</color>
+    <color name="about_divider_color">#27272a</color>
+
+    <!-- ===== BOTTOM NAVIGATION COLORS ===== -->
+    <color name="bottom_nav_background_dark">#18181b</color>
+    <color name="bottom_nav_icon_inactive">#71717a</color>
+    <color name="bottom_nav_icon_active">#ffffff</color>
+    <color name="bottom_nav_text_inactive">#71717a</color>
+    <color name="bottom_nav_text_active">#ffffff</color>
+    <color name="bottom_nav_active">#0F0F0F</color>
+    <color name="bottom_nav_inactive">#71717A</color>
+
+    <!-- ===== APP ICON GRADIENT COLORS ===== -->
+    <color name="gradient_start">#27272a</color>
+    <color name="gradient_end">#000000</color>
+
+    <!-- ===== GLOW EFFECT COLORS ===== -->
+    <color name="glow_start">#71717a</color>
+    <color name="glow_middle">#71717a</color>
+    <color name="glow_end">#71717a</color>
+
+    <!-- ===== SLATE COLOR PALETTE ===== -->
+    <color name="slate_50">#F8FAFC</color>
+    <color name="slate_100">#F1F5F9</color>
+    <color name="slate_200">#E2E8F0</color>
+    <color name="slate_300">#CBD5E1</color>
+    <color name="slate_400">#94A3B8</color>
+    <color name="slate_500">#64748B</color>
+    <color name="slate_600">#475569</color>
+    <color name="slate_700">#334155</color>
+    <color name="slate_800">#1E293B</color>
+    <color name="slate_900">#0F172A</color>
+
+    <!-- ===== CALCULATOR SPECIFIC COLORS ===== -->
+    <color name="calculator_primary">#0F0F0F</color>
+    <color name="calculator_primary_light">#27272A</color>
+    <color name="calculator_accent">#52525B</color>
+    <color name="calculator_background_base">#F9FAFB</color>
+    <color name="calculator_surface">#FFFFFF</color>
+    <color name="calculator_text_main">#09090B</color>
+    <color name="calculator_text_muted">#71717A</color>
+    <color name="calculator_grey_300">#E4E4E7</color>
+    <color name="calculator_grey_400">#A1A1AA</color>
+    <color name="calculator_grey_500">#71717A</color>
+
+    <!-- ===== BACKGROUND COLORS ===== -->
+    <color name="background_dark">#09090b</color>
+    <color name="background_light">#ffffff</color>
+    <color name="calc_gray_50">#FAFAFA</color>
+
+    <!-- ===== TEXT COLORS ===== -->
+    <color name="text_primary">#09090B</color>
+    <color name="text_secondary">#71717A</color>
+    <color name="text_light">#A1A1AA</color>
+
+    <!-- ===== BORDER COLORS ===== -->
+    <color name="border_light">#E4E4E7</color>
+    <color name="border_dark">#27272A</color>
+
+    <!-- ===== GRAY COLORS ===== -->
+    <color name="gray_50">#FAFAFA</color>
+    <color name="gray_100">#F5F5F5</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_300">#D4D4D8</color>
+    <color name="gray_400">#BDBDBD</color>
+    <color name="gray_500">#71717A</color>
+    <color name="gray_600">#52525B</color>
+    <color name="gray_700">#3F3F46</color>
+    <color name="gray_800">#1F2937</color>
+    <color name="gray_900">#111827</color>
+
+    <!-- ===== SURFACE COLORS ===== -->
+    <color name="surface_light">#FFFFFF</color>
+    <color name="surface_dark">#18181B</color>
+
+    <!-- ===== TAG/STATUS COLORS ===== -->
+    <color name="tag_instock_bg">#F0FDF4</color>
+    <color name="tag_instock_border">#BBF7D0</color>
+    <color name="tag_lowstock_bg">#FEF2F2</color>
+    <color name="tag_lowstock_border">#FECACA</color>
+    <color name="tag_outofstock_bg">#FEF2F2</color>
+    <color name="tag_outofstock_border">#FECACA</color>
+
+    <!-- ===== SHADOW COLORS ===== -->
+    <color name="shadow_light">#20000000</color>
+    <color name="shadow_dark">#40000000</color>
+
+    <!-- ===== INDICATOR COLORS ===== -->
+    <color name="indicator_active">#0F0F0F</color>
+    <color name="indicator_inactive">#A1A1AA</color>
+
+    <!-- ===== PRODUCT DETAILS SPECIFIC COLORS ===== -->
+    <color name="bg_stock_in">#ECFDF5</color>
+    <color name="bg_stock_in_border">#10B981</color>
+    <color name="bg_stock_low">#FFFBEB</color>
+    <color name="bg_stock_low_border">#F59E0B</color>
+    <color name="bg_stock_out">#FEF2F2</color>
+    <color name="bg_stock_out_border">#EF4444</color>
+    <color name="dot_green">#10B981</color>
+    <color name="dot_amber">#F59E0B</color>
+    <color name="dot_red">#EF4444</color>
+    <color name="dot_gray">#71717A</color>
+    <color name="price_highlight">#059669</color>
+    <color name="price_background">#FFFFFF</color>
+    <color name="btn_edit_bg">#FFFFFF</color>
+    <color name="btn_edit_border">#D4D4D8</color>
+    <color name="btn_edit_text">#09090B</color>
+    <color name="btn_update_bg">#000000</color>
+    <color name="btn_update_text">#FFFFFF</color>
+    <color name="btn_update_shadow">#33000000</color>
+    <color name="image_label_bg">#80000000</color>
+    <color name="image_label_text">#FFFFFF</color>
+    <color name="divider_light">#E4E4E7</color>
+    <color name="divider_dark">#27272A</color>
+    <color name="spec_bg">#F8FAFC</color>
+    <color name="spec_border">#E2E8F0</color>
+    <color name="card_shadow_light">#0A000000</color>
+    <color name="card_shadow_dark">#1A000000</color>
+
+    <!-- Status Colors -->
+    <color name="emerald_200">#A7F3D0</color>
+    <color name="text_main_light">#000000</color>
+
+    <!-- ===== VIEW BILL SCREEN COLORS ===== -->
+    <color name="viewbill_primary">#111827</color>
+    <color name="viewbill_primary_fg">#ffffff</color>
+    <color name="viewbill_background">#f3f4f6</color>
+    <color name="viewbill_surface">#ffffff</color>
+    <color name="viewbill_border_dark">#e5e7eb</color>
+    <color name="viewbill_text_main">#111827</color>
+    <color name="viewbill_text_muted">#6b7280</color>
+    <color name="viewbill_green_dark_bg">#dcfce7</color>
+    <color name="viewbill_green_dark_text">#15803d</color>
+    <color name="viewbill_border_gray_200">#e5e7eb</color>
+    <color name="viewbill_gray_50">#f9fafb</color>
+    <color name="viewbill_green_600_20">#1ea858</color>
+    <color name="viewbill_black_30">#4d000000</color>
+    <color name="viewbill_white_50">#80ffffff</color>
+    <color name="viewbill_gray_400">#9ca3af</color>
+    <color name="viewbill_dashed_border">#e5e7eb</color>
+    <color name="viewbill_stamp_border">#4d000000</color>
+    <color name="viewbill_stamp_bg">#80ffffff</color>
+    <color name="viewbill_button_primary_bg">#111827</color>
+    <color name="viewbill_button_outline_border">#d1d5db</color>
+    <color name="viewbill_button_outline_bg">#ffffff</color>
+    <color name="viewbill_gradient_dot">#000000</color>
+    <color name="viewbill_shadow">#1A000000</color>
+    <color name="viewbill_status_paid_bg">#dcfce7</color>
+    <color name="viewbill_status_paid_text">#15803d</color>
+    <color name="viewbill_status_paid_border">#1ea858</color>
+    <color name="whatsapp_green">#25D366</color>
+    <color name="error_red">#FF3B30</color>
+
+    <!-- ===== RESPOND TO ENQUIRY SCREEN COLORS ===== -->
+    <color name="bg_bottom_bar">@color/white</color>
+    <color name="bg_badge_gray">@color/zinc_100</color>
+    <color name="bg_badge_primary">@color/black</color>
+    <color name="section_title">@color/text_primary</color>
+    <color name="card_background">@color/white</color>
+    <color name="card_border">@color/border_light</color>
+    <color name="info_section_bg">@color/gray_50</color>
+    <color name="info_label">@color/zinc_500</color>
+    <color name="info_value">@color/text_primary</color>
+    <color name="notes_bg">@color/gray_50</color>
+    <color name="notes_text">@color/text_primary</color>
+    <color name="input_background">@color/white</color>
+    <color name="input_border">@color/zinc_300</color>
+    <color name="input_focus_border">@color/black</color>
+    <color name="input_hint">@color/zinc_400</color>
+    <color name="price_bg">@color/gray_50</color>
+    <color name="price_label">@color/zinc_500</color>
+    <color name="price_value">@color/text_primary</color>
+    <color name="price_note">@color/zinc_400</color>
+    <color name="button_primary_bg">@color/black</color>
+    <color name="button_primary_text">@color/white</color>
+    <color name="button_secondary_bg">@color/white</color>
+    <color name="button_secondary_text">@color/text_primary</color>
+    <color name="button_secondary_border">@color/zinc_300</color>
+    <color name="icon_primary">@color/black</color>
+    <color name="icon_secondary">@color/zinc_400</color>
+    <color name="icon_interactive">@color/zinc_500</color>
+    <color name="vertical_divider">@color/zinc_200</color>
+    <color name="horizontal_divider">@color/zinc_200</color>
+    <color name="interactive_hover">@color/zinc_50</color>
+    <color name="interactive_pressed">@color/zinc_100</color>
+    <color name="total_price_bg">@color/gray_50</color>
+    <color name="total_price_label">@color/zinc_500</color>
+    <color name="total_price_value">@color/black</color>
+    <color name="enquiry_status_bg">@color/gray_50</color>
+    <color name="enquiry_status_text">@color/gray_600</color>
+    <color name="product_name">@color/black</color>
+    <color name="product_spec">@color/zinc_500</color>
+    <color name="product_date">@color/zinc_400</color>
+    <color name="grid_cell_bg">@color/white</color>
+    <color name="grid_border_right">@color/zinc_200</color>
+    <color name="grid_border_top">@color/zinc_200</color>
+    <color name="grid_highlight_bg">@color/gray_50</color>
+    <color name="input_label">@color/gray_700</color>
+    <color name="input_icon">@color/zinc_400</color>
+    <color name="quantity_btn_bg">@color/white</color>
+    <color name="quantity_btn_border">@color/zinc_200</color>
+    <color name="quantity_btn_icon">@color/zinc_400</color>
+    <color name="action_save_bg">@color/white</color>
+    <color name="action_save_text">@color/gray_700</color>
+    <color name="action_save_border">@color/zinc_300</color>
+    <color name="action_send_bg">@color/black</color>
+    <color name="action_send_text">@color/white</color>
+    <color name="bottom_bar_shadow">@color/shadow_light</color>
+
+    <!-- ===== QUOTATION DETAILS SCREEN COLORS ===== -->
+    <color name="quotation_primary">#000000</color>
+    <color name="quotation_background_light">#f6f6f8</color>
+    <color name="quotation_background_dark">#101622</color>
+    <color name="quotation_surface_light">#ffffff</color>
+    <color name="quotation_surface_dark">#1a2230</color>
+    <color name="status_responded_bg">#F0FDF4</color>
+    <color name="status_responded_border">#BBF7D0</color>
+    <color name="status_responded_text">#15803D</color>
+    <color name="card_shadow">#0A000000</color>
+    <color name="border_gray_100">#F3F4F6</color>
+    <color name="border_gray_800">#1F2937</color>
+    <color name="timeline_line">#E5E7EB</color>
+    <color name="timeline_green_bg">#DCFCE7</color>
+    <color name="timeline_green_icon">#16A34A</color>
+    <color name="timeline_primary_bg">#000000</color>
+    <color name="note_card_bg">#0D000000</color>
+    <color name="note_card_border">#1A000000</color>
+    <color name="note_card_text">#000000</color>
+    <color name="text_slate_900">#111827</color>
+    <color name="text_slate_800">#1F2937</color>
+    <color name="text_slate_700">#374151</color>
+    <color name="text_slate_600">#4B5563</color>
+    <color name="text_slate_500">#6B7280</color>
+    <color name="text_slate_400">#9CA3AF</color>
+    <color name="text_slate_300">#D1D5DB</color>
+    <color name="text_slate_200">#E5E7EB</color>
+    <color name="text_slate_100">#F3F4F6</color>
+    <color name="text_slate_50">#F9FAFB</color>
+    <color name="btn_download_bg">#FFFFFF</color>
+    <color name="btn_download_border">#E5E7EB</color>
+    <color name="btn_download_text">#374151</color>
+    <color name="shadow_quotation_card">#0A000000</color>
+    <color name="shadow_timeline_icon">#1A000000</color>
+    <color name="divider_dashed">#E5E7EB</color>
+    <color name="avatar_bg">#1A000000</color>
+    <color name="delivery_in_stock">#16A34A</color>
+    <color name="delivery_out_stock">#DC2626</color>
+    <color name="footer_text">#9CA3AF</color>
+
+    <!-- ===== ADDITIONAL COMMON COLORS ===== -->
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#000000</color>
+    <color name="dark_surface">#1A2230</color>
+    <color name="dark_background">#101622</color>
+    <color name="dark_text_primary">#FFFFFF</color>
+    <color name="dark_text_secondary">#9CA3AF</color>
+    <color name="success_green">#10B981</color>
+    <color name="warning_yellow">#F59E0B</color>
+    <color name="error_red_dark">#EF4444</color>
+    <color name="pressed_state">#0000000A</color>
+    <color name="hover_state">#00000005</color>
+    <color name="black_10">#1A000000</color>
+    <color name="black_20">#33000000</color>
+    <color name="black_30">#4D000000</color>
+    <color name="black_40">#66000000</color>
+    <color name="black_50">#80000000</color>
+    <color name="white_10">#1AFFFFFF</color>
+    <color name="white_20">#33FFFFFF</color>
+    <color name="white_30">#4DFFFFFF</color>
+    <color name="white_40">#66FFFFFF</color>
+    <color name="white_50">#80FFFFFF</color>
+
+    <!-- ===== CHATBOT SCREEN SPECIFIC COLORS (ADDED) ===== -->
+
+    <!-- Primary Color Variations for Chart Bars -->
+    <color name="primary_10">#1A000000</color>
+    <color name="primary_20">#33000000</color>
+    <color name="primary_30">#4D000000</color>
+    <color name="primary_40">#66000000</color>
+    <color name="primary_50">#80000000</color>
+    <color name="primary_60">#99000000</color>
+    <color name="primary_70">#B3000000</color>
+    <color name="primary_80">#CC000000</color>
+    <color name="primary_90">#E6000000</color>
+
+    <!-- Chatbot Background Colors (from HTML) -->
+    <color name="chatbot_background_off">#F3F4F6</color>
+    <color name="chatbot_background_dark_theme">#101622</color>
+    <color name="chatbot_surface_light">#FFFFFF</color>
+    <color name="chatbot_surface_dark">#1E293B</color>
+
+    <!-- Chat Message Bubbles -->
+    <color name="chatbot_ai_bg">#FFFFFF</color>
+    <color name="chatbot_ai_border">#E5E7EB</color>
+    <color name="chatbot_user_bg">#000000</color>
+    <color name="chatbot_user_border">#000000</color>
+
+    <!-- Text Colors for Chat -->
+    <color name="chatbot_text_dark">#111318</color>
+    <color name="chatbot_text_gray_dark">#111827</color>
+    <color name="chatbot_text_gray_medium">#616F89</color>
+    <color name="chatbot_text_gray_light">#94A3B8</color>
+
+    <!-- Sales Card Colors -->
+    <color name="chatbot_sales_card_bg">#F8F9FA</color>
+    <color name="chatbot_sales_card_border">#E5E7EB</color>
+    <color name="chatbot_chart_line">#E5E7EB</color>
+    <color name="chatbot_chart_line_dashed">#E5E7EB80</color>
+
+    <!-- Status and Badge Colors -->
+    <color name="chatbot_success_bg">#DCFCE7</color>
+    <color name="chatbot_success_text">#15803D</color>
+    <color name="chatbot_success_border">#15803D30</color>
+    <color name="chatbot_warning_bg">#FEF3C7</color>
+    <color name="chatbot_warning_text">#92400E</color>
+    <color name="chatbot_date_badge_bg">#F1F5F9</color>
+    <color name="chatbot_date_badge_text">#64748B</color>
+
+    <!-- Quick Action Buttons -->
+    <color name="chatbot_quick_action_bg">#F9FAFB</color>
+    <color name="chatbot_quick_action_border">#E5E7EB</color>
+    <color name="chatbot_quick_action_hover_bg">#F3F4F6</color>
+    <color name="chatbot_quick_action_hover_border">#D1D5DB</color>
+
+    <!-- Input Field Colors -->
+    <color name="chatbot_input_bg">#F9FAFB</color>
+    <color name="chatbot_input_border">#E5E7EB</color>
+    <color name="chatbot_input_focus_border">#000000</color>
+    <color name="chatbot_input_placeholder">#6B7280</color>
+
+    <!-- Button Colors -->
+    <color name="chatbot_button_secondary_bg">#FFFFFF</color>
+    <color name="chatbot_button_secondary_border">#E5E7EB</color>
+    <color name="chatbot_button_secondary_text">#374151</color>
+    <color name="chatbot_button_secondary_hover_bg">#F9FAFB</color>
+
+    <!-- Send Button -->
+    <color name="chatbot_send_button_bg">#000000</color>
+    <color name="chatbot_send_button_hover_bg">#111827</color>
+
+    <!-- Icon Container Colors -->
+    <color name="chatbot_icon_container_bg">#FFFFFF</color>
+    <color name="chatbot_icon_container_border">#E5E7EB</color>
+    <color name="chatbot_icon_container_dark_bg">#1F2937</color>
+
+    <!-- AI Avatar Colors -->
+    <color name="chatbot_ai_avatar_bg">#FFFFFF</color>
+    <color name="chatbot_ai_avatar_border">#E5E7EB</color>
+
+    <!-- Header Colors -->
+    <color name="chatbot_header_bg">#FFFFFF</color>
+    <color name="chatbot_header_border">#F3F4F6</color>
+    <color name="chatbot_header_border_dark">#1F2937</color>
+
+    <!-- Shadow Colors -->
+    <color name="chatbot_shadow_soft">#08000000</color>
+    <color name="chatbot_shadow_card">#0A000000</color>
+    <color name="chatbot_shadow_button">#33000000</color>
+
+    <!-- Progress/Status Colors -->
+    <color name="chatbot_progress_green">#10B981</color>
+    <color name="chatbot_progress_amber">#F59E0B</color>
+    <color name="chatbot_progress_red">#EF4444</color>
+
+    <!-- Divider Colors -->
+    <color name="chatbot_divider_light">#F3F4F6</color>
+    <color name="chatbot_divider_dark">#1F2937</color>
+
+    <!-- Hover States -->
+    <color name="chatbot_hover_primary">#0000000A</color>
+    <color name="chatbot_hover_white">#FFFFFF0A</color>
+
+    <!-- Chart Bar Colors (from HTML opacity levels) -->
+    <color name="chart_bar_20">#33000000</color> <!-- primary/20 -->
+    <color name="chart_bar_30">#4D000000</color> <!-- primary/30 -->
+    <color name="chart_bar_50">#80000000</color> <!-- primary/50 -->
+    <color name="chart_bar_60">#99000000</color> <!-- primary/60 -->
+    <color name="chart_bar_80">#CC000000</color> <!-- primary/80 -->
+    <color name="chart_bar_100">#FF000000</color> <!-- primary/100 -->
+
+    <!-- Dark Mode Specific Colors -->
+    <color name="chatbot_dark_bg">#101622</color>
+    <color name="chatbot_dark_surface">#1E293B</color>
+    <color name="chatbot_dark_border">#334155</color>
+    <color name="chatbot_dark_text">#F1F5F9</color>
+    <color name="chatbot_dark_text_muted">#94A3B8</color>
+
+    <!-- Light Mode Specific Colors -->
+    <color name="chatbot_light_bg">#F3F4F6</color>
+    <color name="chatbot_light_surface">#FFFFFF</color>
+    <color name="chatbot_light_border">#E5E7EB</color>
+    <color name="chatbot_light_text">#111827</color>
+    <color name="chatbot_light_text_muted">#6B7280</color>
+
+    <!-- Status Indicator Colors -->
+    <color name="chatbot_status_delivered">#10B981</color>
+    <color name="chatbot_status_read">#3B82F6</color>
+    <color name="chatbot_status_pending">#F59E0B</color>
+    <color name="chatbot_status_error">#EF4444</color>
+
+    <!-- Quick Action Specific Colors -->
+    <color name="chatbot_action_enquiries">#000000</color>
+    <color name="chatbot_action_quotation">#000000</color>
+    <color name="chatbot_action_lowstock">#EA580C</color>
+    <color name="chatbot_action_sales">#000000</color>
+    <color name="chatbot_action_pending">#000000</color>
+    <color name="chatbot_action_report">#000000</color>
+
+    <!-- Alert/Notification Colors -->
+    <color name="chatbot_alert_info">#3B82F6</color>
+    <color name="chatbot_alert_success">#10B981</color>
+    <color name="chatbot_alert_warning">#F59E0B</color>
+    <color name="chatbot_alert_error">#EF4444</color>
+
+    <!-- Message Metadata -->
+    <color name="message_sender_name">#64748B</color>
+    <color name="message_time">#94A3B8</color>
+
+    <!-- Subscription Screen Colors -->
+    <color name="sub_background_light">#f6f6f8</color>
+    <color name="sub_background_dark">#101622</color>
+    <color name="sub_text_primary">#111318</color>
+    <color name="sub_text_secondary">#616f89</color>
+    <color name="sub_card_bg_light">#FFFFFF</color>
+    <color name="sub_card_bg_dark">#1c2433</color>
+    <color name="sub_card_border_light">#f3f4f6</color> <!-- gray-100 -->
+    <color name="sub_card_border_dark">#1f2937</color> <!-- gray-800 -->
+    <color name="sub_button_bg_light">#111318</color>
+    <color name="sub_button_text_light">#FFFFFF</color>
+    <color name="sub_button_bg_dark">#FFFFFF</color>
+    <color name="sub_button_text_dark">#000000</color>
+
+    <!-- Payment Success Colors -->
+    <color name="payment_primary">#0d40a5</color>
+    <color name="payment_bg_light">#f6f6f8</color>
+    <color name="payment_bg_dark">#101622</color>
+    <color name="payment_text_primary">#111318</color>
+    <color name="payment_text_secondary">#616f89</color>
+    <color name="payment_card_bg_light">#FFFFFF</color>
+    <color name="payment_card_border">#e5e7eb</color>
+    <color name="payment_icon_bg">#1A0d40a5</color> <!-- 10% opacity primary -->
+
+</resources>

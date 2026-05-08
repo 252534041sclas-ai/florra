@@ -1,0 +1,32 @@
+*.iml
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+env/
+venv/
+ENV/
+*.log
+
+# Android
+frontend/.gradle/
+frontend/build/
+app/build/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Database & Media
+db.sqlite3
+/media/

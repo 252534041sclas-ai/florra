@@ -1,0 +1,889 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:fitsSystemWindows="true">
+
+    <!-- Main Scroll View -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="100dp">
+
+            <!-- Header Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/white"
+                android:paddingTop="24dp"
+                android:paddingBottom="12dp"
+                android:elevation="4dp">
+
+                <!-- Back button and Title -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingBottom="12dp"
+                    android:gravity="center_vertical">
+
+                    <!-- Back Button -->
+                    <ImageView
+                        android:id="@+id/btnBack"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_arrow_back"
+                        android:tint="@color/primary_color"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="8dp" />
+
+                    <!-- Title -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Products"
+                        android:textColor="@color/primary_color"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        android:letterSpacing="-0.02" />
+
+                    <!-- More Options Button -->
+                    <ImageView
+                        android:id="@+id/btnMore"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_more_vert"
+                        android:tint="@color/primary_color"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="8dp" />
+
+                </LinearLayout>
+
+                <!-- Search Bar -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingTop="4dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_search_bar"
+                        android:paddingVertical="12dp"
+                        android:paddingHorizontal="16dp"
+                        android:gravity="center_vertical">
+
+                        <!-- Search Icon -->
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_search"
+                            android:tint="@color/zinc_400"
+                            android:layout_marginEnd="12dp" />
+
+                        <!-- Search Input -->
+                        <EditText
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="Search tiles, codes..."
+                            android:textColor="@color/primary_color"
+                            android:textColorHint="@color/zinc_400"
+                            android:textSize="14sp"
+                            android:background="@null"
+                            android:padding="0dp"
+                            android:maxLines="1" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Filter Chips Section -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp"
+                android:background="@color/background_light">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- All Filter -->
+                    <Button
+                        android:id="@+id/btnAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_filter_chip_active"
+                        android:paddingVertical="8dp"
+                        android:paddingHorizontal="20dp"
+                        android:layout_marginEnd="8dp"
+                        android:stateListAnimator="@null" />
+
+                    <!-- Category Filter -->
+                    <Button
+                        android:id="@+id/btnCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Category"
+                        android:textColor="@color/zinc_600"
+                        android:textSize="14sp"
+                        android:drawableEnd="@drawable/ic_expand_more"
+                        android:drawablePadding="4dp"
+                        android:background="@drawable/bg_filter_chip"
+                        android:paddingVertical="8dp"
+                        android:paddingHorizontal="20dp"
+                        android:layout_marginEnd="8dp"
+                        android:stateListAnimator="@null" />
+
+                    <!-- Size Filter -->
+                    <Button
+                        android:id="@+id/btnSize"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Size"
+                        android:textColor="@color/zinc_600"
+                        android:textSize="14sp"
+                        android:drawableEnd="@drawable/ic_expand_more"
+                        android:drawablePadding="4dp"
+                        android:background="@drawable/bg_filter_chip"
+                        android:paddingVertical="8dp"
+                        android:paddingHorizontal="20dp"
+                        android:layout_marginEnd="8dp"
+                        android:stateListAnimator="@null" />
+
+                    <!-- Stock Filter -->
+                    <Button
+                        android:id="@+id/btnStock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Stock"
+                        android:textColor="@color/zinc_600"
+                        android:textSize="14sp"
+                        android:drawableEnd="@drawable/ic_expand_more"
+                        android:drawablePadding="4dp"
+                        android:background="@drawable/bg_filter_chip"
+                        android:paddingVertical="8dp"
+                        android:paddingHorizontal="20dp"
+                        android:stateListAnimator="@null" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <!-- Products List -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="24dp">
+
+                <!-- Product 1: Statuario Gold -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/productCard1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <!-- Product Image -->
+                        <LinearLayout
+                            android:layout_width="96dp"
+                            android:layout_height="96dp"
+                            android:background="@drawable/bg_product_image"
+                            android:gravity="center"
+                            android:layout_marginEnd="16dp">
+
+                            <ImageView
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:src="@drawable/ic_tile_placeholder"
+                                android:tint="@color/zinc_300" />
+
+                        </LinearLayout>
+
+                        <!-- Product Details -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="4dp">
+
+                            <!-- Title and More Options -->
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp">
+
+                                <!-- Product Title -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Statuario Gold"
+                                    android:textColor="@color/primary_color"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:layout_alignParentStart="true" />
+
+                                <!-- More Options Button -->
+                                <ImageView
+                                    android:id="@+id/moreOptions1"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_more_vert"
+                                    android:tint="@color/zinc_400"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:layout_alignParentEnd="true"
+                                    android:padding="2dp" />
+
+                            </RelativeLayout>
+
+                            <!-- Product Type and Size -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Vitrified • 600×1200mm"
+                                android:textColor="@color/zinc_500"
+                                android:textSize="12sp"
+                                android:layout_marginBottom="8dp" />
+
+                            <!-- Stock Status -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/bg_stock_in"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp"
+                                android:layout_marginBottom="8dp">
+
+                                <!-- Green Dot -->
+                                <View
+                                    android:layout_width="6dp"
+                                    android:layout_height="6dp"
+                                    android:background="@drawable/bg_green_dot"
+                                    android:layout_marginEnd="6dp" />
+
+                                <!-- Stock Text -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="In Stock (450)"
+                                    android:textColor="@color/emerald_700"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <!-- Price -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="₹65/sq.ft"
+                                android:textColor="@color/primary_color"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Product 2: Rustic Oak Plank -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/productCard2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <!-- Product Image -->
+                        <LinearLayout
+                            android:layout_width="96dp"
+                            android:layout_height="96dp"
+                            android:background="@drawable/bg_product_image"
+                            android:gravity="center"
+                            android:layout_marginEnd="16dp">
+
+                            <ImageView
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:src="@drawable/ic_tile_placeholder"
+                                android:tint="@color/zinc_300" />
+
+                        </LinearLayout>
+
+                        <!-- Product Details -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="4dp">
+
+                            <!-- Title and More Options -->
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp">
+
+                                <!-- Product Title -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Rustic Oak Plank"
+                                    android:textColor="@color/primary_color"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:layout_alignParentStart="true" />
+
+                                <!-- More Options Button -->
+                                <ImageView
+                                    android:id="@+id/moreOptions2"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_more_vert"
+                                    android:tint="@color/zinc_400"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:layout_alignParentEnd="true"
+                                    android:padding="2dp" />
+
+                            </RelativeLayout>
+
+                            <!-- Product Type and Size -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Ceramic • 200×1000mm"
+                                android:textColor="@color/zinc_500"
+                                android:textSize="12sp"
+                                android:layout_marginBottom="8dp" />
+
+                            <!-- Stock Status -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/bg_stock_low"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp"
+                                android:layout_marginBottom="8dp">
+
+                                <!-- Amber Dot -->
+                                <View
+                                    android:layout_width="6dp"
+                                    android:layout_height="6dp"
+                                    android:background="@drawable/bg_amber_dot"
+                                    android:layout_marginEnd="6dp" />
+
+                                <!-- Stock Text -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Low Stock (12)"
+                                    android:textColor="@color/amber_700"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <!-- Price -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="₹45/sq.ft"
+                                android:textColor="@color/primary_color"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Product 3: Urban Cement Grey -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/productCard3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <!-- Product Image -->
+                        <LinearLayout
+                            android:layout_width="96dp"
+                            android:layout_height="96dp"
+                            android:background="@drawable/bg_product_image"
+                            android:gravity="center"
+                            android:layout_marginEnd="16dp">
+
+                            <ImageView
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:src="@drawable/ic_tile_placeholder"
+                                android:tint="@color/zinc_300" />
+
+                        </LinearLayout>
+
+                        <!-- Product Details -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="4dp">
+
+                            <!-- Title and More Options -->
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp">
+
+                                <!-- Product Title -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Urban Cement Grey"
+                                    android:textColor="@color/primary_color"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:layout_alignParentStart="true" />
+
+                                <!-- More Options Button -->
+                                <ImageView
+                                    android:id="@+id/moreOptions3"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_more_vert"
+                                    android:tint="@color/zinc_400"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:layout_alignParentEnd="true"
+                                    android:padding="2dp" />
+
+                            </RelativeLayout>
+
+                            <!-- Product Type and Size -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Porcelain • 600×600mm"
+                                android:textColor="@color/zinc_500"
+                                android:textSize="12sp"
+                                android:layout_marginBottom="8dp" />
+
+                            <!-- Stock Status -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/bg_stock_in"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp"
+                                android:layout_marginBottom="8dp">
+
+                                <!-- Green Dot -->
+                                <View
+                                    android:layout_width="6dp"
+                                    android:layout_height="6dp"
+                                    android:background="@drawable/bg_green_dot"
+                                    android:layout_marginEnd="6dp" />
+
+                                <!-- Stock Text -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="In Stock (820)"
+                                    android:textColor="@color/emerald_700"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <!-- Price -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="₹52/sq.ft"
+                                android:textColor="@color/primary_color"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Product 4: Azure Mosaic -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/productCard4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="1dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <!-- Product Image (Out of Stock) -->
+                        <LinearLayout
+                            android:layout_width="96dp"
+                            android:layout_height="96dp"
+                            android:background="@drawable/bg_product_image_out"
+                            android:gravity="center"
+                            android:layout_marginEnd="16dp">
+
+                            <ImageView
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:src="@drawable/ic_tile_placeholder"
+                                android:tint="@color/zinc_200" />
+
+                            <!-- Out of Stock Overlay -->
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="#80FFFFFF"
+                                android:gravity="center">
+
+                                <ImageView
+                                    android:layout_width="32dp"
+                                    android:layout_height="32dp"
+                                    android:src="@drawable/ic_block"
+                                    android:tint="@color/zinc_400" />
+
+                            </View>
+
+                        </LinearLayout>
+
+                        <!-- Product Details -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="4dp">
+
+                            <!-- Title and More Options -->
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp">
+
+                                <!-- Product Title (Grayed out) -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Azure Mosaic"
+                                    android:textColor="@color/zinc_400"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:layout_alignParentStart="true" />
+
+                                <!-- More Options Button (Grayed out) -->
+                                <ImageView
+                                    android:id="@+id/moreOptions4"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_more_vert"
+                                    android:tint="@color/zinc_300"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:layout_alignParentEnd="true"
+                                    android:padding="2dp" />
+
+                            </RelativeLayout>
+
+                            <!-- Product Type and Size (Grayed out) -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Glass • 300×300mm"
+                                android:textColor="@color/zinc_300"
+                                android:textSize="12sp"
+                                android:layout_marginBottom="8dp" />
+
+                            <!-- Stock Status -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/bg_stock_out"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp"
+                                android:layout_marginBottom="8dp">
+
+                                <!-- Gray Dot -->
+                                <View
+                                    android:layout_width="6dp"
+                                    android:layout_height="6dp"
+                                    android:background="@drawable/bg_gray_dot"
+                                    android:layout_marginEnd="6dp" />
+
+                                <!-- Stock Text -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Out of Stock"
+                                    android:textColor="@color/zinc_500"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <!-- Price (Grayed out) -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="₹120/sheet"
+                                android:textColor="@color/zinc_400"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <!-- Product 5: Midnight Slate -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/productCard5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp">
+
+                        <!-- Product Image -->
+                        <LinearLayout
+                            android:layout_width="96dp"
+                            android:layout_height="96dp"
+                            android:background="@drawable/bg_product_image"
+                            android:gravity="center"
+                            android:layout_marginEnd="16dp">
+
+                            <ImageView
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:src="@drawable/ic_tile_placeholder"
+                                android:tint="@color/zinc_300" />
+
+                        </LinearLayout>
+
+                        <!-- Product Details -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:paddingVertical="4dp">
+
+                            <!-- Title and More Options -->
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="4dp">
+
+                                <!-- Product Title -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Midnight Slate"
+                                    android:textColor="@color/primary_color"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold"
+                                    android:layout_alignParentStart="true" />
+
+                                <!-- More Options Button -->
+                                <ImageView
+                                    android:id="@+id/moreOptions5"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_more_vert"
+                                    android:tint="@color/zinc_400"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:layout_alignParentEnd="true"
+                                    android:padding="2dp" />
+
+                            </RelativeLayout>
+
+                            <!-- Product Type and Size -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Natural Stone • 400×400mm"
+                                android:textColor="@color/zinc_500"
+                                android:textSize="12sp"
+                                android:layout_marginBottom="8dp" />
+
+                            <!-- Stock Status -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:background="@drawable/bg_stock_in"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp"
+                                android:layout_marginBottom="8dp">
+
+                                <!-- Green Dot -->
+                                <View
+                                    android:layout_width="6dp"
+                                    android:layout_height="6dp"
+                                    android:background="@drawable/bg_green_dot"
+                                    android:layout_marginEnd="6dp" />
+
+                                <!-- Stock Text -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="In Stock (150)"
+                                    android:textColor="@color/emerald_700"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <!-- Price -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="₹85/sq.ft"
+                                android:textColor="@color/primary_color"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Add Product Button (Floating Action Button) -->
+    <Button
+        android:id="@+id/btnAddProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+ Add Product"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:drawableStart="@drawable/ic_add"
+        android:drawablePadding="8dp"
+        android:background="@drawable/bg_add_button"
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="16dp"
+        android:elevation="8dp"
+        android:stateListAnimator="@null" />
+
+</RelativeLayout>

@@ -1,0 +1,5 @@
+Customers can request quotations from the Request Quotation screen.
+After submitting enquiry, admin reviews and sends quotation.
+Customers can view admin replies in Quotations screen.
+Quotation details include price, quantity, and notes.
+This chatbot is only for customer support.

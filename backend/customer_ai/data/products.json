@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "name": "Marmo White",
+        "category": "Floor",
+        "size": "60x60",
+        "finish": "Glossy",
+        "image_path": "C:/Users/suriy/OneDrive/Desktop/my app/myproject/media/products/marmo_white.jpg",
+        "text_representation": "A Glossy finish Floor tile named Marmo White. Size: 60x60."
+    },
+    {
+        "id": 2,
+        "name": "Black Pearl",
+        "category": "Wall",
+        "size": "120x60",
+        "finish": "Matte",
+        "image_path": "C:/Users/suriy/OneDrive/Desktop/my app/myproject/media/products/black_pearl.jpg",
+        "text_representation": "A Matte finish Wall tile named Black Pearl. Size: 120x60."
+    },
+    {
+        "id": 3,
+        "name": "Wooden Strip",
+        "category": "Floor",
+        "size": "10x60",
+        "finish": "Wood",
+        "image_path": "C:/Users/suriy/OneDrive/Desktop/my app/myproject/media/products/wooden_strip.jpg",
+        "text_representation": "A Wood finish Floor tile named Wooden Strip. Size: 10x60."
+    },
+    {
+        "id": 4,
+        "name": "Blue Lagoon",
+        "category": "Bathroom",
+        "size": "30x30",
+        "finish": "Glossy",
+        "image_path": "C:/Users/suriy/OneDrive/Desktop/my app/myproject/media/products/blue_lagoon.jpg",
+        "text_representation": "A Glossy finish Bathroom tile named Blue Lagoon. Size: 30x30."
+    }
+]

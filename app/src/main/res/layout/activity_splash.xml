@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F9FF"
+    android:padding="0dp">
+
+    <!-- Background Blur Circles -->
+    <View
+        android:id="@+id/blobTop"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="-40dp"
+        android:layout_marginEnd="-40dp"
+        android:background="@drawable/circle_blur_top"
+        android:elevation="0dp" />
+
+    <View
+        android:id="@+id/blobBottom"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="-30dp"
+        android:layout_marginStart="-30dp"
+        android:background="@drawable/circle_blur_bottom"
+        android:elevation="0dp" />
+
+    <!-- Main Content Container -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingHorizontal="32dp">
+
+        <!-- Logo Container -->
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:layout_gravity="center">
+
+            <!-- Logo Background -->
+            <LinearLayout
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:background="@drawable/logo_background"
+                android:elevation="16dp"
+                android:gravity="center">
+
+                <!-- Grid Pattern -->
+                <GridLayout
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:columnCount="2"
+                    android:rowCount="2"
+                    android:columnWidth="40dp"
+                    android:rowHeight="40dp"
+                    android:useDefaultMargins="false">
+
+                    <!-- Top Left Tile -->
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_column="0"
+                        android:layout_row="0"
+                        android:layout_margin="1dp"
+                        android:layout_columnWeight="1"
+                        android:layout_rowWeight="1"
+                        android:background="@drawable/tile_top_left" />
+
+                    <!-- Top Right Tile -->
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_column="1"
+                        android:layout_row="0"
+                        android:layout_margin="1dp"
+                        android:layout_columnWeight="1"
+                        android:layout_rowWeight="1"
+                        android:background="@drawable/tile_top_right" />
+
+                    <!-- Bottom Left Tile -->
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_column="0"
+                        android:layout_row="1"
+                        android:layout_margin="1dp"
+                        android:layout_columnWeight="1"
+                        android:layout_rowWeight="1"
+                        android:background="@drawable/tile_bottom_left" />
+
+                    <!-- Bottom Right Tile -->
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_column="1"
+                        android:layout_row="1"
+                        android:layout_margin="1dp"
+                        android:layout_columnWeight="1"
+                        android:layout_rowWeight="1"
+                        android:background="@drawable/tile_bottom_right" />
+
+                </GridLayout>
+
+                <!-- Grid Icon Overlay -->
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_grid_view"
+                    android:tint="#FFFFFF" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <!-- App Name -->
+        <TextView
+            android:id="@+id/txtAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Florra"
+            android:textColor="#0F172A"
+            android:textSize="42sp"
+            android:fontFamily="sans-serif-black"
+            android:letterSpacing="-0.02"
+            android:lineHeight="42sp"
+            android:layout_marginBottom="12dp"
+            android:gravity="center" />
+
+        <!-- Tagline Container -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="12dp">
+
+            <TextView
+                android:id="@+id/txtTagline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tile Designs &amp; Shop Management"
+                android:textColor="#64748B"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.1"
+                android:gravity="center"
+                android:textAllCaps="true" />
+
+            <!-- Divider Line -->
+            <View
+                android:layout_width="48dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="8dp"
+                android:background="#3B82F6"
+                android:alpha="0.3" />
+
+        </LinearLayout>
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/txtDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Professional showroom utility for inventory, quotation &amp; sales insights."
+            android:textColor="#94A3B8"
+            android:textSize="12sp"
+            android:fontFamily="sans-serif"
+            android:lineHeight="18sp"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:maxWidth="240dp"
+            android:paddingHorizontal="16dp" />
+
+    </LinearLayout>
+
+    <!-- Bottom Section (Version Info Only - No Loading Dots) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingBottom="48dp">
+
+        <!-- Version Info -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/txtVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="VERSION 2.1.0"
+                android:textColor="#94A3B8"
+                android:textSize="10sp"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.05"
+                android:gravity="center"
+                android:textAllCaps="true" />
+
+            <TextView
+                android:id="@+id/txtPoweredBy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Powered by Florra Systems"
+                android:textColor="#CBD5E1"
+                android:textSize="10sp"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:layout_marginTop="2dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
