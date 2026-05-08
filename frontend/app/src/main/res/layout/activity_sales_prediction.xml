@@ -13,20 +13,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/white"
-        android:elevation="4dp">
-
-        <!-- Status Bar Spacer -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:background="@color/white" />
+        android:elevation="4dp"
+        android:paddingTop="8dp">
 
         <!-- Header with Back and Title -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
             android:gravity="center_vertical"
             android:background="@color/white">
 
@@ -82,8 +78,8 @@
         android:layout_height="match_parent"
         android:layout_below="@id/headerContainer"
         android:fillViewport="true"
-        android:paddingBottom="120dp"
-        android:clipToPadding="false">
+        android:fitsSystemWindows="true"
+        android:paddingBottom="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -425,7 +421,7 @@
                                 android:id="@+id/tvEstRevenue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                tools:text="₹5,400"
+                                tools:text="$5,400"
                                 android:textColor="@color/primary_color"
                                 android:textSize="24sp"
                                 android:textStyle="bold"
@@ -1118,88 +1114,6 @@
 
     </ScrollView>
 
-    <!-- Floating Bottom Navigation -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="20dp"
-        app:cardCornerRadius="35dp"
-        app:cardElevation="12dp"
-        app:cardBackgroundColor="@color/white">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <!-- Dash -->
-            <LinearLayout
-                android:id="@+id/bottomDashboard"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_dashboard"
-                    app:tint="@color/primary_color"/>
-            </LinearLayout>
-
-            <!-- Inventory -->
-            <LinearLayout
-                android:id="@+id/bottomInventory"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_grid_view"
-                    app:tint="@color/zinc_400"/>
-            </LinearLayout>
-
-            <!-- Quotes -->
-            <LinearLayout
-                android:id="@+id/bottomQuotes"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_chat"
-                    app:tint="@color/zinc_400"/>
-            </LinearLayout>
-
-            <!-- Account -->
-            <LinearLayout
-                android:id="@+id/bottomAccount"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_person"
-                    app:tint="@color/zinc_400"/>
-            </LinearLayout>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

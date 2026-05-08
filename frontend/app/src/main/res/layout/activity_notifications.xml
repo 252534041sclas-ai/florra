@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f8f9fa"
-    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <!-- Header -->
@@ -13,6 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:orientation="vertical"
+        android:paddingTop="24dp"
         android:paddingBottom="8dp"
         android:elevation="2dp"
         android:paddingStart="16dp"

@@ -43,16 +43,10 @@ public class NotificationsActivity extends AppCompatActivity implements Notifica
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Enable edge-to-edge
-        androidx.core.view.WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        // Handle notch and status bar
-        androidx.core.view.WindowInsetsControllerCompat windowInsetsController =
-                androidx.core.view.WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        if (windowInsetsController != null) {
-            windowInsetsController.setAppearanceLightStatusBars(true);
-            windowInsetsController.setAppearanceLightNavigationBars(true);
-        }
+        // Set fullscreen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_notifications);
 

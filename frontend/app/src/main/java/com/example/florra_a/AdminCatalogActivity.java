@@ -9,8 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.florra_a.models.InventoryResponse;
@@ -33,6 +31,10 @@ public class AdminCatalogActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Set fullscreen
+        getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_admin_catalog);
 
         // Check if intent has filter parameter
@@ -48,8 +50,9 @@ public class AdminCatalogActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
+        // Fix: Use View or Button generic type to avoid ClassCastException
         // Dashboard button
-        View btnDashboard = findViewById(R.id.bottomDashboard);
+        Button btnDashboard = findViewById(R.id.bottomDashboard);
         if (btnDashboard != null) {
             btnDashboard.setOnClickListener(v -> {
                 Intent intent = new Intent(AdminCatalogActivity.this, AdminDashboardActivity.class);
@@ -61,7 +64,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
         }
 
         // Catalog button - Already here
-        View btnCatalog = findViewById(R.id.bottomInventory);
+        Button btnCatalog = findViewById(R.id.bottomInventory);
         if (btnCatalog != null) {
             btnCatalog.setOnClickListener(v -> {
                 // Already on catalog
@@ -69,7 +72,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
         }
 
         // Enquiries button
-        View btnEnquiries = findViewById(R.id.bottomQuotes);
+        Button btnEnquiries = findViewById(R.id.bottomQuotes);
         if (btnEnquiries != null) {
             btnEnquiries.setOnClickListener(v -> {
                 Intent intent = new Intent(AdminCatalogActivity.this, EnquiriesActivity.class);
@@ -80,7 +83,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
         }
 
         // Account button
-        View btnAccount = findViewById(R.id.bottomAccount);
+        Button btnAccount = findViewById(R.id.bottomAccount);
         if (btnAccount != null) {
             btnAccount.setOnClickListener(v -> {
                 Intent intent = new Intent(AdminCatalogActivity.this, AdminAccountActivity.class);

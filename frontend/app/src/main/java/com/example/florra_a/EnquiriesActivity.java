@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -26,6 +25,17 @@ public class EnquiriesActivity extends AppCompatActivity {
 
         // Set fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        // Enable edge-to-edge
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // Handle notch and status bar
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        windowInsetsController.setAppearanceLightStatusBars(false);
+        windowInsetsController.setAppearanceLightNavigationBars(false);
 
         setContentView(R.layout.activity_enquiries);
 
@@ -163,8 +173,8 @@ public class EnquiriesActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        // Dashboard button
-        View btnDashboard = findViewById(R.id.bottomDashboard);
+                   // Dashboard button
+        Button btnDashboard = findViewById(R.id.bottomDashboard);
         if (btnDashboard != null) {
             btnDashboard.setOnClickListener(v -> {
                 Intent intent = new Intent(EnquiriesActivity.this, AdminDashboardActivity.class);
@@ -175,7 +185,7 @@ public class EnquiriesActivity extends AppCompatActivity {
         }
 
         // Catalog button
-        View btnCatalog = findViewById(R.id.bottomInventory);
+        Button btnCatalog = findViewById(R.id.bottomInventory);
         if (btnCatalog != null) {
             btnCatalog.setOnClickListener(v -> {
                 Intent intent = new Intent(EnquiriesActivity.this, AdminCatalogActivity.class);
@@ -186,7 +196,7 @@ public class EnquiriesActivity extends AppCompatActivity {
         }
 
         // Enquiries button - Already here
-        View btnEnquiries = findViewById(R.id.bottomQuotes);
+        Button btnEnquiries = findViewById(R.id.bottomQuotes);
         if (btnEnquiries != null) {
             btnEnquiries.setOnClickListener(v -> {
                 // Already on enquiries
@@ -194,7 +204,7 @@ public class EnquiriesActivity extends AppCompatActivity {
         }
 
         // Account button
-        View btnAccount = findViewById(R.id.bottomAccount);
+        Button btnAccount = findViewById(R.id.bottomAccount);
         if (btnAccount != null) {
             btnAccount.setOnClickListener(v -> {
                 Intent intent = new Intent(EnquiriesActivity.this, AdminAccountActivity.class);

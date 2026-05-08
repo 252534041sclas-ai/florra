@@ -410,7 +410,7 @@
                                 android:id="@+id/tvSubtotal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="₹181.00"
+                                android:text="$181.00"
                                 android:textColor="#111118"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
@@ -437,7 +437,7 @@
                                 android:id="@+id/tvTaxAmount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="₹18.10"
+                                android:text="$18.10"
                                 android:textColor="#111118"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
@@ -464,7 +464,7 @@
                                 android:id="@+id/tvDiscountAmount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="-₹5.00"
+                                android:text="-$5.00"
                                 android:textColor="#166534"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
@@ -498,7 +498,7 @@
                                 android:id="@+id/tvGrandTotal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="₹194.10"
+                                android:text="$194.10"
                                 android:textColor="#000000"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />

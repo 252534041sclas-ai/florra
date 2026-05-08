@@ -17,6 +17,8 @@ public class SplashActivity extends AppCompatActivity {
 
         // Make it fullscreen and handle edge-to-edge
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // Enable edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
@@ -24,10 +26,8 @@ public class SplashActivity extends AppCompatActivity {
         // Handle notch and status bar
         WindowInsetsControllerCompat windowInsetsController =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        if (windowInsetsController != null) {
-            windowInsetsController.setAppearanceLightStatusBars(true);
-            windowInsetsController.setAppearanceLightNavigationBars(true);
-        }
+        windowInsetsController.setAppearanceLightStatusBars(false);
+        windowInsetsController.setAppearanceLightNavigationBars(false);
 
         setContentView(R.layout.activity_splash);
 

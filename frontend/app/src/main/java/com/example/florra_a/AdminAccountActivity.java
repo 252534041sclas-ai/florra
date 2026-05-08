@@ -12,7 +12,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -24,7 +23,7 @@ import com.squareup.picasso.Transformation;
 public class AdminAccountActivity extends AppCompatActivity {
 
     // Bottom Navigation Buttons
-    private View btnDashboard, btnInventory, btnQuotes, btnAccount;
+    private Button btnDashboard, btnInventory, btnQuotes, btnAccount;
     private Button btnBack, btnLogout;
 
     // Card Views
@@ -40,6 +39,17 @@ public class AdminAccountActivity extends AppCompatActivity {
 
         // Set fullscreen and edge-to-edge
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        // Enable edge-to-edge
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // Handle notch and status bar
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        windowInsetsController.setAppearanceLightStatusBars(false);
+        windowInsetsController.setAppearanceLightNavigationBars(false);
 
         setContentView(R.layout.activity_admin_account);
 
@@ -48,6 +58,9 @@ public class AdminAccountActivity extends AppCompatActivity {
 
         // Setup click listeners
         setupClickListeners();
+
+        // Set Account as active initially
+        setActiveTab(btnAccount);
 
         // Load profile image
         loadProfileImage();
@@ -79,8 +92,32 @@ public class AdminAccountActivity extends AppCompatActivity {
             cardHelp = findViewById(R.id.cardHelp);
             cardAbout = findViewById(R.id.cardAbout);
 
+            // Log which views are null for debugging
+            logNullViews();
+
         } catch (Exception e) {
             Toast.makeText(this, "Error initializing views: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void logNullViews() {
+        StringBuilder log = new StringBuilder("Null Views: ");
+
+        if (btnDashboard == null) log.append("btnDashboard, ");
+        if (btnInventory == null) log.append("btnInventory, ");
+        if (btnQuotes == null) log.append("btnQuotes, ");
+        if (btnAccount == null) log.append("btnAccount, ");
+        if (btnBack == null) log.append("btnBack, ");
+        if (btnLogout == null) log.append("btnLogout, ");
+
+        // Remove trailing comma and space
+        String logMessage = log.toString();
+        if (logMessage.endsWith(", ")) {
+            logMessage = logMessage.substring(0, logMessage.length() - 2);
+        }
+
+        if (!logMessage.equals("Null Views: ")) {
+            Toast.makeText(this, logMessage, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -283,6 +320,33 @@ public class AdminAccountActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void setActiveTab(Button activeButton) {
+        // CRITICAL: Check if button is null
+        if (activeButton == null) {
+            Toast.makeText(this, "Cannot set active tab - button is null", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Reset all buttons - with null checks
+        if (btnDashboard != null) {
+            btnDashboard.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
+        }
+        if (btnInventory != null) {
+            btnInventory.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
+        }
+        if (btnQuotes != null) {
+            btnQuotes.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
+        }
+        if (btnAccount != null) {
+            btnAccount.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
+        }
+
+        // Set active button color
+        activeButton.setTextColor(ContextCompat.getColor(this, R.color.primary_color));
+
+        // Note: You'll need to adjust for icons separately
     }
 
     private void performLogout() {

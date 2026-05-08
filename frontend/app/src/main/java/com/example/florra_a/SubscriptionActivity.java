@@ -5,130 +5,33 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClientStateListener;
-import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.BillingResult;
-import com.android.billingclient.api.ProductDetails;
-import com.android.billingclient.api.Purchase;
-import com.android.billingclient.api.PurchasesUpdatedListener;
-import com.android.billingclient.api.QueryProductDetailsParams;
 import com.bumptech.glide.Glide;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class SubscriptionActivity extends AppCompatActivity {
-
-    private BillingClient billingClient;
-    private ProductDetails productDetails;
-    private static final String PRODUCT_ID = "premium_subscription"; // Replace with your actual product ID
+public class SubscriptionActivity extends AppCompatActivity implements com.razorpay.PaymentResultListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subscription);
 
+        // Preload Razorpay for faster loading
+        try {
+            com.razorpay.Checkout.preload(getApplicationContext());
+        } catch (Exception e) {
+            android.util.Log.e("Razorpay", "Error in preload", e);
+        }
+
         // Hide ActionBar if present
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        initializeBillingClient();
         initializeViews();
-    }
-
-    private void initializeBillingClient() {
-        billingClient = BillingClient.newBuilder(this)
-                .setListener(purchasesUpdatedListener)
-                .enablePendingPurchases()
-                .build();
-
-        startConnection();
-    }
-
-    private void startConnection() {
-        billingClient.startConnection(new BillingClientStateListener() {
-            @Override
-            public void onBillingSetupFinished(BillingResult billingResult) {
-                if (billingResult.getResponseCode() ==  BillingClient.BillingResponseCode.OK) {
-                    // The BillingClient is ready. You can query purchases here.
-                    queryProductDetails();
-                } else {
-                    android.util.Log.e("Billing", "Setup failed: " + billingResult.getDebugMessage());
-                    Toast.makeText(SubscriptionActivity.this, "Billing setup failed: " + billingResult.getDebugMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onBillingServiceDisconnected() {
-                // Try to restart the connection on the next request to
-                // Google Play by calling the startConnection() method.
-                android.util.Log.e("Billing", "Service disconnected");
-            }
-        });
-    }
-
-    private void queryProductDetails() {
-        List<QueryProductDetailsParams.Product> productList = new ArrayList<>();
-        productList.add(
-                QueryProductDetailsParams.Product.newBuilder()
-                        .setProductId(PRODUCT_ID)
-                        .setProductType(BillingClient.ProductType.SUBS)
-                        .build()
-        );
-
-        QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
-                .setProductList(productList)
-                .build();
-
-        billingClient.queryProductDetailsAsync(params, (billingResult, productDetailsList) -> {
-            if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && productDetailsList != null) {
-                if (!productDetailsList.isEmpty()) {
-                    productDetails = productDetailsList.get(0);
-                    android.util.Log.d("Billing", "Product details found: " + productDetails.getName());
-                } else {
-                     // Handle case where product is not found
-                     android.util.Log.e("Billing", "Product list empty. Check Product ID in Play Console.");
-                     runOnUiThread(() -> Toast.makeText(SubscriptionActivity.this, "Product not found. Check Play Console.", Toast.LENGTH_LONG).show());
-                }
-            } else {
-                android.util.Log.e("Billing", "Query failed: " + billingResult.getDebugMessage());
-            }
-        });
-    }
-
-    private final PurchasesUpdatedListener purchasesUpdatedListener = (billingResult, purchases) -> {
-        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
-            for (Purchase purchase : purchases) {
-                handlePurchase(purchase);
-            }
-        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
-            // Handle an error caused by a user cancelling the purchase flow.
-            Toast.makeText(this, "Purchase Canceled", Toast.LENGTH_SHORT).show();
-        } else {
-            // Handle any other error codes.
-            Toast.makeText(this, "Error: " + billingResult.getDebugMessage(), Toast.LENGTH_SHORT).show();
-        }
-    };
-
-    private void handlePurchase(Purchase purchase) {
-        if (purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
-            // Acknowledge the purchase if it hasn't been acknowledged yet.
-            if (!purchase.isAcknowledged()) {
-                 // In a real app, you should verify the purchase token on your server here.
-                Toast.makeText(this, "Purchase Successful!", Toast.LENGTH_SHORT).show();
-                
-                 // Navigate to Success Screen
-                Intent intent = new Intent(SubscriptionActivity.this, PaymentSuccessActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        }
     }
 
     private void initializeViews() {
@@ -147,38 +50,54 @@ public class SubscriptionActivity extends AppCompatActivity {
                 .into(ivShowroom);
 
         // Subscribe Button
-        findViewById(R.id.btnSubscribe).setOnClickListener(v -> launchBillingFlow());
+        findViewById(R.id.btnSubscribe).setOnClickListener(v -> startPayment());
 
         // Restore Purchase
         findViewById(R.id.btnRestore).setOnClickListener(v -> {
             Toast.makeText(this, "Restore purchase logic not implemented yet", Toast.LENGTH_SHORT).show();
-            // TODO: Implement restore purchase logic by querying existing purchases
+            // TODO: Implement restore purchase logic
         });
     }
 
-    private void launchBillingFlow() {
-        if (productDetails != null) {
-            List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList = new ArrayList<>();
-            productDetailsParamsList.add(
-                    BillingFlowParams.ProductDetailsParams.newBuilder()
-                            .setProductDetails(productDetails)
-                            // Retrieve the offer token from the product details.
-                            // For simplicity, we're taking the first offer token here.
-                            // In a real app, you might want to present multiple offers.
-                             .setOfferToken(productDetails.getSubscriptionOfferDetails().get(0).getOfferToken())
-                            .build()
-            );
+    private void startPayment() {
+        com.razorpay.Checkout checkout = new com.razorpay.Checkout();
+        // TEST Key ID - Replace with your LIVE Key ID in production
+        checkout.setKeyID("rzp_test_1DP5mmOlF5G5ag"); 
+        
+        checkout.setImage(R.drawable.ic_launcher_foreground); // App Icon
 
-            BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
-                    .setProductDetailsParamsList(productDetailsParamsList)
-                    .build();
+        try {
+            org.json.JSONObject options = new org.json.JSONObject();
+            options.put("name", "Florra");
+            options.put("description", "Premium Subscription");
+            options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
+            options.put("theme.color", "#3399cc");
+            options.put("currency", "INR");
+            options.put("amount", "10000"); // Amount in paise (100.00 INR)
+            options.put("prefill.email", "test@florra.com");
+            options.put("prefill.contact", "9988776655");
 
-            billingClient.launchBillingFlow(this, billingFlowParams);
-        } else {
-             android.util.Log.e("Billing", "ProductDetails is null. Query likely failed.");
-             Toast.makeText(this, "Billing not ready. please try again in a moment.", Toast.LENGTH_SHORT).show();
-             startConnection(); // Retry connection
+            checkout.open(this, options);
+        } catch(Exception e) {
+            android.util.Log.e("Razorpay", "Error in starting Razorpay Checkout", e);
+            Toast.makeText(this, "Error in payment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onPaymentSuccess(String razorpayPaymentID) {
+        // Navigate to Success Screen
+        Toast.makeText(this, "Payment Successful: " + razorpayPaymentID, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(SubscriptionActivity.this, PaymentSuccessActivity.class);
+        startActivity(intent);
+        finish(); // Optional: Close subscription screen so user can't go back directly
+    }
+
+    @Override
+    public void onPaymentError(int code, String response) {
+        Toast.makeText(this, "Payment Failed or Cancelled", Toast.LENGTH_SHORT).show();
+        // Uncomment below to debug error details
+        // Toast.makeText(this, "Error: " + response, Toast.LENGTH_LONG).show();
     }
 
     public static Intent newIntent(Context context) {

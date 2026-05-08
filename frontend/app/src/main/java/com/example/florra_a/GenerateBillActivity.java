@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
@@ -52,40 +51,19 @@ public class GenerateBillActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        WindowInsetsControllerCompat controller =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        controller.setAppearanceLightStatusBars(false);
 
         setContentView(R.layout.activity_generate_bill);
 
         initViews();
         setListeners();
         calculateTotals();
-        setupBottomNavigation();
-    }
-
-    private void setupBottomNavigation() {
-        LinearLayout navDash = findViewById(R.id.bottomDashboard);
-        LinearLayout navInventory = findViewById(R.id.bottomInventory);
-        LinearLayout navQuotes = findViewById(R.id.bottomQuotes);
-        LinearLayout navAccount = findViewById(R.id.bottomAccount);
-
-        navDash.setOnClickListener(v -> {
-            startActivity(new Intent(this, AdminDashboardActivity.class));
-            finish();
-        });
-
-        navInventory.setOnClickListener(v -> {
-            startActivity(new Intent(this, AdminCatalogActivity.class));
-            finish();
-        });
-
-        navQuotes.setOnClickListener(v -> {
-            startActivity(new Intent(this, EnquiriesActivity.class));
-            finish();
-        });
-
-        navAccount.setOnClickListener(v -> {
-            startActivity(new Intent(this, AdminAccountActivity.class));
-            finish();
-        });
     }
 
     private void initViews() {

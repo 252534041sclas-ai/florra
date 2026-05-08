@@ -1,6 +1,5 @@
 package com.example.florra_a;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -12,15 +11,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.florra_a.adapters.RecommendationAdapter;
 import com.example.florra_a.models.Product;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AIRecommendationActivity extends AppCompatActivity implements TileAdapter.OnItemClickListener {
+public class AIRecommendationActivity extends AppCompatActivity {
 
     private RecyclerView rvRecommendations;
-    private TileAdapter adapter;
+    private RecommendationAdapter adapter;
     private List<Product> recommendedProducts;
     private TextView tvMatchCount;
 
@@ -30,6 +30,8 @@ public class AIRecommendationActivity extends AppCompatActivity implements TileA
 
         // Set fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_ai_recommendation);
 
@@ -58,8 +60,7 @@ public class AIRecommendationActivity extends AppCompatActivity implements TileA
 
         tvMatchCount.setText("Found " + recommendedProducts.size() + " similar matches");
 
-        adapter = new TileAdapter(this, recommendedProducts);
-        adapter.setOnItemClickListener(this);
+        adapter = new RecommendationAdapter(this, recommendedProducts);
         rvRecommendations.setAdapter(adapter);
     }
 
@@ -79,69 +80,6 @@ public class AIRecommendationActivity extends AppCompatActivity implements TileA
                  Toast.makeText(this, "Filter applied", Toast.LENGTH_SHORT).show();
             });
         }
-    }
-
-    @Override
-    public void onItemClick(Product product) {
-        Intent intent = new Intent(this, ProductDetailsActivity.class);
-        intent.putExtra("productId", product.getId());
-        intent.putExtra("productName", product.getTileName());
-        intent.putExtra("tileName", product.getTileName());
-        intent.putExtra("productPrice", String.valueOf(product.getPrice()));
-        intent.putExtra("tilePrice", String.valueOf(product.getPrice()));
-        intent.putExtra("productStock", product.getStockStatus());
-        intent.putExtra("stockStatus", product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK");
-        intent.putExtra("productCategory", product.getCategory());
-        intent.putExtra("productMaterial", product.getCategory());
-        intent.putExtra("productTileNo", product.getTileNo());
-        intent.putExtra("tileSize", product.getSize());
-        intent.putExtra("productFinish", product.getFinish());
-        intent.putExtra("productDescription", product.getDescription());
-        intent.putExtra("productImage", product.getImage());
-        startActivity(intent);
-    }
-
-    @Override
-    public void onItemLongClick(Product product) {
-        Toast.makeText(this, product.getTileName(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onBookmarkClick(Product product) {
-        // Handle bookmark logic
-        boolean newState = product.isFavorite(); // TileAdapter toggles it before calling this
-        
-        com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();
-        if (newState) {
-            java.util.Map<String, Integer> map = new java.util.HashMap<>();
-            map.put("product_id", product.getId());
-            apiService.addToFavorites(map).enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
-                @Override
-                public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(AIRecommendationActivity.this, "Added to Favorites", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                @Override
-                public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {}
-            });
-        } else {
-            apiService.removeFromFavorites(product.getId()).enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
-                @Override
-                public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(AIRecommendationActivity.this, "Removed from Favorites", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                @Override
-                public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {}
-            });
-        }
-    }
-
-    @Override
-    public void onAddToCartClick(Product product) {
-        Toast.makeText(this, "Added to cart: " + product.getTileName(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

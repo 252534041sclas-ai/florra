@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -52,6 +51,20 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Set fullscreen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        // Enable edge-to-edge
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // Handle notch and status bar
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        windowInsetsController.setAppearanceLightStatusBars(false);
+        windowInsetsController.setAppearanceLightNavigationBars(false);
+
         setContentView(R.layout.activity_adminproduct_details);
 
         // Initialize views
@@ -62,9 +75,6 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
 
         // Setup click listeners
         setupClickListeners();
-
-        // Setup bottom navigation
-        setupBottomNavigation();
 
         Toast.makeText(this, "Product Details", Toast.LENGTH_SHORT).show();
     }
@@ -192,35 +202,19 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
         // Product Name and SKU
         if (currentProductName != null && !currentProductName.isEmpty()) {
             tvProductName.setText(currentProductName);
-        } else {
-            tvProductName.setText("Product Name");
         }
 
-        StringBuilder skuBuilder = new StringBuilder();
-        if (currentProductSku != null && !currentProductSku.isEmpty()) {
-            skuBuilder.append("SKU: ").append(currentProductSku);
-        } else if (currentProductTileNo != null && !currentProductTileNo.isEmpty()) {
-            skuBuilder.append("Model: ").append(currentProductTileNo);
-        }
-        
-        if (currentProductCategory != null && !currentProductCategory.isEmpty()) {
-            if (skuBuilder.length() > 0) skuBuilder.append(" • ");
-            skuBuilder.append(currentProductCategory);
-        }
-        
-        if (skuBuilder.length() > 0) {
-            tvProductSku.setText(skuBuilder.toString());
-            tvProductSku.setVisibility(View.VISIBLE);
-        } else {
-            tvProductSku.setText("SKU: N/A");
+        if (currentProductSku != null && currentProductCategory != null) {
+            String skuText = "SKU: " + currentProductSku + " • " + currentProductCategory;
+            tvProductSku.setText(skuText);
         }
 
         // Price
         if (currentPrice != null && !currentPrice.isEmpty()) {
             // Convert ₹ to $ if needed
             String displayPrice = currentPrice;
-            if (currentPrice.contains("$")) {
-                displayPrice = currentPrice.replace("$", "₹");
+            if (currentPrice.contains("₹")) {
+                displayPrice = currentPrice.replace("₹", "$");
             }
             tvPrice.setText(displayPrice);
         }
@@ -228,8 +222,8 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
         // Retail Price and Margin
         if (currentRetailPrice != null && !currentRetailPrice.isEmpty()) {
             String displayRetailPrice = currentRetailPrice;
-            if (currentRetailPrice.contains("$")) {
-                displayRetailPrice = currentRetailPrice.replace("$", "₹");
+            if (currentRetailPrice.contains("₹")) {
+                displayRetailPrice = currentRetailPrice.replace("₹", "$");
             }
             tvRetailPrice.setText("Retail Price: " + displayRetailPrice);
         }
@@ -465,46 +459,6 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
                     Toast.makeText(this, "Product updated successfully", Toast.LENGTH_SHORT).show();
                 }
             }
-        }
-    }
-
-    private void setupBottomNavigation() {
-        LinearLayout navDash = findViewById(R.id.bottomDashboard);
-        LinearLayout navInventory = findViewById(R.id.bottomInventory);
-        LinearLayout navQuotes = findViewById(R.id.bottomQuotes);
-        LinearLayout navAccount = findViewById(R.id.bottomAccount);
-
-        if (navDash != null) {
-            navDash.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AdminDashboardActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navInventory != null) {
-            navInventory.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AdminCatalogActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navQuotes != null) {
-            navQuotes.setOnClickListener(v -> {
-                Intent intent = new Intent(this, EnquiriesActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navAccount != null) {
-            navAccount.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AdminAccountActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
         }
     }
 

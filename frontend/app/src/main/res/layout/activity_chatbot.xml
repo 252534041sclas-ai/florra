@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/chatbot_light_bg"
-    android:fitsSystemWindows="true">
+    android:background="@color/chatbot_light_bg">
 
     <!-- Header -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -125,40 +124,6 @@
         android:paddingBottom="16dp"
         android:paddingTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent">
-
-        <!-- Image Preview Container (Initially Hidden) -->
-        <RelativeLayout
-            android:id="@+id/layoutImagePreview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="12dp"
-            android:visibility="gone">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
-                <ImageView
-                    android:id="@+id/imgSelectedPreview"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
-            </androidx.cardview.widget.CardView>
-
-            <ImageButton
-                android:id="@+id/btnRemoveImage"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="68dp"
-                android:layout_marginTop="-8dp"
-                android:background="@drawable/bg_black_circle"
-                android:src="@drawable/ic_close"
-                android:padding="4dp"
-                app:tint="@color/white"
-                android:elevation="4dp" />
-        </RelativeLayout>
 
         <View
             android:layout_width="match_parent"

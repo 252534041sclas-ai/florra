@@ -26,7 +26,7 @@ public class AuthInterceptor implements Interceptor {
 
         if (!token.isEmpty()) {
             android.util.Log.d("AuthInterceptor", "Attaching Token: " + token);
-            requestBuilder.addHeader("Authorization", "Token " + token);
+            requestBuilder.addHeader("Authorization", "Bearer " + token);
         } else {
             android.util.Log.e("AuthInterceptor", "Token is EMPTY!");
         }

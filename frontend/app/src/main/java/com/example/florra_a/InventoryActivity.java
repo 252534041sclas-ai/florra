@@ -9,9 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -52,7 +50,6 @@ public class InventoryActivity extends AppCompatActivity {
         initViews();
         setupRecyclerView();
         setupListeners();
-        setupBottomNavigation();
         fetchInventoryData();
     }
 
@@ -197,45 +194,5 @@ public class InventoryActivity extends AppCompatActivity {
                 Log.e("InventoryActivity", "API call failed", t);
             }
         });
-    }
-    private void setupBottomNavigation() {
-        LinearLayout navDash = findViewById(R.id.bottomDashboard);
-        LinearLayout navInventory = findViewById(R.id.bottomInventory);
-        LinearLayout navQuotes = findViewById(R.id.bottomQuotes);
-        LinearLayout navAccount = findViewById(R.id.bottomAccount);
-
-        if (navDash != null) {
-            navDash.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AdminDashboardActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navInventory != null) {
-            navInventory.setOnClickListener(v -> {
-                // Already in inventory/catalog area, but can refresh or go to catalog
-                Intent intent = new Intent(this, AdminCatalogActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navQuotes != null) {
-            navQuotes.setOnClickListener(v -> {
-                Intent intent = new Intent(this, EnquiriesActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navAccount != null) {
-            navAccount.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AdminAccountActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
     }
 }

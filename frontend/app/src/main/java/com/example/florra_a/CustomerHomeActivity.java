@@ -10,13 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.widget.TextView;
 //import com.example.florra_a.utils.ChatbotActivity;
 
+import com.example.florra_a.adapters.HomeProductAdapter;
 import com.example.florra_a.models.Enquiry;
 import com.example.florra_a.models.Product;
 import com.example.florra_a.network.ApiService;
@@ -29,26 +28,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CustomerHomeActivity extends AppCompatActivity implements TileAdapter.OnItemClickListener {
+public class CustomerHomeActivity extends AppCompatActivity {
 
     private RecyclerView rvNewArrivals;
-    private TileAdapter homeProductAdapter;
+    private HomeProductAdapter homeProductAdapter;
     private TextView tvActiveEnquiriesCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Enable edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        // Handle notch and status bar - Set to true for dark icons on light background
-        WindowInsetsControllerCompat windowInsetsController =
-                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        if (windowInsetsController != null) {
-            windowInsetsController.setAppearanceLightStatusBars(true);
-            windowInsetsController.setAppearanceLightNavigationBars(true);
-        }
+        // Set fullscreen
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_customer_home);
 
@@ -74,8 +67,7 @@ public class CustomerHomeActivity extends AppCompatActivity implements TileAdapt
         // Setup Horizontal RecyclerView for New Arrivals
         if (rvNewArrivals != null) {
             rvNewArrivals.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-            homeProductAdapter = new TileAdapter(this, new ArrayList<>(), true); // true for horizontal
-            homeProductAdapter.setOnItemClickListener(this);
+            homeProductAdapter = new HomeProductAdapter(this, new ArrayList<>());
             rvNewArrivals.setAdapter(homeProductAdapter);
         }
     }
@@ -473,78 +465,6 @@ public class CustomerHomeActivity extends AppCompatActivity implements TileAdapt
             Toast.makeText(this, "Cannot open Subscription", Toast.LENGTH_SHORT).show();
             Log.e("FLORRA", "Error opening Subscription: " + e.getMessage());
         }
-    }
-
-    @Override
-    public void onItemClick(Product product) {
-        Intent intent = new Intent(this, ProductDetailsActivity.class);
-        intent.putExtra("productId", product.getId());
-        intent.putExtra("productName", product.getTileName());
-        intent.putExtra("tileName", product.getTileName());
-        intent.putExtra("productPrice", String.valueOf(product.getPrice()));
-        intent.putExtra("tilePrice", String.valueOf(product.getPrice()));
-        intent.putExtra("productStock", product.getStockStatus());
-        intent.putExtra("stockStatus", product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK");
-        intent.putExtra("productCategory", product.getCategory());
-        intent.putExtra("productMaterial", product.getCategory());
-        intent.putExtra("productTileNo", product.getTileNo());
-        intent.putExtra("tileSize", product.getSize());
-        intent.putExtra("productFinish", product.getFinish());
-        intent.putExtra("productDescription", product.getDescription());
-        intent.putExtra("productImage", product.getImage());
-        startActivity(intent);
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-    }
-
-    @Override
-    public void onItemLongClick(Product product) {
-        Toast.makeText(this, product.getTileName(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onBookmarkClick(Product product) {
-        android.content.SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
-        
-        if (!isLoggedIn) {
-            Toast.makeText(this, "Please login to add favorites", Toast.LENGTH_SHORT).show();
-            // Revert state in adapter if possible, or just ignore since it's transient
-            return;
-        }
-
-        boolean newState = product.isFavorite();
-        com.example.florra_a.network.ApiService apiService = RetrofitClient.getApiService();
-        
-        if (newState) {
-            java.util.Map<String, Integer> map = new java.util.HashMap<>();
-            map.put("product_id", product.getId());
-            apiService.addToFavorites(map).enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
-                @Override
-                public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(CustomerHomeActivity.this, "Added to Favorites", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                @Override
-                public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {}
-            });
-        } else {
-            apiService.removeFromFavorites(product.getId()).enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
-                @Override
-                public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
-                    if (response.isSuccessful()) {
-                        Toast.makeText(CustomerHomeActivity.this, "Removed from Favorites", Toast.LENGTH_SHORT).show();
-                    }
-                }
-                @Override
-                public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {}
-            });
-        }
-    }
-
-    @Override
-    public void onAddToCartClick(Product product) {
-        Toast.makeText(this, "Added to cart: " + product.getTileName(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

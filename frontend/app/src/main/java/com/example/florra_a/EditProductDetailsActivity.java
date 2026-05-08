@@ -12,7 +12,6 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 import android.graphics.Color; // Added for color manipulation if needed, or just use resources
-import android.widget.LinearLayout;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -55,7 +54,6 @@ public class EditProductDetailsActivity extends AppCompatActivity {
         setupColorAdapter();
         setupFinishButtons(); // New
         setupClickListeners();
-        setupBottomNavigation();
         loadProductData();
     }
 
@@ -374,46 +372,6 @@ public class EditProductDetailsActivity extends AppCompatActivity {
                 Toast.makeText(EditProductDetailsActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void setupBottomNavigation() {
-        LinearLayout navDash = findViewById(R.id.bottomDashboard);
-        LinearLayout navInventory = findViewById(R.id.bottomInventory);
-        LinearLayout navQuotes = findViewById(R.id.bottomQuotes);
-        LinearLayout navAccount = findViewById(R.id.bottomAccount);
-
-        if (navDash != null) {
-            navDash.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AdminDashboardActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navInventory != null) {
-            navInventory.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AdminCatalogActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navQuotes != null) {
-            navQuotes.setOnClickListener(v -> {
-                Intent intent = new Intent(this, EnquiriesActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
-
-        if (navAccount != null) {
-            navAccount.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AdminAccountActivity.class);
-                startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-            });
-        }
     }
 
     private RequestBody createPartFromString(String value) {

@@ -25,20 +25,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@color/white"
+                android:paddingTop="24dp"
+                android:paddingBottom="12dp"
                 android:elevation="4dp">
-
-                <!-- Status Bar Spacer -->
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="24dp"
-                    android:background="@color/white" />
 
                 <!-- Back button and Title -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp"
+                    android:paddingBottom="12dp"
                     android:gravity="center_vertical">
 
                     <!-- Back Button -->
@@ -243,93 +240,9 @@
         android:paddingHorizontal="24dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="110dp"
+        android:layout_marginBottom="24dp"
         android:layout_marginEnd="16dp"
         android:elevation="8dp"
         android:stateListAnimator="@null" />
-
-    <!-- Floating Bottom Navigation -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="20dp"
-        app:cardCornerRadius="35dp"
-        app:cardElevation="12dp"
-        app:cardBackgroundColor="@color/white">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <!-- Dash -->
-            <LinearLayout
-                android:id="@+id/bottomDashboard"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_dashboard"
-                    app:tint="@color/zinc_400"/>
-            </LinearLayout>
-
-            <!-- Inventory -->
-            <LinearLayout
-                android:id="@+id/bottomInventory"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_grid_view"
-                    app:tint="@color/primary_color"/>
-            </LinearLayout>
-
-            <!-- Quotes -->
-            <LinearLayout
-                android:id="@+id/bottomQuotes"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_chat"
-                    app:tint="@color/zinc_400"/>
-            </LinearLayout>
-
-            <!-- Account -->
-            <LinearLayout
-                android:id="@+id/bottomAccount"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_person"
-                    app:tint="@color/zinc_400"/>
-            </LinearLayout>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

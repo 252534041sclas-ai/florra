@@ -8,7 +8,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -30,6 +29,17 @@ public class SavedBillsActivity extends AppCompatActivity {
 
         // Set fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        // Enable edge-to-edge
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // Handle notch and status bar
+        WindowInsetsControllerCompat windowInsetsController =
+                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        windowInsetsController.setAppearanceLightStatusBars(false);
+        windowInsetsController.setAppearanceLightNavigationBars(false);
 
         setContentView(R.layout.activity_saved_bills);
 
@@ -38,37 +48,9 @@ public class SavedBillsActivity extends AppCompatActivity {
 
         // Setup click listeners
         setupClickListeners();
-        setupBottomNavigation();
         
         // Fetch Data
         fetchBills();
-    }
-
-    private void setupBottomNavigation() {
-        LinearLayout navDash = findViewById(R.id.bottomDashboard);
-        LinearLayout navInventory = findViewById(R.id.bottomInventory);
-        LinearLayout navQuotes = findViewById(R.id.bottomQuotes);
-        LinearLayout navAccount = findViewById(R.id.bottomAccount);
-
-        navDash.setOnClickListener(v -> {
-            startActivity(new Intent(this, AdminDashboardActivity.class));
-            finish();
-        });
-
-        navInventory.setOnClickListener(v -> {
-            startActivity(new Intent(this, AdminCatalogActivity.class));
-            finish();
-        });
-
-        navQuotes.setOnClickListener(v -> {
-            startActivity(new Intent(this, EnquiriesActivity.class));
-            finish();
-        });
-
-        navAccount.setOnClickListener(v -> {
-            startActivity(new Intent(this, AdminAccountActivity.class));
-            finish();
-        });
     }
 
     private void fetchBills() {

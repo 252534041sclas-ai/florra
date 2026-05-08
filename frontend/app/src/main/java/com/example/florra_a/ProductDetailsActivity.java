@@ -8,8 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.florra_a.models.Product;
 // FavoritesManager import removed
@@ -37,16 +35,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Enable edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        // Handle notch and status bar - Set to true for dark icons on light background
-        WindowInsetsControllerCompat windowInsetsController =
-                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        if (windowInsetsController != null) {
-            windowInsetsController.setAppearanceLightStatusBars(true);
-            windowInsetsController.setAppearanceLightNavigationBars(true);
-        }
+        // Set fullscreen
+        getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_product_details);
 
@@ -88,46 +79,41 @@ public class ProductDetailsActivity extends AppCompatActivity {
         // 1. Name
         String name = intent.getStringExtra("productName");
         if (name == null) name = intent.getStringExtra("tileName");
-        if (name == null) name = intent.getStringExtra("product_name"); // Fallback for admin keys
         
         currentProduct.setTileName(name);
-        if (name != null && !name.isEmpty()) {
+        if (name != null) {
             productName.setText(name);
-            productName.setTextColor(getResources().getColor(R.color.primary_dark));
+            productName.setTextColor(android.graphics.Color.BLACK); // Force visible color
         } else {
-             productName.setText("Product Details");
+             productName.setText("Name is NULL");
         }
 
         // 2. Price
         String price = intent.getStringExtra("productPrice");
         if (price == null) price = intent.getStringExtra("tilePrice");
-        if (price == null) price = String.valueOf(intent.getDoubleExtra("product_price", 0.0));
-        
         currentProduct.setPrice(price);
-        if (price != null && !price.equals("0.0")) {
-            productPrice.setText(price.contains("$") || price.contains("₹") ? price : "₹" + price);
-        } else {
-            productPrice.setText("Contact for Price");
-        }
+        if (price != null) productPrice.setText(price);
 
         // 3. Model
         String model = intent.getStringExtra("productModel");
         String tileNo = intent.getStringExtra("productTileNo");
-        if (tileNo == null) tileNo = intent.getStringExtra("product_tile_no"); // Fallback
+        
+        // Debug: Show received name and tileNo
+        Toast.makeText(this, "Name: " + name + "\nTileNo: " + tileNo, Toast.LENGTH_LONG).show();
         
         if (tileNo != null && !tileNo.isEmpty()) {
             model = tileNo;
-        } else if (model == null && name != null && !name.isEmpty()) {
+        } else if (model == null && name != null) {
             model = "FL-" + name.substring(0, Math.min(2, name.length())).toUpperCase() +
                     "-" + String.format("%03d", (int)(Math.random() * 1000));
         }
         
-        if (model != null && !model.isEmpty()) {
-             currentProduct.setTileNo(model.replace("Model: ", ""));
+        // Ensure "Model:" prefix is present
+        if (model != null) {
+             currentProduct.setTileNo(model.replace("Model: ", "")); // Store raw
              productModel.setText(model.startsWith("Model:") ? model : "Model: " + model);
-             productModel.setVisibility(View.VISIBLE);
         } else {
-             productModel.setText("Model: N/A");
+             productModel.setText("");
         }
 
         // 4. Stock
@@ -439,7 +425,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
                                 intent.putExtra("productImage", product.getImage());
                                 intent.putExtra("productDescription", product.getDescription());
                                 intent.putExtra("productTileNo", product.getTileNo());
-                                intent.putExtra("productId", product.getId());
                                 
                                 startActivity(intent);
                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

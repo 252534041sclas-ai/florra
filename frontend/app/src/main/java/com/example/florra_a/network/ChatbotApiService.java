@@ -18,10 +18,10 @@ public interface ChatbotApiService {
         public String reply;
     }
 
-    @POST("customer/chat/")
+    @POST("customer/chat")
     Call<ChatResponse> chat(@Body ChatRequest request);
 
     @retrofit2.http.Multipart
-    @POST("customer/search_image/")
+    @POST("customer/search_image")
     Call<ChatResponse> searchImage(@retrofit2.http.Part okhttp3.MultipartBody.Part image);
 }

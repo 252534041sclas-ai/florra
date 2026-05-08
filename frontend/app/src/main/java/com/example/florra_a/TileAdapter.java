@@ -22,7 +22,6 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
     private Context context;
     private List<Product> productList;
     private List<Product> productListFull; // For filtering
-    private boolean isHorizontal = false;
 
     // Interface for click listeners
     public interface OnItemClickListener {
@@ -38,13 +37,6 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         this.context = context;
         this.productList = productList;
         this.productListFull = new ArrayList<>(productList);
-    }
-
-    public TileAdapter(Context context, List<Product> productList, boolean isHorizontal) {
-        this.context = context;
-        this.productList = productList;
-        this.productListFull = new ArrayList<>(productList);
-        this.isHorizontal = isHorizontal;
     }
 
     // Set click listener
@@ -88,20 +80,6 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_tile, parent, false);
-        
-        if (isHorizontal) {
-            // Set fixed width for horizontal items
-            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            if (layoutParams == null) {
-                layoutParams = new ViewGroup.LayoutParams(
-                        (int) (context.getResources().getDisplayMetrics().widthPixels * 0.45),
-                        ViewGroup.LayoutParams.WRAP_CONTENT);
-            } else {
-                layoutParams.width = (int) (context.getResources().getDisplayMetrics().widthPixels * 0.45);
-            }
-            view.setLayoutParams(layoutParams);
-        }
-        
         return new ViewHolder(view);
     }
 
@@ -112,32 +90,25 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         // Set product data
         holder.tileName.setText(product.getTileName());
         holder.tilePrice.setText("₹" + product.getPrice());
-        
+        // Size might need to be fetched from backend or if missing, use placeholder/calc
+        // Bind Real Data
         // Size / Model
         String size = product.getSize();
         String tileNo = product.getTileNo();
         if (tileNo != null && !tileNo.isEmpty()) {
-             holder.tileSize.setText(tileNo); 
+             holder.tileSize.setText(tileNo); // User wants tileNo shown
         } else {
              holder.tileSize.setText(size != null ? size : "60x60 cm");
         }
 
         // Category / Finish
         String category = product.getCategory();
-        String finish = product.getFinish();
-        if (finish != null && !finish.isEmpty()) {
-            holder.tileFinish.setText(finish.toUpperCase());
-        } else if (category != null && !category.isEmpty()) {
-            holder.tileFinish.setText(category.toUpperCase());
-        } else {
-            holder.tileFinish.setText("PORCELAIN");
-        }
+        if (category == null) category = product.getFinish();
+        holder.tileFinish.setText(category != null ? category.toUpperCase() : "PORCELAIN");
 
         // Stock Status
         String stockStatus = product.getStockStatus();
-        if (stockStatus == null) {
-            stockStatus = product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK";
-        }
+        if (stockStatus == null) stockStatus = "IN STOCK"; // Default
         holder.stockBadgeText.setText(stockStatus);
 
         // Set stock color
@@ -151,35 +122,25 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
 
         // Load image using Glide
         String imageUrl = product.getImage();
+        
+        // Debug Toast for first item
+        if (position == 0) {
+             // System.out.println("DEBUG IMAGE: " + imageUrl); 
+             Toast.makeText(context, "Img: " + imageUrl, Toast.LENGTH_LONG).show();
+        }
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
             if (!imageUrl.startsWith("http")) {
-                // Ensure it starts with media/ if it's a relative path from Django
-                if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
-                
-                if (!imageUrl.startsWith("media/")) {
-                    imageUrl = "media/" + imageUrl;
-                }
-                
                 imageUrl = RetrofitClient.BASE_URL + imageUrl;
-            } else {
-                // Fix potential localhost issues
-                String baseHost = RetrofitClient.BASE_URL
-                        .replace("http://", "")
-                        .replace("https://", "")
-                        .split(":")[0];
-                imageUrl = imageUrl.replace("127.0.0.1", baseHost)
-                                   .replace("localhost", baseHost);
             }
-            
             Glide.with(context)
                 .load(imageUrl)
-                .placeholder(R.drawable.ic_tile_placeholder)
-                .error(R.drawable.ic_tile_placeholder)
+                .placeholder(R.drawable.tile_placeholder)
+                .error(R.drawable.tile_placeholder)
                 .centerCrop()
                 .into(holder.tileImage);
         } else {
-            holder.tileImage.setImageResource(R.drawable.ic_tile_placeholder);
+            holder.tileImage.setImageResource(R.drawable.tile_placeholder);
         }
 
         // Handle item click
@@ -188,8 +149,6 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
             public void onClick(View v) {
                 if (onItemClickListener != null) {
                     onItemClickListener.onItemClick(product);
-                } else {
-                    openProductDetails(product);
                 }
             }
         });
@@ -199,34 +158,40 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
             public boolean onLongClick(View v) {
                 if (onItemClickListener != null) {
                     onItemClickListener.onItemLongClick(product);
-                    return true;
+                    return true; // Consume the long click
                 }
                 return false;
             }
         });
 
+
+
+        // Handle add to cart button click
+        if (holder.btnAddToCart != null) {
+            holder.btnAddToCart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onAddToCartClick(product);
+                    } else {
+                        Toast.makeText(context, "Added to cart: " + product.getTileName(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
         // Handle bookmark button click
         if (holder.btnBookmark != null) {
             // Update UI based on state
-            ImageView heartIcon = null;
-            if (holder.btnBookmark instanceof ViewGroup && ((ViewGroup) holder.btnBookmark).getChildCount() > 0) {
-                View child = ((ViewGroup) holder.btnBookmark).getChildAt(0);
-                if (child instanceof ImageView) {
-                    heartIcon = (ImageView) child;
-                }
+            ImageView heartIcon = (ImageView) holder.btnBookmark.getChildAt(0);
+            if (product.isFavorite()) {
+                heartIcon.setImageResource(R.drawable.ic_favorite_filled);
+                heartIcon.setColorFilter(context.getResources().getColor(R.color.red_600));
+            } else {
+                heartIcon.setImageResource(R.drawable.ic_favorite_border);
+                heartIcon.setColorFilter(context.getResources().getColor(R.color.slate_600));
             }
 
-            if (heartIcon != null) {
-                if (product.isFavorite()) {
-                    heartIcon.setImageResource(R.drawable.ic_favorite_filled);
-                    heartIcon.setColorFilter(context.getResources().getColor(R.color.red_600));
-                } else {
-                    heartIcon.setImageResource(R.drawable.ic_favorite_border);
-                    heartIcon.setColorFilter(context.getResources().getColor(R.color.slate_600));
-                }
-            }
-
-            final ImageView finalHeartIcon = heartIcon;
             holder.btnBookmark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -235,14 +200,12 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
                     product.setFavorite(newState);
                     
                     // Update UI immediately
-                    if (finalHeartIcon != null) {
-                        if (newState) {
-                            finalHeartIcon.setImageResource(R.drawable.ic_favorite_filled);
-                            finalHeartIcon.setColorFilter(context.getResources().getColor(R.color.red_600));
-                        } else {
-                            finalHeartIcon.setImageResource(R.drawable.ic_favorite_border);
-                            finalHeartIcon.setColorFilter(context.getResources().getColor(R.color.slate_600));
-                        }
+                    if (newState) {
+                        heartIcon.setImageResource(R.drawable.ic_favorite_filled);
+                        heartIcon.setColorFilter(context.getResources().getColor(R.color.red_600));
+                    } else {
+                        heartIcon.setImageResource(R.drawable.ic_favorite_border);
+                        heartIcon.setColorFilter(context.getResources().getColor(R.color.slate_600));
                     }
 
                     if (onItemClickListener != null) {
@@ -257,28 +220,20 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return productList != null ? productList.size() : 0;
+        return productList.size();
     }
 
     private void openProductDetails(Product product) {
         try {
             Intent intent = new Intent(context, ProductDetailsActivity.class);
 
-            // Pass data using consistent keys
-            intent.putExtra("productId", product.getId());
+            // Pass data
             intent.putExtra("productName", product.getTileName());
-            intent.putExtra("tileName", product.getTileName());
             intent.putExtra("productPrice", String.valueOf(product.getPrice()));
-            intent.putExtra("tilePrice", String.valueOf(product.getPrice()));
             intent.putExtra("productStock", product.getStockStatus());
-            intent.putExtra("stockStatus", product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK");
             intent.putExtra("productCategory", product.getCategory());
-            intent.putExtra("productMaterial", product.getCategory());
             intent.putExtra("productTileNo", product.getTileNo());
-            intent.putExtra("tileSize", product.getSize());
-            intent.putExtra("productFinish", product.getFinish());
-            intent.putExtra("productDescription", product.getDescription());
-            intent.putExtra("productImage", product.getImage());
+            // Add other fields as needed
 
             context.startActivity(intent);
         } catch (Exception e) {
@@ -294,7 +249,8 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         TextView tileFinish;
         TextView stockBadgeText;
         LinearLayout stockBadge;
-        View btnBookmark; // Corrected name to match logic
+        LinearLayout btnAddToCart;
+        LinearLayout btnBookmark;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -307,6 +263,7 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
             tileFinish = itemView.findViewById(R.id.tileFinish);
             stockBadgeText = itemView.findViewById(R.id.stockBadgeText);
             stockBadge = itemView.findViewById(R.id.stockBadge);
+            //btnAddToCart = itemView.findViewById(R.id.btnAddToCart);
             btnBookmark = itemView.findViewById(R.id.btnFavorite);
         }
     }

@@ -83,34 +83,6 @@ public class AddProductActivity extends AppCompatActivity {
         setupSpinners();
         setupColorAdapter(); // New
         setupClickListeners();
-        setupBottomNavigation();
-    }
-
-    private void setupBottomNavigation() {
-        LinearLayout navDash = findViewById(R.id.bottomDashboard);
-        LinearLayout navInventory = findViewById(R.id.bottomInventory);
-        LinearLayout navQuotes = findViewById(R.id.bottomQuotes);
-        LinearLayout navAccount = findViewById(R.id.bottomAccount);
-
-        navDash.setOnClickListener(v -> {
-            startActivity(new Intent(this, AdminDashboardActivity.class));
-            finish();
-        });
-
-        navInventory.setOnClickListener(v -> {
-            startActivity(new Intent(this, AdminCatalogActivity.class));
-            finish();
-        });
-
-        navQuotes.setOnClickListener(v -> {
-            startActivity(new Intent(this, EnquiriesActivity.class));
-            finish();
-        });
-
-        navAccount.setOnClickListener(v -> {
-            startActivity(new Intent(this, AdminAccountActivity.class));
-            finish();
-        });
     }
 
     private void initViews() {

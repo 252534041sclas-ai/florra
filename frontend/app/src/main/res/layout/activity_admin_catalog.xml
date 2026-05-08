@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -299,89 +298,96 @@
         android:padding="12dp"
         android:scrollbars="vertical" />
 
-    <!-- Floating Bottom Navigation -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/bottomNavCard"
+    <!-- Bottom Navigation -->
+    <LinearLayout
+        android:id="@+id/bottomNav"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
         android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="20dp"
-        app:cardCornerRadius="35dp"
-        app:cardElevation="12dp"
-        app:cardBackgroundColor="@color/white">
+        android:elevation="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="12dp">
 
-            <!-- Dash -->
-            <LinearLayout
+            <!-- Dashboard -->
+            <Button
                 android:id="@+id/bottomDashboard"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:textColor="@color/zinc_400"
+                android:textSize="10sp"
+                android:drawableTop="@drawable/ic_dashboard"
+                android:drawablePadding="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="Dashboard"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_dashboard"
-                    app:tint="@color/zinc_400"/>
-            </LinearLayout>
+                android:stateListAnimator="@null" />
 
-            <!-- Inventory (Active) -->
-            <LinearLayout
+            <!-- Catalog (Active) -->
+
+            <!-- Enquiries -->
+            <Button
                 android:id="@+id/bottomInventory"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:drawableTop="@drawable/ic_grid_viewic_grid_view_filled"
+                android:drawablePadding="4dp"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_grid_view"
-                    app:tint="@color/primary_color"/>
-            </LinearLayout>
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:stateListAnimator="@null"
+                android:text="Catalog"
+                android:textColor="@color/primary_color"
+                android:textSize="10sp"
+                android:textStyle="bold" />
 
-            <!-- Quotes -->
-            <LinearLayout
+            <Button
                 android:id="@+id/bottomQuotes"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:textColor="@color/zinc_400"
+                android:textSize="10sp"
+                android:drawableTop="@drawable/ic_request_quote"
+                android:drawablePadding="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="Enquiries"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_chat"
-                    app:tint="@color/zinc_400"/>
-            </LinearLayout>
+                android:stateListAnimator="@null" />
 
             <!-- Account -->
-            <LinearLayout
+            <Button
                 android:id="@+id/bottomAccount"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:textColor="@color/zinc_400"
+                android:textSize="10sp"
+                android:drawableTop="@drawable/ic_person"
+                android:drawablePadding="4dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="Account"
                 android:gravity="center"
-                android:orientation="vertical"
-                android:background="?attr/selectableItemBackground">
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_person"
-                    app:tint="@color/zinc_400"/>
-            </LinearLayout>
+                android:stateListAnimator="@null" />
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
 
 </RelativeLayout>

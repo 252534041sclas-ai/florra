@@ -122,7 +122,8 @@
                             android:layout_height="match_parent"
                             android:src="@drawable/ic_person_large"
                             android:scaleType="centerCrop"
-                            android:contentDescription="Profile Image" />
+                            android:contentDescription="Profile Image"
+                            android:tint="@color/gray_400" />
                     </RelativeLayout>
 
                     <!-- Camera Icon Overlay -->
@@ -376,15 +377,14 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="20dp"
             android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground">
+            android:paddingBottom="16dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@drawable/bg_save_button">
+                android:background="@drawable/bg_save_button"
+                android:clickable="true"
+                android:focusable="true">
 
                 <TextView
                     android:layout_width="wrap_content"

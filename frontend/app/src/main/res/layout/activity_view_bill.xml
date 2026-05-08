@@ -444,7 +444,7 @@
                                     android:id="@+id/tvSubtotal"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="₹2,000.00"
+                                    android:text="$2,000.00"
                                     android:textColor="@color/black"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
@@ -471,7 +471,7 @@
                                     android:id="@+id/tvGST"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="₹360.00"
+                                    android:text="$360.00"
                                     android:textColor="@color/black"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
@@ -498,7 +498,7 @@
                                     android:id="@+id/tvDiscount"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="-₹0.00"
+                                    android:text="-$0.00"
                                     android:textColor="@color/viewbill_status_paid_text"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
@@ -527,7 +527,7 @@
                                     android:id="@+id/tvGrandTotal"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="₹2,360.00"
+                                    android:text="$2,360.00"
                                     android:textColor="@color/black"
                                     android:textSize="20sp"
                                     android:textStyle="bold" />

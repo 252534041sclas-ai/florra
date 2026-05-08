@@ -51,7 +51,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="₹0"
+        android:text="$0"
         android:textColor="#111118"
         android:textSize="13sp"
         android:gravity="end" />
@@ -62,7 +62,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="₹0"
+        android:text="$0"
         android:textColor="#111118"
         android:textSize="13sp"
         android:textStyle="bold"

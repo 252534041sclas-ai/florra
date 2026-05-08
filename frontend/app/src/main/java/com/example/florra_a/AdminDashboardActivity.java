@@ -8,15 +8,10 @@
     import android.widget.Button;
     import android.widget.ImageView;
     import android.widget.Toast;
-    import android.widget.LinearLayout;
     import androidx.appcompat.app.AppCompatActivity;
     import androidx.core.view.WindowCompat;
     import androidx.core.view.WindowInsetsControllerCompat;
     import androidx.cardview.widget.CardView;
-    import android.widget.TextView;
-    import java.util.Calendar;
-    import java.text.SimpleDateFormat;
-    import java.util.Locale;
 
     public class AdminDashboardActivity extends AppCompatActivity {
 
@@ -26,6 +21,17 @@
 
             // Set fullscreen
             requestWindowFeature(Window.FEATURE_NO_TITLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+            // Enable edge-to-edge
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+            // Handle notch and status bar
+            WindowInsetsControllerCompat windowInsetsController =
+                    WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+            windowInsetsController.setAppearanceLightStatusBars(false);
+            windowInsetsController.setAppearanceLightNavigationBars(false);
 
             setContentView(R.layout.activity_admin_dashboard);
 
@@ -34,39 +40,11 @@
 
             // Setup navigation
             setupNavigation();
-            
-            // Set dynamic greeting
-            updateGreeting();
-        }
-
-        private void updateGreeting() {
-            TextView txtGreeting = findViewById(R.id.txtGreeting);
-            TextView txtDate = findViewById(R.id.txtDate);
-            
-            if (txtGreeting != null) {
-                Calendar c = Calendar.getInstance();
-                int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
-
-                if (timeOfDay >= 0 && timeOfDay < 12) {
-                    txtGreeting.setText("Good Morning, Admin");
-                } else if (timeOfDay >= 12 && timeOfDay < 16) {
-                    txtGreeting.setText("Good Afternoon, Admin");
-                } else if (timeOfDay >= 16 && timeOfDay < 21) {
-                    txtGreeting.setText("Good Evening, Admin");
-                } else if (timeOfDay >= 21 && timeOfDay < 24) {
-                    txtGreeting.setText("Good Night, Admin");
-                }
-            }
-
-            if (txtDate != null) {
-                SimpleDateFormat sdf = new SimpleDateFormat("EEEE, d MMMM yyyy", Locale.getDefault());
-                txtDate.setText(sdf.format(Calendar.getInstance().getTime()));
-            }
         }
 
         private void setupNavigation() {
             // Dashboard button - Already on this screen
-            View btnDashboard = findViewById(R.id.bottomDashboard);
+            Button btnDashboard = findViewById(R.id.bottomDashboard);
             if (btnDashboard != null) {
                 btnDashboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -78,7 +56,7 @@
             }
 
             // Catalog button
-            View btnCatalog = findViewById(R.id.bottomInventory);
+            Button btnCatalog = findViewById(R.id.bottomInventory);
             if (btnCatalog != null) {
                 btnCatalog.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -92,7 +70,7 @@
             }
 
             // Enquiries button
-            View btnEnquiries = findViewById(R.id.bottomQuotes);
+            Button btnEnquiries = findViewById(R.id.bottomQuotes);
             if (btnEnquiries != null) {
                 btnEnquiries.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -105,7 +83,7 @@
             }
 
             // Account button
-            View btnAccount = findViewById(R.id.bottomAccount);
+            Button btnAccount = findViewById(R.id.bottomAccount);
             if (btnAccount != null) {
                 btnAccount.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -119,17 +97,42 @@
 
             // ========== CARD CLICK LISTENERS ==========
 
-            // TOTAL TILES CARD (Points to Inventory)
+            // TOTAL TILES CARD
             CardView cardTotalTiles = findViewById(R.id.cardTotalTiles);
             if (cardTotalTiles != null) {
-                cardTotalTiles.setOnClickListener(v -> {
-                    Intent intent = new Intent(AdminDashboardActivity.this, InventoryActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                cardTotalTiles.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(AdminDashboardActivity.this, InventoryActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    }
                 });
             }
 
-            // Removed redundant Enquiries and Quotations card listeners as they are now in the Quick Actions section below
+            // ENQUIRIES CARD
+            CardView cardEnquiries = findViewById(R.id.cardEnquiries);
+            if (cardEnquiries != null) {
+                cardEnquiries.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(AdminDashboardActivity.this, EnquiriesActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    }
+                });
+            }
+
+            // QUOTATIONS CARD
+            CardView cardQuotations = findViewById(R.id.cardQuotations);
+            if (cardQuotations != null) {
+                cardQuotations.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(AdminDashboardActivity.this, "Quotations screen coming soon", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
 
             // LOW STOCK CARD
             CardView cardLowStock = findViewById(R.id.cardLowStock);
@@ -146,7 +149,18 @@
                 });
             }
 
-            // Removed redundant Inventory card listener
+            // INVENTORY CARD (Management Section)
+            CardView cardInventory = findViewById(R.id.cardInventory);
+            if (cardInventory != null) {
+                cardInventory.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(AdminDashboardActivity.this, InventoryActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    }
+                });
+            }
 
             // PRODUCT CARD
             CardView cardProduct = findViewById(R.id.cardProduct);
@@ -215,25 +229,41 @@
             // ========== ACTIVITY ITEMS CLICK LISTENERS ==========
             // NOTE: Using the correct IDs from the updated XML
 
-            // Activity Item 1: New Enquiry (This is a LinearLayout in XML)
-            View cardActivityNewEnquiry = findViewById(R.id.cardActivityNewEnquiry);
+            // Activity Item 1: New Enquiry
+            CardView cardActivityNewEnquiry = findViewById(R.id.cardActivityNewEnquiry);
             if (cardActivityNewEnquiry != null) {
-                cardActivityNewEnquiry.setOnClickListener(v -> {
-                    Intent intent = new Intent(AdminDashboardActivity.this, EnquiriesActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                cardActivityNewEnquiry.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(AdminDashboardActivity.this, EnquiriesActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    }
                 });
             }
 
-            // Activity Item 2: Quotation Approved (Removed as it is not in the current layout)
+            // Activity Item 2: Quotation Approved
+            CardView cardActivityQuotationApproved = findViewById(R.id.cardActivityQuotationApproved);
+            if (cardActivityQuotationApproved != null) {
+                cardActivityQuotationApproved.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(AdminDashboardActivity.this, "View Quotation Details", Toast.LENGTH_SHORT).show();
+                        // You can create a QuotationDetailsActivity later
+                    }
+                });
+            }
 
-            // Activity Item 3: Stock Updated (This is a LinearLayout in XML)
-            View cardActivityStockUpdated = findViewById(R.id.cardActivityStockUpdated);
+            // Activity Item 3: Stock Updated
+            CardView cardActivityStockUpdated = findViewById(R.id.cardActivityStockUpdated);
             if (cardActivityStockUpdated != null) {
-                cardActivityStockUpdated.setOnClickListener(v -> {
-                    Intent intent = new Intent(AdminDashboardActivity.this, InventoryActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                cardActivityStockUpdated.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(AdminDashboardActivity.this, InventoryActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    }
                 });
             }
 

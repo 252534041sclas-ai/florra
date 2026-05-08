@@ -84,7 +84,8 @@
                             android:layout_height="match_parent"
                             android:src="@drawable/ic_person"
                             android:scaleType="centerCrop"
-                            android:contentDescription="Profile Image" />
+                            android:contentDescription="Profile Image"
+                            android:tint="@color/slate_400" />
 
                     </RelativeLayout>
 

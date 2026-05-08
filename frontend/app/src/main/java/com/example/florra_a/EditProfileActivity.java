@@ -62,6 +62,8 @@ public class EditProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_edit_profile);
 
         etFullName = findViewById(R.id.etFullName);
@@ -148,7 +150,7 @@ public class EditProfileActivity extends AppCompatActivity {
             }
             if (photoFile != null) {
                 photoURI = FileProvider.getUriForFile(this,
-                        getApplicationContext().getPackageName() + ".fileprovider",
+                        getApplicationContext().getPackageName() + ".provider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -193,26 +195,24 @@ public class EditProfileActivity extends AppCompatActivity {
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
                 // Image captured from camera
                 galleryUri = null; // Clear gallery selection
-                ivProfile.clearColorFilter(); // Remove the gray tint
+                Toast.makeText(this, "Photo captured", Toast.LENGTH_SHORT).show();
+                ivProfile.setColorFilter(null); // Clear tint to show original photo colors
                 Glide.with(this)
                     .load(photoURI)
                     .placeholder(R.drawable.ic_person_large)
                     .error(R.drawable.ic_person_large)
-                    .circleCrop()
                     .into(ivProfile);
-                Toast.makeText(this, "Photo captured", Toast.LENGTH_SHORT).show();
             } else if (requestCode == REQUEST_PICK_IMAGE && data != null) {
                 // Image picked from gallery
                 galleryUri = data.getData();
                 currentPhotoPath = null; // Clear camera selection
-                ivProfile.clearColorFilter(); // Remove the gray tint
+                Toast.makeText(this, "Image selected from Gallery", Toast.LENGTH_SHORT).show();
+                ivProfile.setColorFilter(null); // Clear tint to show original photo colors
                 Glide.with(this)
                     .load(galleryUri)
                     .placeholder(R.drawable.ic_person_large)
                     .error(R.drawable.ic_person_large)
-                    .circleCrop()
                     .into(ivProfile);
-                Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -232,6 +232,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private void saveProfileChanges() {
         String fullName = etFullName.getText().toString().trim();
         String mobile = etMobile.getText().toString().trim();
+        // We do not send email as it might key field. Modify if needed.
 
         if (fullName.isEmpty()) {
             Toast.makeText(this, "Please enter full name", Toast.LENGTH_SHORT).show();
@@ -253,10 +254,8 @@ public class EditProfileActivity extends AppCompatActivity {
         try {
             if (currentPhotoPath != null) {
                 File file = new File(currentPhotoPath);
-                if (file.exists()) {
-                    RequestBody reqFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
-                    imagePart = MultipartBody.Part.createFormData("profile_image", file.getName(), reqFile);
-                }
+                RequestBody reqFile = RequestBody.create(MediaType.parse("image/jpeg"), file);
+                imagePart = MultipartBody.Part.createFormData("profile_image", file.getName(), reqFile);
             } else if (galleryUri != null) {
                 File file = getFileFromUri(galleryUri);
                 if (file != null) {
@@ -266,6 +265,7 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(this, "Image processing error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         ApiService apiService = RetrofitClient.getApiService();
@@ -287,17 +287,21 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
                     editor.apply();
 
-                    Toast.makeText(EditProfileActivity.this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditProfileActivity.this, "Profile saved successfully!", Toast.LENGTH_SHORT).show();
                     goBack();
                 } else {
-                    Toast.makeText(EditProfileActivity.this, "Failed to update profile", Toast.LENGTH_SHORT).show();
+                    String err = "Failed to update profile";
+                    try {
+                        if (response.errorBody() != null) err = response.errorBody().string();
+                    } catch (IOException e) { e.printStackTrace(); }
+                    Toast.makeText(EditProfileActivity.this, err, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
                 if (progressDialog != null) progressDialog.dismiss();
-                Toast.makeText(EditProfileActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditProfileActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
