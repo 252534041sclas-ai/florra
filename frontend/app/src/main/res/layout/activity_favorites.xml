@@ -15,11 +15,7 @@
         android:background="@color/white"
         android:elevation="4dp">
 
-        <!-- Status Bar Spacer -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:background="@color/white" />
+        <!-- Status Bar Spacer Removed -->
 
         <!-- Toolbar -->
         <LinearLayout

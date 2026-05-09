@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
 
     // Using LAN IP for physical device compatibility
-    public static final String BASE_URL = "http://192.168.1.8:8000/";
+    public static final String BASE_URL = "http://192.168.31.56:8001/";
     private static Retrofit retrofit = null;
     private static android.content.Context context;
 

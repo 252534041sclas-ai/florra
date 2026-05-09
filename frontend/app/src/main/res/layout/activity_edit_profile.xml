@@ -16,11 +16,7 @@
         android:elevation="4dp"
         android:layout_alignParentTop="true">
 
-        <!-- Status Bar Spacer -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:background="@color/white" />
+        <!-- Status Bar Spacer Removed -->
 
         <!-- Toolbar -->
         <LinearLayout
@@ -109,32 +105,33 @@
                     android:clickable="true"
                     android:focusable="true">
 
-                    <!-- Profile Image -->
-                    <RelativeLayout
+                    <!-- Profile Image Wrapper (Circle) -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/profileImageCard"
                         android:layout_width="128dp"
                         android:layout_height="128dp"
-                        android:background="@drawable/bg_profile_circle_edit">
+                        app:cardCornerRadius="64dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/gray_100">
 
-                        <!-- Profile Image -->
                         <ImageView
                             android:id="@+id/ivProfile"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:src="@drawable/ic_person_large"
                             android:scaleType="centerCrop"
-                            android:contentDescription="Profile Image"
-                            android:tint="@color/gray_400" />
-                    </RelativeLayout>
+                            android:contentDescription="Profile Image" />
+                    </androidx.cardview.widget.CardView>
 
                     <!-- Camera Icon Overlay -->
                     <RelativeLayout
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:background="@drawable/bg_camera_circle"
-                        android:layout_alignBottom="@id/btnChangePhoto"
-                        android:layout_alignRight="@id/btnChangePhoto"
-                        android:layout_marginBottom="-4dp"
-                        android:layout_marginRight="-4dp"
+                        android:layout_alignBottom="@id/profileImageCard"
+                        android:layout_alignRight="@id/profileImageCard"
+                        android:layout_marginBottom="0dp"
+                        android:layout_marginRight="0dp"
                         android:elevation="8dp">
 
                         <ImageView
@@ -155,9 +152,7 @@
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:letterSpacing="0.05"
-                    android:layout_marginTop="16dp"
-                    android:clickable="true"
-                    android:focusable="true" />
+                    android:layout_marginTop="16dp" />
             </LinearLayout>
 
             <!-- Form Section -->
@@ -372,7 +367,6 @@
 
         <!-- Save Button -->
         <RelativeLayout
-            android:id="@+id/btnSaveChanges"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingHorizontal="20dp"
@@ -380,6 +374,7 @@
             android:paddingBottom="16dp">
 
             <RelativeLayout
+                android:id="@+id/btnSaveChanges"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:background="@drawable/bg_save_button"

@@ -123,14 +123,17 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         // Load image using Glide
         String imageUrl = product.getImage();
         
-        // Debug Toast for first item
-        if (position == 0) {
-             // System.out.println("DEBUG IMAGE: " + imageUrl); 
-             Toast.makeText(context, "Img: " + imageUrl, Toast.LENGTH_LONG).show();
-        }
+        // Debug removed as requested
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
             if (!imageUrl.startsWith("http")) {
+                if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
+                
+                // Ensure media/ prefix is present for Django backend
+                if (!imageUrl.startsWith("media/")) {
+                    imageUrl = "media/" + imageUrl;
+                }
+                
                 imageUrl = RetrofitClient.BASE_URL + imageUrl;
             }
             Glide.with(context)

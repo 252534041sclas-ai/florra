@@ -36,8 +36,11 @@ public class ProductDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Set fullscreen
-        getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                // Set status bar to white with dark icons
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+        }
 
         setContentView(R.layout.activity_product_details);
 
@@ -81,25 +84,29 @@ public class ProductDetailsActivity extends AppCompatActivity {
         if (name == null) name = intent.getStringExtra("tileName");
         
         currentProduct.setTileName(name);
-        if (name != null) {
+        if (name != null && !name.isEmpty()) {
             productName.setText(name);
             productName.setTextColor(android.graphics.Color.BLACK); // Force visible color
         } else {
-             productName.setText("Name is NULL");
+             productName.setText("");
         }
 
         // 2. Price
         String price = intent.getStringExtra("productPrice");
         if (price == null) price = intent.getStringExtra("tilePrice");
         currentProduct.setPrice(price);
-        if (price != null) productPrice.setText(price);
+        if (price != null && !price.isEmpty()) {
+            String displayPrice = price.startsWith("₹") ? price : "₹" + price;
+            productPrice.setText(displayPrice);
+        } else {
+            productPrice.setText("₹0.00");
+        }
 
         // 3. Model
         String model = intent.getStringExtra("productModel");
         String tileNo = intent.getStringExtra("productTileNo");
         
-        // Debug: Show received name and tileNo
-        Toast.makeText(this, "Name: " + name + "\nTileNo: " + tileNo, Toast.LENGTH_LONG).show();
+
         
         if (tileNo != null && !tileNo.isEmpty()) {
             model = tileNo;

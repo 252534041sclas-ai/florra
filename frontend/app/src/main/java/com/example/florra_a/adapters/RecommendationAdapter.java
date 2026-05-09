@@ -56,8 +56,16 @@ public class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAd
         if (imageUrl != null && !imageUrl.isEmpty()) {
              if (!imageUrl.startsWith("http")) {
                  if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
+                 
+                 // If the path doesn't start with media/, and it's a relative path from the DB
+                 if (!imageUrl.startsWith("media/")) {
+                     imageUrl = "media/" + imageUrl;
+                 }
+                 
+                 // Use the standard RetrofitClient.BASE_URL (which is port 8001)
                  imageUrl = RetrofitClient.BASE_URL + imageUrl;
              } else {
+                 // Handle absolute URLs if any, replacing localhost/127.0.0.1 with actual IP
                  String baseHost = RetrofitClient.BASE_URL
                          .replace("http://", "")
                          .replace("https://", "")
@@ -72,23 +80,28 @@ public class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAd
             Glide.with(context)
                     .load(imageUrl)
                     .placeholder(R.drawable.ic_tile_placeholder)
-                    .error(R.drawable.ic_tile_placeholder) // Show placeholder on error
-                    .listener(new com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable>() {
-                        @Override
-                        public boolean onLoadFailed(@androidx.annotation.Nullable com.bumptech.glide.load.engine.GlideException e, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, boolean isFirstResource) {
-                            android.util.Log.e("RecAdapter", "Image Load Failed for URL: " + model, e);
-                            return false; // Allow calling onLoadFailed on target
-                        }
-
-                        @Override
-                        public boolean onResourceReady(android.graphics.drawable.Drawable resource, Object model, com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable> target, com.bumptech.glide.load.DataSource dataSource, boolean isFirstResource) {
-                            android.util.Log.d("RecAdapter", "Image Loaded Successfully from: " + dataSource);
-                            return false;
-                        }
-                    })
+                    .error(R.drawable.ic_tile_placeholder)
                     .into(holder.tileImage);
         } else {
             holder.tileImage.setImageResource(R.drawable.ic_tile_placeholder);
+        }
+
+        // Show match score if available
+        if (product.getSimilarityScore() > 0) {
+            holder.stockBadge.setVisibility(View.VISIBLE);
+            // Convert e.g. 0.956 to "95% Match"
+            int percentage = (int) (product.getSimilarityScore() * 100);
+            if (percentage > 100) percentage = 100;
+            TextView tvBadgeText = holder.itemView.findViewById(R.id.stockBadgeText);
+            if (tvBadgeText != null) {
+                tvBadgeText.setText(percentage + "% MATCH");
+            }
+        } else if (product.getStock() > 0) {
+            holder.stockBadge.setVisibility(View.VISIBLE);
+            TextView tvBadgeText = holder.itemView.findViewById(R.id.stockBadgeText);
+            if (tvBadgeText != null) tvBadgeText.setText("IN STOCK");
+        } else {
+            holder.stockBadge.setVisibility(View.GONE);
         }
         
         // Debug Logging

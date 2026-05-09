@@ -53,8 +53,11 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
 
         // Set fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                // Set status bar to white with dark icons
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+        }
 
         // Enable edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
@@ -204,17 +207,25 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
             tvProductName.setText(currentProductName);
         }
 
-        if (currentProductSku != null && currentProductCategory != null) {
-            String skuText = "SKU: " + currentProductSku + " • " + currentProductCategory;
+        if (currentProductSku != null && !currentProductSku.isEmpty()) {
+            String skuText = "SKU: " + currentProductSku;
+            if (currentProductCategory != null && !currentProductCategory.isEmpty()) {
+                skuText += " • " + currentProductCategory;
+            }
             tvProductSku.setText(skuText);
+        } else if (currentProductCategory != null && !currentProductCategory.isEmpty()) {
+            tvProductSku.setText(currentProductCategory);
+        } else {
+            tvProductSku.setText("SKU: --");
         }
 
         // Price
         if (currentPrice != null && !currentPrice.isEmpty()) {
-            // Convert ₹ to $ if needed
             String displayPrice = currentPrice;
-            if (currentPrice.contains("₹")) {
-                displayPrice = currentPrice.replace("₹", "$");
+            if (currentPrice.contains("$")) {
+                displayPrice = currentPrice.replace("$", "₹");
+            } else if (!currentPrice.contains("₹")) {
+                displayPrice = "₹" + currentPrice;
             }
             tvPrice.setText(displayPrice);
         }
@@ -222,8 +233,10 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
         // Retail Price and Margin
         if (currentRetailPrice != null && !currentRetailPrice.isEmpty()) {
             String displayRetailPrice = currentRetailPrice;
-            if (currentRetailPrice.contains("₹")) {
-                displayRetailPrice = currentRetailPrice.replace("₹", "$");
+            if (currentRetailPrice.contains("$")) {
+                displayRetailPrice = currentRetailPrice.replace("$", "₹");
+            } else if (!currentRetailPrice.contains("₹")) {
+                displayRetailPrice = "₹" + currentRetailPrice;
             }
             tvRetailPrice.setText("Retail Price: " + displayRetailPrice);
         }
@@ -322,22 +335,22 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
     }
 
     private void setDefaultProductData() {
-        // Set default data (Carrara White Marble from your design)
-        currentProductName = "Carrara White Marble";
-        currentProductSku = "FL-8821";
-        currentProductCategory = "Porcelain";
-        currentProductSize = "600×1200mm";
-        currentPrice = "$45.00";
-        currentStock = "120";
-        currentStockStatus = "In Stock";
-        currentWarehouse = "Zone A";
-        currentDimensions = "600 x 1200 mm";
-        currentFinish = "High Gloss";
-        currentThickness = "9 mm";
-        currentCoverage = "1.44 sq. mt / box";
-        currentDescription = "The Carrara White Marble porcelain tile offers the timeless elegance of natural marble with the durability of porcelain. Featuring distinctive grey veining against a luminous white background, this tile brings sophistication to any interior space. Suitable for both residential and commercial high-traffic areas.";
-        currentMargin = "18%";
-        currentRetailPrice = "$55.00";
+        // Clear default data
+        currentProductName = "";
+        currentProductSku = "";
+        currentProductCategory = "";
+        currentProductSize = "";
+        currentPrice = "";
+        currentStock = "";
+        currentStockStatus = "";
+        currentWarehouse = "";
+        currentDimensions = "";
+        currentFinish = "";
+        currentThickness = "";
+        currentCoverage = "";
+        currentDescription = "";
+        currentMargin = "";
+        currentRetailPrice = "";
     }
 
     private void showMoreOptionsMenu() {

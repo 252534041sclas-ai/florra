@@ -1,6 +1,7 @@
 package com.example.florra_a;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Window;
@@ -17,33 +18,49 @@ public class SplashActivity extends AppCompatActivity {
 
         // Make it fullscreen and handle edge-to-edge
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        // Enable edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+                // Set status bar to white with dark icons
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+        }
 
         // Handle notch and status bar
         WindowInsetsControllerCompat windowInsetsController =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.setAppearanceLightStatusBars(false);
-        windowInsetsController.setAppearanceLightNavigationBars(false);
+        if (windowInsetsController != null) {
+            windowInsetsController.setAppearanceLightStatusBars(true);
+            windowInsetsController.setAppearanceLightNavigationBars(true);
+        }
 
         setContentView(R.layout.activity_splash);
 
-        // Handler to navigate to main activity after 3 seconds
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Navigate to your existing MainActivity
-                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
-
-                // Add fade transition
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                navigateNext();
             }
         }, 3000); // 3 seconds delay
+    }
+
+    private void navigateNext() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
+        String userType = sharedPreferences.getString("user_type", "");
+
+        Intent intent;
+        if (isLoggedIn) {
+            if ("admin".equals(userType)) {
+                intent = new Intent(SplashActivity.this, AdminDashboardActivity.class);
+            } else {
+                intent = new Intent(SplashActivity.this, CustomerHomeActivity.class);
+            }
+        } else {
+            intent = new Intent(SplashActivity.this, LoginActivity.class);
+        }
+        
+        startActivity(intent);
+        finish();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
     @Override

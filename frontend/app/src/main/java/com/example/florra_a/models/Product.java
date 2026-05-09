@@ -55,6 +55,12 @@ public class Product implements Serializable {
     @SerializedName("warehouse")
     private String warehouse;
 
+    @SerializedName("similarity_score")
+    private double similarityScore;
+
+    public double getSimilarityScore() { return similarityScore; }
+    public void setSimilarityScore(double similarityScore) { this.similarityScore = similarityScore; }
+
     // Constructors
     public Product() {}
 

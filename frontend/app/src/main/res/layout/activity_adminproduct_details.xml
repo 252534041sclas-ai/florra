@@ -139,7 +139,7 @@
                             android:id="@+id/tvProductName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Carrara White Marble"
+                            android:text=""
                             android:textColor="@color/primary_color"
                             android:textSize="24sp"
                             android:textStyle="bold"
@@ -150,7 +150,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text="Model: FL-8821 • Porcelain"
+                            android:text=""
                             android:textColor="@color/zinc_500"
                             android:textSize="14sp"
                             android:textStyle="normal" />

@@ -19,8 +19,11 @@ public class CustomerAccountActivity extends AppCompatActivity {
 
         // Set fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                // Set status bar to white with dark icons
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+        }
 
         setContentView(R.layout.activity_customer_account);
 
@@ -150,15 +153,36 @@ public class CustomerAccountActivity extends AppCompatActivity {
             });
         }
     }
-
     private void setupProfileButton() {
         View btnEditProfile = findViewById(R.id.btnEditProfile);
         if (btnEditProfile != null) {
             btnEditProfile.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(CustomerAccountActivity.this, "Edit Profile Picture", Toast.LENGTH_SHORT).show();
+                    try {
+                        Intent intent = new Intent(CustomerAccountActivity.this, EditProfileActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    } catch (Exception e) {
+                        android.util.Log.e("AccountActivity", "Error opening EditProfile", e);
+                        Toast.makeText(CustomerAccountActivity.this, "Cannot open Edit Profile", Toast.LENGTH_SHORT).show();
+                    }
                 }
+            });
+        }
+
+        // Add additional click targets for intuitive editing
+        View profileContainer = findViewById(R.id.profileImageContainer);
+        if (profileContainer != null) {
+            profileContainer.setOnClickListener(v -> {
+                startActivity(new Intent(CustomerAccountActivity.this, EditProfileActivity.class));
+            });
+        }
+        
+        View userNameView = findViewById(R.id.tvUserName);
+        if (userNameView != null) {
+            userNameView.setOnClickListener(v -> {
+                startActivity(new Intent(CustomerAccountActivity.this, EditProfileActivity.class));
             });
         }
     }

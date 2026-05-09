@@ -61,13 +61,13 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // Set status bar to white with dark icons
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+        }
         setContentView(R.layout.activity_edit_profile);
 
-        etFullName = findViewById(R.id.etFullName);
-        etEmail = findViewById(R.id.etEmail);
         etFullName = findViewById(R.id.etFullName);
         etEmail = findViewById(R.id.etEmail);
         etMobile = findViewById(R.id.etMobile);
@@ -230,6 +230,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void saveProfileChanges() {
+        Toast.makeText(this, "Saving changes...", Toast.LENGTH_SHORT).show();
         String fullName = etFullName.getText().toString().trim();
         String mobile = etMobile.getText().toString().trim();
         // We do not send email as it might key field. Modify if needed.

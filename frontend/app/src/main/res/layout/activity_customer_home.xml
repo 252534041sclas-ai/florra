@@ -14,11 +14,7 @@
         android:background="@color/white"
         android:elevation="4dp">
 
-        <!-- Status Bar Spacer -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:background="@color/white" />
+        <!-- Status Bar Spacer removed for standard visibility -->
 
         <!-- Toolbar -->
         <LinearLayout
@@ -28,6 +24,7 @@
             android:paddingHorizontal="20dp"
             android:gravity="center_vertical"
             android:background="@color/white"
+            android:clipChildren="false"
             android:paddingTop="4dp">
 
             <!-- App Title and Subtitle -->
@@ -79,6 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:clipChildren="false"
                 android:gravity="center_vertical">
 
                 <!-- Chatbot -->
@@ -90,6 +88,15 @@
                     android:layout_marginEnd="12dp"
                     android:clickable="true"
                     android:focusable="true">
+
+                    <!-- Rainbow Border View -->
+                    <View
+                        android:id="@+id/viewChatbotRainbow"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/bg_rainbow_sweep"
+                        android:visibility="gone" />
 
                     <ImageView
                         android:layout_width="20dp"
@@ -244,6 +251,15 @@
                             android:layout_height="32dp"
                             android:background="@drawable/bg_grey_circle"
                             android:layout_marginBottom="12dp">
+
+                            <!-- Rainbow Border View -->
+                            <View
+                                android:id="@+id/viewScanRainbow"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_centerInParent="true"
+                                android:background="@drawable/bg_rainbow_sweep"
+                                android:visibility="gone" />
 
                             <ImageView
                                 android:layout_width="16dp"

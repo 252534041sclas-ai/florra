@@ -32,8 +32,11 @@ public class AdminCatalogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Set fullscreen
-        getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                // Set status bar to white with dark icons
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+        }
 
         setContentView(R.layout.activity_admin_catalog);
 
@@ -314,22 +317,20 @@ public class AdminCatalogActivity extends AppCompatActivity {
 
     private void fetchProducts() {
         ApiService apiService = RetrofitClient.getApiService();
-        apiService.getInventory(null, null, null).enqueue(new Callback<InventoryResponse>() {
+        apiService.getProducts().enqueue(new Callback<List<Product>>() {
             @Override
-            public void onResponse(Call<InventoryResponse> call, Response<InventoryResponse> response) {
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    if (response.body().getProducts() != null) {
-                        allProducts = response.body().getProducts();
-                        tileAdapter.updateData(allProducts);
-                        applyFilter(selectedFilter);
-                    }
+                    allProducts = response.body();
+                    tileAdapter.updateData(allProducts);
+                    applyFilter(selectedFilter);
                 } else {
                     Toast.makeText(AdminCatalogActivity.this, "Failed to load catalog", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(Call<InventoryResponse> call, Throwable t) {
+            public void onFailure(Call<List<Product>> call, Throwable t) {
                 Toast.makeText(AdminCatalogActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

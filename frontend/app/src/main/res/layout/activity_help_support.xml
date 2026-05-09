@@ -15,11 +15,7 @@
         android:background="@color/calc_gray_50"
         android:elevation="4dp">
 
-        <!-- Status Bar Spacer -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:background="@color/calc_gray_50" />
+        <!-- Status Bar Spacer Removed -->
 
         <!-- Toolbar with Back and Title -->
         <RelativeLayout

@@ -399,6 +399,8 @@
     <color name="chatbot_ai_border">#E5E7EB</color>
     <color name="chatbot_user_bg">#000000</color>
     <color name="chatbot_user_border">#000000</color>
+    <color name="chatbot_primary">#000000</color>
+    <color name="chatbot_light_blue">#E0F2FE</color>
 
     <!-- Text Colors for Chat -->
     <color name="chatbot_text_dark">#111318</color>

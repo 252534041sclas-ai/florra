@@ -13,13 +13,13 @@ INDEX_FILE = "vectorstore/products.index"
 META_FILE = "vectorstore/products.pkl"
 
 # Load Model
-print(f"🔄 Loading CLIP model: {MODEL_NAME}...")
+print(f"Loading CLIP model: {MODEL_NAME}...")
 model = SentenceTransformer(MODEL_NAME)
 
 # Load Data
-print("📂 Loading product data...")
+print("Loading product data...")
 if not os.path.exists(DATA_FILE):
-    print(f"❌ {DATA_FILE} not found. Run fetch_products.py first.")
+    print(f"File {DATA_FILE} not found. Run fetch_products.py first.")
     exit(1)
 
 with open(DATA_FILE, "r", encoding="utf-8") as f:
@@ -28,7 +28,7 @@ with open(DATA_FILE, "r", encoding="utf-8") as f:
 vectors = []
 metadata = []
 
-print(f"🚀 Processing {len(products)} products...")
+print(f"Processing {len(products)} products...")
 
 for p in products:
     # 1. Text Embedding
@@ -71,7 +71,7 @@ for p in products:
 
 # Convert to FAISS format
 if not vectors:
-    print("❌ No vectors generated.")
+    print("No vectors generated.")
     exit(1)
 
 vectors_np = np.array(vectors).astype('float32')
@@ -80,7 +80,7 @@ vectors_np = np.array(vectors).astype('float32')
 faiss.normalize_L2(vectors_np)
 
 # Create Index
-print(f"🧠 Indexing {len(vectors)} vectors...")
+print(f"Indexing {len(vectors)} vectors...")
 dimension = vectors_np.shape[1]
 index = faiss.IndexFlatIP(dimension) # Inner Product (Cosine after norm)
 index.add(vectors_np)
@@ -91,5 +91,5 @@ faiss.write_index(index, INDEX_FILE)
 with open(META_FILE, "wb") as f:
     pickle.dump(metadata, f)
 
-print("✅ Ingestion Complete!")
-print(f"💾 Index saved to {INDEX_FILE}")
+print("Ingestion Complete!")
+print(f"Index saved to {INDEX_FILE}")

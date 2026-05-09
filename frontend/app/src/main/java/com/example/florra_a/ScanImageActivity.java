@@ -54,8 +54,11 @@ public class ScanImageActivity extends AppCompatActivity {
 
         // Set fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                // Set status bar to white with dark icons
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+        }
 
         setContentView(R.layout.activity_scan_image);
 
@@ -108,28 +111,47 @@ public class ScanImageActivity extends AppCompatActivity {
     }
 
     private void openCamera() {
+        Log.d(TAG, "openCamera() called");
         if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA)
                 != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Requesting camera permission");
             androidx.core.app.ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.CAMERA}, REQUEST_CAMERA);
             return;
         }
 
         try {
+            Log.d(TAG, "Creating camera intent");
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                File photoFile = createImageFile();
-                if (photoFile != null) {
-                    Uri photoURI = FileProvider.getUriForFile(this,
-                            getApplicationContext().getPackageName() + ".fileprovider",
-                            photoFile);
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    startActivityForResult(takePictureIntent, REQUEST_CAMERA);
-                }
+            // Removed resolveActivity check as it's unreliable on Android 11+
+            File photoFile = createImageFile();
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        getApplicationContext().getPackageName() + ".fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_CAMERA);
+            } else {
+                Log.e(TAG, "Failed to create image file");
             }
         } catch (Exception e) {
+            Log.e(TAG, "Camera Error", e);
             e.printStackTrace();
             Toast.makeText(this, "Camera Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA) {
+            if (grantResults.length > 0 && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Camera permission granted");
+                openCamera();
+            } else {
+                Log.w(TAG, "Camera permission denied");
+                Toast.makeText(this, "Camera permission is required to scan tiles", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

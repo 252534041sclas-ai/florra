@@ -1,5 +1,6 @@
 package com.example.florra_a;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -20,7 +21,7 @@ import java.util.List;
 public class AIRecommendationActivity extends AppCompatActivity {
 
     private RecyclerView rvRecommendations;
-    private RecommendationAdapter adapter;
+    private TileAdapter adapter;
     private List<Product> recommendedProducts;
     private TextView tvMatchCount;
 
@@ -30,8 +31,11 @@ public class AIRecommendationActivity extends AppCompatActivity {
 
         // Set fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                // Set status bar to white with dark icons
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+        }
 
         setContentView(R.layout.activity_ai_recommendation);
 
@@ -60,8 +64,56 @@ public class AIRecommendationActivity extends AppCompatActivity {
 
         tvMatchCount.setText("Found " + recommendedProducts.size() + " similar matches");
 
-        adapter = new RecommendationAdapter(this, recommendedProducts);
+        adapter = new TileAdapter(this, recommendedProducts);
+        adapter.setOnItemClickListener(new TileAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Product product) {
+                Intent intent = new Intent(AIRecommendationActivity.this, ProductDetailsActivity.class);
+                intent.putExtra("productId", product.getId());
+                intent.putExtra("tileName", product.getTileName());
+                intent.putExtra("tilePrice", String.valueOf(product.getPrice()));
+                intent.putExtra("tileSize", product.getSize());
+                intent.putExtra("productFinish", product.getFinish());
+                intent.putExtra("productCategory", product.getCategory());
+                intent.putExtra("productDescription", product.getDescription());
+                intent.putExtra("productImage", product.getImage());
+                intent.putExtra("stockStatus", product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK");
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            }
+
+            @Override
+            public void onItemLongClick(Product product) {}
+
+            @Override
+            public void onBookmarkClick(Product product) {
+                // Logic for bookmarking
+                toggleFavorite(product);
+            }
+
+            @Override
+            public void onAddToCartClick(Product product) {}
+        });
         rvRecommendations.setAdapter(adapter);
+    }
+
+    private void toggleFavorite(Product product) {
+        if (product.getId() == 0) return;
+        
+        java.util.Map<String, Integer> body = new java.util.HashMap<>();
+        body.put("product_id", product.getId());
+
+        com.example.florra_a.network.RetrofitClient.getApiService().addToFavorites(body).enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
+            @Override
+            public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(AIRecommendationActivity.this, "Updated favorites", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {}
+        });
     }
 
     private void setupClickListeners() {

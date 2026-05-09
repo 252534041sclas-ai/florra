@@ -16,6 +16,7 @@ public interface ChatbotApiService {
 
     class ChatResponse {
         public String reply;
+        public java.util.List<com.example.florra_a.models.Product> products;
     }
 
     @POST("customer/chat")

@@ -12,6 +12,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.os.Handler;
 import android.widget.TextView;
 //import com.example.florra_a.utils.ChatbotActivity;
 
@@ -33,16 +36,17 @@ public class CustomerHomeActivity extends AppCompatActivity {
     private RecyclerView rvNewArrivals;
     private HomeProductAdapter homeProductAdapter;
     private TextView tvActiveEnquiriesCount;
+    private View viewChatbotRainbow, viewScanRainbow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set fullscreen
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        // Set status bar to white with dark icons
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+        }
         setContentView(R.layout.activity_customer_home);
 
         Log.d("DEBUG", "CustomerHomeActivity loaded");
@@ -50,6 +54,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
         setupViews();
         setupAllClickListeners();
         fetchDashboardData();
+        startRainbowAnimations();
     }
 
     private void setupViews() {
@@ -70,6 +75,33 @@ public class CustomerHomeActivity extends AppCompatActivity {
             homeProductAdapter = new HomeProductAdapter(this, new ArrayList<>());
             rvNewArrivals.setAdapter(homeProductAdapter);
         }
+
+        viewChatbotRainbow = findViewById(R.id.viewChatbotRainbow);
+        viewScanRainbow = findViewById(R.id.viewScanRainbow);
+    }
+
+    private void startRainbowAnimations() {
+        if (viewChatbotRainbow == null || viewScanRainbow == null) return;
+
+        Animation rotateAnim = AnimationUtils.loadAnimation(this, R.anim.rotate_infinite);
+
+        // Show and start animation
+        viewChatbotRainbow.setVisibility(View.VISIBLE);
+        viewScanRainbow.setVisibility(View.VISIBLE);
+        
+        viewChatbotRainbow.startAnimation(rotateAnim);
+        viewScanRainbow.startAnimation(rotateAnim);
+
+        // Stop after 3 seconds
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                viewChatbotRainbow.clearAnimation();
+                viewScanRainbow.clearAnimation();
+                viewChatbotRainbow.setVisibility(View.GONE);
+                viewScanRainbow.setVisibility(View.GONE);
+            }
+        }, 3000);
     }
 
     private void fetchDashboardData() {
@@ -223,6 +255,8 @@ public class CustomerHomeActivity extends AppCompatActivity {
             btnChatbot.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.d("DEBUG", "Chatbot button clicked!");
+                    Toast.makeText(CustomerHomeActivity.this, "Opening AI Assistant...", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(CustomerHomeActivity.this, AIChatActivity.class);
                     startActivity(intent);
                 }

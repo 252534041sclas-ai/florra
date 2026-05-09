@@ -36,4 +36,8 @@ urlpatterns = [
     path("notifications/mark-all-read/", MarkAllReadView.as_view()),
     path("ai/scan-tile/", AIScanView.as_view()),
     path("customer/chat/", CustomerChatView.as_view()),
+    
+    # Moved from florra_admin
+    path("customer/search-image/", AIScanView.as_view()), # Using existing AIScanView
+    path("customer/notifications/", NotificationListView.as_view()), # Using existing NotificationListView
 ]
