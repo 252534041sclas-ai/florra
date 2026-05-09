@@ -42,13 +42,13 @@
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btnSort"
+                android:id="@+id/btnFilterIcon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/bg_circle_gray"
                 android:padding="10dp"
-                android:src="@drawable/ic_sort"
+                android:src="@drawable/ic_filter_list"
                 android:tint="#1a1a1a" />
         </RelativeLayout>
 
@@ -133,10 +133,25 @@
                     android:paddingEnd="16dp"
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp"
-                    android:text="Color Palette"
+                    android:text="Color Match"
                     android:textColor="#475569"
                     android:textSize="12sp"
                     android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/btnPattern"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_chip_unselected"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:text="Pattern"
+                    android:textColor="#475569"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="8dp" />
+
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>

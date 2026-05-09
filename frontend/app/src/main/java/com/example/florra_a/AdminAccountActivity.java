@@ -22,13 +22,13 @@ import com.squareup.picasso.Transformation;
 
 public class AdminAccountActivity extends AppCompatActivity {
 
-    // Bottom Navigation Buttons
-    private Button btnDashboard, btnInventory, btnQuotes, btnAccount;
+    // Bottom Navigation Views
+    private View btnDashboard, btnInventory, btnQuotes, btnAccount;
     private Button btnBack, btnLogout;
 
     // Card Views
     private CardView cardEditShop, cardBusinessInfo, cardManageStaff;
-    private CardView cardSecurity, cardAppSettings, cardHelp, cardAbout;
+    private CardView cardHelp, cardAbout;
 
     // Profile Image
     private ImageView ivProfile;
@@ -37,22 +37,11 @@ public class AdminAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set fullscreen and edge-to-edge
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-                // Set status bar to white with dark icons
+        // Set status bar to dark teal
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+            getWindow().getDecorView().setSystemUiVisibility(0); // White icons
+            getWindow().setStatusBarColor(android.graphics.Color.parseColor("#014D4E"));
         }
-
-        // Enable edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        // Handle notch and status bar
-        WindowInsetsControllerCompat windowInsetsController =
-                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.setAppearanceLightStatusBars(false);
-        windowInsetsController.setAppearanceLightNavigationBars(false);
 
         setContentView(R.layout.activity_admin_account);
 
@@ -61,9 +50,6 @@ public class AdminAccountActivity extends AppCompatActivity {
 
         // Setup click listeners
         setupClickListeners();
-
-        // Set Account as active initially
-        setActiveTab(btnAccount);
 
         // Load profile image
         loadProfileImage();
@@ -90,49 +76,23 @@ public class AdminAccountActivity extends AppCompatActivity {
             cardManageStaff = findViewById(R.id.cardManageStaff);
 
             // System & Support Cards
-            cardSecurity = findViewById(R.id.cardSecurity);
-            cardAppSettings = findViewById(R.id.cardAppSettings);
             cardHelp = findViewById(R.id.cardHelp);
             cardAbout = findViewById(R.id.cardAbout);
-
-            // Log which views are null for debugging
-            logNullViews();
 
         } catch (Exception e) {
             Toast.makeText(this, "Error initializing views: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void logNullViews() {
-        StringBuilder log = new StringBuilder("Null Views: ");
-
-        if (btnDashboard == null) log.append("btnDashboard, ");
-        if (btnInventory == null) log.append("btnInventory, ");
-        if (btnQuotes == null) log.append("btnQuotes, ");
-        if (btnAccount == null) log.append("btnAccount, ");
-        if (btnBack == null) log.append("btnBack, ");
-        if (btnLogout == null) log.append("btnLogout, ");
-
-        // Remove trailing comma and space
-        String logMessage = log.toString();
-        if (logMessage.endsWith(", ")) {
-            logMessage = logMessage.substring(0, logMessage.length() - 2);
-        }
-
-        if (!logMessage.equals("Null Views: ")) {
-            Toast.makeText(this, logMessage, Toast.LENGTH_LONG).show();
-        }
-    }
-
     private void loadProfileImage() {
         try {
-            // The profile image URL from your HTML
+            // The profile image URL
             String profileImageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuB7A0vo_l2v1FXZFzyvYBbUew2LBVTSZla6MCGIiDJBpTzBtJaD651obQWhd789__6kiefzM_P94pjG8ui_YK9njt0jj9VzDTejy2WUxb3mtRuUqueUOWZILdw8KkVNwLAKNPHw8cfgsd_oYzlZJ66kc0UVAUHSw7Y2nUDX9kR_vHHRl0op43OZrA_Ldp0ENLOtkIEQ4biGuuMRukbUJYHLudw73Ez7UUbloAkXCB_wfPTunxgvkpjYbKARxrkhZ18Ksh8CI8msgyp9";
 
             // Load image with Picasso
             Picasso.get()
                     .load(profileImageUrl)
-                    .placeholder(R.drawable.ic_profile_placeholder) // Make sure this drawable exists
+                    .placeholder(R.drawable.ic_profile_placeholder)
                     .error(R.drawable.ic_profile_placeholder)
                     .transform(new CircleTransform())
                     .into(ivProfile);
@@ -184,172 +144,75 @@ public class AdminAccountActivity extends AppCompatActivity {
     private void setupClickListeners() {
         // Back button
         if (btnBack != null) {
-            btnBack.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
+            btnBack.setOnClickListener(v -> onBackPressed());
         }
 
         // Logout button
         if (btnLogout != null) {
-            btnLogout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    performLogout();
-                }
-            });
+            btnLogout.setOnClickListener(v -> performLogout());
         }
 
         // Shop Management Cards
         if (cardEditShop != null) {
-            cardEditShop.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(AdminAccountActivity.this, "Edit Shop Profile", Toast.LENGTH_SHORT).show();
-                }
-            });
+            cardEditShop.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Edit Shop Profile", Toast.LENGTH_SHORT).show());
         }
 
         if (cardBusinessInfo != null) {
-            cardBusinessInfo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(AdminAccountActivity.this, "Business Information", Toast.LENGTH_SHORT).show();
-                }
-            });
+            cardBusinessInfo.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Business Information", Toast.LENGTH_SHORT).show());
         }
 
         if (cardManageStaff != null) {
-            cardManageStaff.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(AdminAccountActivity.this, "Manage Staff", Toast.LENGTH_SHORT).show();
-                }
-            });
+            cardManageStaff.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Manage Staff", Toast.LENGTH_SHORT).show());
         }
 
         // System & Support Cards
-        if (cardSecurity != null) {
-            cardSecurity.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(AdminAccountActivity.this, "Security & Access", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
-        if (cardAppSettings != null) {
-            cardAppSettings.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(AdminAccountActivity.this, "App Settings", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-
         if (cardHelp != null) {
-            cardHelp.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(AdminAccountActivity.this, "Help & Support", Toast.LENGTH_SHORT).show();
-                }
-            });
+            cardHelp.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Help & Support", Toast.LENGTH_SHORT).show());
         }
 
         if (cardAbout != null) {
-            cardAbout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(AdminAccountActivity.this, "About Florra", Toast.LENGTH_SHORT).show();
-                }
-            });
+            cardAbout.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "About Florra", Toast.LENGTH_SHORT).show());
         }
 
         // Bottom Navigation
         if (btnDashboard != null) {
-            btnDashboard.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(AdminAccountActivity.this, AdminDashboardActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                }
+            btnDashboard.setOnClickListener(v -> {
+                Intent intent = new Intent(AdminAccountActivity.this, AdminDashboardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
 
         if (btnInventory != null) {
-            btnInventory.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(AdminAccountActivity.this, AdminCatalogActivity.class);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                }
+            btnInventory.setOnClickListener(v -> {
+                Intent intent = new Intent(AdminAccountActivity.this, AdminCatalogActivity.class);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
 
         if (btnQuotes != null) {
-            btnQuotes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(AdminAccountActivity.this, EnquiriesActivity.class);
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                }
+            btnQuotes.setOnClickListener(v -> {
+                Intent intent = new Intent(AdminAccountActivity.this, EnquiriesActivity.class);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
 
         if (btnAccount != null) {
-            btnAccount.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Already on Account
-                }
+            btnAccount.setOnClickListener(v -> {
+                // Already on Account
             });
         }
 
         // Profile Image Click
         if (ivProfile != null) {
-            ivProfile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(AdminAccountActivity.this, "Edit Profile Picture", Toast.LENGTH_SHORT).show();
-                }
-            });
+            ivProfile.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Edit Profile Picture", Toast.LENGTH_SHORT).show());
         }
-    }
-
-    private void setActiveTab(Button activeButton) {
-        // CRITICAL: Check if button is null
-        if (activeButton == null) {
-            Toast.makeText(this, "Cannot set active tab - button is null", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Reset all buttons - with null checks
-        if (btnDashboard != null) {
-            btnDashboard.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
-        }
-        if (btnInventory != null) {
-            btnInventory.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
-        }
-        if (btnQuotes != null) {
-            btnQuotes.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
-        }
-        if (btnAccount != null) {
-            btnAccount.setTextColor(ContextCompat.getColor(this, R.color.zinc_400));
-        }
-
-        // Set active button color
-        activeButton.setTextColor(ContextCompat.getColor(this, R.color.primary_color));
-
-        // Note: You'll need to adjust for icons separately
     }
 
     private void performLogout() {

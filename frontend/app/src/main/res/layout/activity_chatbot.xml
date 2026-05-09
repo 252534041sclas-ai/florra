@@ -266,10 +266,21 @@
                 android:layout_weight="1"
                 android:background="@drawable/bg_chat_input">
 
+                <ImageView
+                    android:id="@+id/ivImagePreview"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="8dp"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/bg_rounded_4"
+                    android:visibility="gone" />
+
                 <EditText
                     android:id="@+id/edtMessage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/ivImagePreview"
                     android:hint="Ask me anything..."
                     android:padding="16dp"
                     android:paddingEnd="80dp"

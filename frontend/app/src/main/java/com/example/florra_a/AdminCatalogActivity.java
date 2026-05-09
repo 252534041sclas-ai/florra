@@ -32,10 +32,10 @@ public class AdminCatalogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Set fullscreen
-                // Set status bar to white with dark icons
+        // Set status bar to dark teal
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+            getWindow().getDecorView().setSystemUiVisibility(0); // White icons
+            getWindow().setStatusBarColor(android.graphics.Color.parseColor("#014D4E"));
         }
 
         setContentView(R.layout.activity_admin_catalog);
@@ -53,9 +53,8 @@ public class AdminCatalogActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        // Fix: Use View or Button generic type to avoid ClassCastException
         // Dashboard button
-        Button btnDashboard = findViewById(R.id.bottomDashboard);
+        View btnDashboard = findViewById(R.id.bottomDashboard);
         if (btnDashboard != null) {
             btnDashboard.setOnClickListener(v -> {
                 Intent intent = new Intent(AdminCatalogActivity.this, AdminDashboardActivity.class);
@@ -67,7 +66,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
         }
 
         // Catalog button - Already here
-        Button btnCatalog = findViewById(R.id.bottomInventory);
+        View btnCatalog = findViewById(R.id.bottomInventory);
         if (btnCatalog != null) {
             btnCatalog.setOnClickListener(v -> {
                 // Already on catalog
@@ -75,7 +74,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
         }
 
         // Enquiries button
-        Button btnEnquiries = findViewById(R.id.bottomQuotes);
+        View btnEnquiries = findViewById(R.id.bottomQuotes);
         if (btnEnquiries != null) {
             btnEnquiries.setOnClickListener(v -> {
                 Intent intent = new Intent(AdminCatalogActivity.this, EnquiriesActivity.class);
@@ -86,7 +85,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
         }
 
         // Account button
-        Button btnAccount = findViewById(R.id.bottomAccount);
+        View btnAccount = findViewById(R.id.bottomAccount);
         if (btnAccount != null) {
             btnAccount.setOnClickListener(v -> {
                 Intent intent = new Intent(AdminCatalogActivity.this, AdminAccountActivity.class);

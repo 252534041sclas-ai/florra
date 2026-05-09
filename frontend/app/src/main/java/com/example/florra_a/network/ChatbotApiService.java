@@ -24,5 +24,8 @@ public interface ChatbotApiService {
 
     @retrofit2.http.Multipart
     @POST("customer/search_image")
-    Call<ChatResponse> searchImage(@retrofit2.http.Part okhttp3.MultipartBody.Part image);
+    Call<ChatResponse> searchImage(
+            @retrofit2.http.Part okhttp3.MultipartBody.Part image,
+            @retrofit2.http.Query("message") String message
+    );
 }

@@ -13,7 +13,7 @@ import io
 app = FastAPI()
 
 # Configuration
-MODEL_NAME = "sentence-transformers/clip-ViT-B-32"
+MODEL_NAME = "sentence-transformers/clip-ViT-L-14"
 INDEX_FILE = "vectorstore/products.index"
 META_FILE = "vectorstore/products.pkl"
 DJANGO_BASE_URL = "http://127.0.0.1:8000/api"
@@ -27,9 +27,10 @@ FAQS = {
 }
 
 # Configuration
-MODEL_NAME = "sentence-transformers/clip-ViT-B-32"
+MODEL_NAME = "sentence-transformers/clip-ViT-L-14"
 INDEX_FILE = "vectorstore/products.index"
 META_FILE = "vectorstore/products.pkl"
+MIN_SIMILARITY_THRESHOLD = 0.85  # Strict threshold for 100% accuracy feel
 
 # Global State
 model = None
@@ -70,13 +71,26 @@ def search_index(vector, k=5):
     results = []
     for idx_dist, idx_val in zip(D[0], I[0]):
         if idx_val < len(metadata) and idx_val != -1:
-            match = metadata[idx_val]
-            prod = match["product"]
-            # Add similarity metadata to product object for the UI
-            prod["similarity_score"] = float(idx_dist)
-            prod["match_type"] = match["type"]
-            results.append(prod)
-    return results
+            # Check if it meets the minimum similarity for "exactness"
+            if idx_dist >= MIN_SIMILARITY_THRESHOLD:
+                match = metadata[idx_val]
+                prod = match["product"]
+                prod["similarity_score"] = float(idx_dist)
+                prod["match_type"] = match["type"]
+                results.append(prod)
+    
+    # Sort by similarity
+    results.sort(key=lambda x: x["similarity_score"], reverse=True)
+    
+    # Deduplicate results (if multiple augmentations match the same product)
+    seen_ids = set()
+    unique_results = []
+    for r in results:
+        if r["id"] not in seen_ids:
+            unique_results.append(r)
+            seen_ids.add(r["id"])
+            
+    return unique_results[:k]
 
 def get_django_data(endpoint, params=None):
     try:
@@ -88,9 +102,13 @@ def get_django_data(endpoint, params=None):
     return None
 
 def classify_intent(message):
-    message = message.lower()
+    message = message.lower().strip()
     
-    # Visual Search request (Tanglish/Tamil)
+    # 0. Greetings
+    if any(k in message for k in ["hi", "hello", "hey", "vanakkam", "vanakam", "good morning", "good evening", "how are you", "yo"]):
+        # But if it also contains "tile" or categories, it might be a search
+        if not any(k in message for k in ["tile", "floor", "wall", "bathroom", "kitchen"]):
+            return "greeting"
     if any(k in message for k in ["match", "similar", "iddhu mari", "idhupola", "photo", "image", "upload"]):
         return "visual_search_hint"
 
@@ -120,101 +138,153 @@ def classify_intent(message):
 
 def format_product_list(products, prefix=""):
     if not products:
-        return "I couldn't find any matching tiles."
+        return "I couldn't find any matching tiles right now. 😊"
     
     reply = prefix + "\n\n"
     for p in products:
-        price_str = f"₹{p['price']}/sqft" if 'price' in p and p['price'] else ""
-        reply += f"• *{p['name']}* ({p['category']})\n  Finish: {p['finish']}, Size: {p['size']} {price_str}\n"
+        price_str = f"₹{p['price']}/sqft" if 'price' in p and p['price'] else "Price on request"
+        texture_str = f"{p['finish']}" if 'finish' in p else "Natural"
+        reply += f"✨ *{p['name']}* ({p['category']})\n   {texture_str} | {price_str} | Size: {p['size']}\n"
     return reply
+
+# --- PERSONALITY & RULES (from training guidelines) ---
+ASSISTANT_PERSONALITY = {
+    "name": "Florra Customer AI Assistant",
+    "tone": "Friendly, Professional, Conversational, Sales-focused",
+    "languages": ["English", "Tamil", "Tanglish"],
+    "rules": [
+        "Communicate naturally like a showroom assistant",
+        "Don't sound robotic",
+        "Keep responses short",
+        "Ask simple follow-up questions",
+        "Never discuss backend or technical details"
+    ]
+}
+
+def get_personality_response(intent, products=None, query=""):
+    query = query.lower()
+    
+    # 1. GREETINGS & INTRO
+    if intent == "greeting":
+        if "hello" in query:
+            return "Hello! 👋 Welcome back to Florra. Designing ungada dream home? I'm here to help!"
+        if any(k in query for k in ["vanakkam", "vanakam", "namaste"]):
+            return "Vanakkam! 🙏 Florra Tiles ungali anbudan varaverkirathu. Enna tiles choose panna help venum?"
+        
+        # Proactive suggestion on simple Hi
+        trending_reply = "Hi there! 😊 I'm your Florra Assistant.\n\nIppo trend-ah irukura top 3 designs check pannunga: \n\n"
+        if products:
+            trending_reply += format_product_list(products)
+        else:
+            trending_reply += "✨ *Carrara White* (Floor)\n✨ *Rustic Oak* (Living)\n✨ *Black Marquina* (Floor)"
+        trending_reply += "\n\nEdhavadhu particular room-ku designs venuma? Bathroom or Kitchen?"
+        return trending_reply
+
+    # 2. ROOM SPECIFIC ADVICE (Tanglish)
+    if any(k in query for k in ["bathroom", "restroom", "toilet"]):
+        return "Bathroom ku anti-skid matte tiles thaan best safety. 🚿 Dark colors like Grey or Brown choice pannunga, maintain panna easy ah irukum. Matching wall tiles show pannata?"
+    
+    if any(k in query for k in ["hall", "living", "veranda"]):
+        return "Living room ku glossy large size tiles (2x4 or 4x8) premium look kudukum. ✨ Light colors like Beige or Off-White try pannunga, room perusa theriyum. Options kaatata?"
+    
+    if any(k in query for k in ["kitchen", "samayal"]):
+        return "Kitchen wall tiles stain-resistant-ah irukanum. 🍳 Pattern designs or subway tiles ippo trend. Floor-ku anti-skid matte finish suggest panren."
+    
+    if any(k in query for k in ["bedroom", "padukai"]):
+        return "Bedroom ku wooden finish tiles or light marble designs romba cozy-ah irukum. 🛌 Nalla sleep and comfort kulla look idhu!"
+
+    if any(k in query for k in ["parking", "outdoor", "balcony"]):
+        return "Parking and Outdoor-ku heavy-duty 12mm or 16mm thickness tiles thaan correct. 🚗 Rough finish anti-skid tiles select pannunga, rain time la safety-ah irukum."
+
+    # 3. MATERIAL & TEXTURE (Tanglish)
+    if "marble" in query:
+        return "Marble finish tiles eppovume classic look! 😍 Real marble range la premium vitrified tiles available. Maintenance-free luxury idhu!"
+    
+    if "wood" in query or "maram" in query:
+        return "Wooden finish tiles natural look kudukum. 🌳 Hall or Bedroom ku idhu best choice. Real wood mariye textures available!"
+
+    # 4. BUDGET & PRICE (Tanglish)
+    if any(k in query for k in ["budget", "cheap", "low price", "kammi", "koraivana"]):
+        return "Kandippa! 😊 Budget-friendly options starting from ₹45/sqft la iruku. Economy range matte and glossy designs kaatava?"
+    
+    if any(k in query for k in ["premium", "luxury", "best quality", "costly"]):
+        return "Luxury search panringala? ✨ Full-body vitrified and Italian marble finish tiles thaan premium choice. Uncompromised quality!"
+
+    # 5. FAQ & SERVICES
+    if intent == "faq":
+        if any(k in query for k in ["delivery", "time", "eppo"]):
+            return "Delivery usually 3-5 days la aayidum across Tamil Nadu. 🚛 Fast delivery panna try panvom!"
+        if any(k in query for k in ["return", "replace", "broken"]):
+            return "48 hours kulla return pannalam if tiles unused. Broken tiles direct-ah replace aayidum. 👍"
+        if any(k in query for k in ["install", "partner", "fixing"]):
+            return "Yes, fixing-ku nalla partner contractors irukanga. Area details sonna correct cost solren. 👷‍♂️"
+        if any(k in query for k in ["timing", "open", "close"]):
+            return "Showroom Morning 10 AM to Night 8 PM open-ah irukum. All days active! 🕙"
+        return "Showroom timing, delivery, return policy pathi na solluven. Enna help venum? 😊"
+
+    if intent == "track_order":
+        return "Sure! Order track panna ungada Bill Number sollunga. Delivery status check panni solren. 📦"
+
+    if intent == "calculate_price":
+        return "Okay! Room dimensions (length x width) sollunga, approximate cost and box count calculate panni solren. 📐"
+
+    # 6. PRODUCT SHOWCASE (FALLBACK)
+    if intent == "recommendations":
+        reply = "🌟 Based on your choice, check out these premium tiles. Designs trending-ah irukum! \n\n"
+        reply += format_product_list(products) if products else "• Carrara Marble\n• Satin Grey\n• Oak Wood"
+        reply += "\nUngal budget range sollunga, specific options suggest panren. 😊"
+        return reply
+
+    if intent == "search_products":
+        if not products:
+            return "Sorry, andha design ippo stock la illa. 😅 Vera design or different color try pannalama?"
+        
+        reply = "Yes, kandippa! 😊 Indha designs unga description ku matching-ah irukum: \n\n"
+        reply += format_product_list(products)
+        reply += "\nLarge size tiles venuma or standard size?"
+        return reply
+
+    return "I'm here to help! Tiles choice, quotations, or tracking orders pathi edhu venum nallum kelunga. 😊"
 
 @app.post("/customer/chat")
 def chat(req: ChatRequest):
     if not model or not index:
-        return {"reply": "System initializing or index missing."}
+        return {"reply": "Initializing... Please wait a moment. 😊"}
 
     intent = classify_intent(req.message)
-    print(f"🤖 Intent Detected: {intent} for message: {req.message}")
+    print(f"🤖 Personality Intent: {intent} for: {req.message}")
 
-    # --- HANDLE INTENTS ---
+    # For search/recommendations or generic Hi, get some products
+    products = []
+    if intent in ["search_products", "recommendations", "greeting"]:
+        # For greeting, search for "trending"
+        search_query = req.message if intent != "greeting" else "trending top quality tiles"
+        vec = model.encode([search_query])
+        products = search_index(vec, k=3)
 
-    if intent == "visual_search_hint":
-        return {"reply": "I can definitely help you find similar tiles! Please click the 📎 attachment icon to upload a photo of the tile you're looking for."}
-
-    # 1. TRACK ORDER
-    if intent == "track_order":
-        # Extract Bill No if present
-        bill_no_match = re.search(r'([A-Z0-9]+)', req.message.upper())
-        if bill_no_match:
-            bill_no = bill_no_match.group(1)
-            bills = get_django_data("bills/list/", {"search": bill_no})
-            if bills:
-                b = bills[0]
-                return {"reply": f"📦 Order Status for {b['bill_no']}:\nStatus: {b['status']}\nDate: {b['bill_date'][:10]}\nTotal: ₹{b['grand_total']}"}
-        return {"reply": "Please provide your Bill Number (e.g., BILL001) so I can track it for you."}
-
-    # 2. CHECK QUOTATION
-    if intent == "check_quote":
-        enquiries = get_django_data("enquiries/")
-        if enquiries:
-            e = enquiries[0]
-            reply = f"📝 Quotation Status:\nStatus: {e['status'].title()}\n"
-            if e['quotation_price']:
-                reply += f"Estimated Price: ₹{e['quotation_price']}\nNotes: {e['quotation_notes']}"
-            else:
-                reply += "Our team is still reviewing your request. We'll notify you soon."
-            return {"reply": reply}
-        return {"reply": "You don't have any active quotation requests."}
-
-    # 3. CALCULATE PRICE
-    if intent == "calculate_price":
-        nums = re.findall(r'\d+', req.message)
-        if len(nums) >= 2:
-            w, h = float(nums[0]), float(nums[1])
-            area = w * h
-            price = area * 60 
-            return {"reply": f"📐 Calculation for {w}x{h} room:\nTotal Area: {area} sqft\nApproximate Tiles Needed: {round(area/16)} boxes (for 2x2)\nEstimated Cost: ₹{price} (@₹60/sqft)"}
-        return {"reply": "Please provide the room dimensions (e.g., 10x12) for estimation."}
-
-    # 4. FAQ
-    if intent == "faq":
-        for key in FAQS:
-            if key in req.message.lower():
-                return {"reply": f"ℹ️ {FAQS[key]}"}
-        return {"reply": "I can help with delivery, returns, and showroom info. What would you like to know?"}
-
-    # 5. RECOMMENDATIONS & SEARCH (CLIP)
-    vec = model.encode([req.message])
-    products = search_index(vec, k=5)
-    
-    if intent == "recommendations":
-        prefix = "🌟 Based on your preference, I recommend these premium tiles:"
-    else:
-        prefix = "🔍 I found these tiles matching your description:"
-
-    reply = format_product_list(products, prefix)
+    reply = get_personality_response(intent, products, req.message)
     return {"reply": reply, "products": products}
 
 @app.post("/customer/search_image")
-async def search_image(file: UploadFile = File(...)):
+async def search_image(file: UploadFile = File(...), message: str = Query(None)):
     if not model or not index:
-        return {"reply": "System initializing or index missing."}
+        return {"reply": "System initializing... Just a second! 😊"}
 
-    # 1. Read Image
-    print(f"📸 Processing uploaded image for Visual Search: {file.filename}")
     content = await file.read()
     image = Image.open(io.BytesIO(content))
+    img_vec = model.encode(image)
     
-    # 2. Generate Image Embedding
-    vec = model.encode(image)
-    vec = np.expand_dims(vec, axis=0) # batch dimension
+    if message and len(message.strip()) > 1:
+        text_vec = model.encode([message])[0]
+        final_vec = (img_vec * 0.7) + (text_vec * 0.3)
+    else:
+        final_vec = img_vec
+        
+    final_vec = np.expand_dims(final_vec, axis=0)
+    products = search_index(final_vec, k=3)
     
-    # 3. Search
-    products = search_index(vec, k=5)
-    
-    # 4. Format Response
     if not products:
-        return {"reply": "I analyzed your photo but couldn't find any visually similar tiles in our current collection."}
+        return {"reply": "Photo analyze pannen, but exactly match aagura designs ippo illa. 😅 Similar pattern vera designs show pannalama?"}
     
-    reply = "I've analyzed your photo! Here are the tiles that look most similar to what you're looking for:"
+    reply = "I've analyzed your photo! 😍 Indha tiles unga photo ku romba match aaguthu. Check pannunga:"
     return {"reply": reply, "products": products}

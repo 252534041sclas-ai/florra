@@ -7,7 +7,7 @@ from PIL import Image
 import pickle
 
 # Configuration
-MODEL_NAME = "sentence-transformers/clip-ViT-B-32"
+MODEL_NAME = "sentence-transformers/clip-ViT-L-14" # Highest accuracy model available
 DATA_FILE = "data/products.json"
 INDEX_FILE = "vectorstore/products.index"
 META_FILE = "vectorstore/products.pkl"
@@ -65,6 +65,24 @@ for p in products:
             flip_img = image.transpose(Image.FLIP_LEFT_RIGHT)
             vectors.append(model.encode(flip_img))
             metadata.append({"type": "image_flip", "product": p})
+
+            # D. Vertical Flip
+            v_flip_img = image.transpose(Image.FLIP_TOP_BOTTOM)
+            vectors.append(model.encode(v_flip_img))
+            metadata.append({"type": "image_vflip", "product": p})
+
+            # E. Rotations (90, 180, 270) - Critical for "Exact" match from any angle
+            for angle in [90, 180, 270]:
+                rot_img = image.rotate(angle)
+                vectors.append(model.encode(rot_img))
+                metadata.append({"type": f"image_rot_{angle}", "product": p})
+                
+            # F. Zoom In even more (60%)
+            z_left, z_top = width * 0.2, height * 0.2
+            z_right, z_bottom = width * 0.8, height * 0.8
+            zoom_img = image.crop((z_left, z_top, z_right, z_bottom))
+            vectors.append(model.encode(zoom_img))
+            metadata.append({"type": "image_zoom_close", "product": p})
             
         except Exception as e:
             print(f"⚠️ Failed to process image for {p['name']}: {e}")

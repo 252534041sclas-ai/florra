@@ -3,110 +3,140 @@
         "id": 2,
         "tile_name": "Carrara White",
         "name": "Carrara White",
+        "tile_no": "FL-002",
         "category": "Floor",
         "size": "60x60 cm",
         "finish": "Glossy",
+        "color": "White with Grey Veins",
+        "price": "85",
         "image": "products/carrara_white.png",
         "image_path": "C:/Users/akash/Desktop/project/florra/backend/myproject/media/products/carrara_white.png",
-        "text_representation": "A Glossy finish Floor tile named Carrara White. Size: 60x60 cm."
+        "text_representation": "A Glossy finish Floor tile named Carrara White. Size: 60x60 cm. Color: White with Grey Veins."
     },
     {
         "id": 3,
         "tile_name": "Black Marquina",
         "name": "Black Marquina",
+        "tile_no": "FL-003",
         "category": "Floor",
         "size": "60x120 cm",
         "finish": "Glossy",
+        "color": "Black with White Veins",
+        "price": "120",
         "image": "products/black_marquina.png",
         "image_path": "C:/Users/akash/Desktop/project/florra/backend/myproject/media/products/black_marquina.png",
-        "text_representation": "A Glossy finish Floor tile named Black Marquina. Size: 60x120 cm."
+        "text_representation": "A Glossy finish Floor tile named Black Marquina. Size: 60x120 cm. Color: Black with White Veins."
     },
     {
         "id": 4,
         "tile_name": "Rustic Oak",
         "name": "Rustic Oak",
+        "tile_no": "FL-004",
         "category": "Living",
         "size": "20x100 cm",
-        "finish": "Matte",
+        "finish": "Wood Matte",
+        "color": "Natural Oak Brown",
+        "price": "95",
         "image": "products/rustic_oak.png",
         "image_path": "C:/Users/akash/Desktop/project/florra/backend/myproject/media/products/rustic_oak.png",
-        "text_representation": "A Matte finish Living tile named Rustic Oak. Size: 20x100 cm."
+        "text_representation": "A Wood Matte finish Living tile named Rustic Oak. Size: 20x100 cm. Color: Natural Oak Brown."
     },
     {
         "id": 5,
         "tile_name": "Grey Concrete",
         "name": "Grey Concrete",
+        "tile_no": "FL-005",
         "category": "Floor",
         "size": "60x60 cm",
         "finish": "Matte",
+        "color": "Cement Grey",
+        "price": "65",
         "image": "products/grey_concrete.png",
         "image_path": "C:/Users/akash/Desktop/project/florra/backend/myproject/media/products/grey_concrete.png",
-        "text_representation": "A Matte finish Floor tile named Grey Concrete. Size: 60x60 cm."
+        "text_representation": "A Matte finish Floor tile named Grey Concrete. Size: 60x60 cm. Color: Cement Grey."
     },
     {
         "id": 6,
         "tile_name": "Blue Mosaic",
         "name": "Blue Mosaic",
+        "tile_no": "FL-006",
         "category": "Bathroom",
         "size": "30x30 cm",
         "finish": "Glossy",
+        "color": "Royal Blue",
+        "price": "55",
         "image": "products/blue_mosaic.png",
         "image_path": "C:/Users/akash/Desktop/project/florra/backend/myproject/media/products/blue_mosaic.png",
-        "text_representation": "A Glossy finish Bathroom tile named Blue Mosaic. Size: 30x30 cm."
+        "text_representation": "A Glossy finish Bathroom tile named Blue Mosaic. Size: 30x30 cm. Color: Royal Blue."
     },
     {
         "id": 7,
         "tile_name": "Beige Travertine",
         "name": "Beige Travertine",
+        "tile_no": "FL-007",
         "category": "Wall",
         "size": "30x60 cm",
-        "finish": "Rustic",
+        "finish": "Rustic Stone",
+        "color": "Beige",
+        "price": "75",
         "image": "products/beige_travertine.png",
         "image_path": "C:/Users/akash/Desktop/project/florra/backend/myproject/media/products/beige_travertine.png",
-        "text_representation": "A Rustic finish Wall tile named Beige Travertine. Size: 30x60 cm."
+        "text_representation": "A Rustic Stone finish Wall tile named Beige Travertine. Size: 30x60 cm. Color: Beige."
     },
     {
         "id": 8,
         "tile_name": "Calacatta Gold",
         "name": "Calacatta Gold",
+        "tile_no": "FL-008",
         "category": "Floor",
         "size": "80x80 cm",
-        "finish": "Glossy",
+        "finish": "Glossy High-End",
+        "color": "White with Gold Veins",
+        "price": "150",
         "image": "products/calacatta_gold.png",
         "image_path": "C:/Users/akash/Desktop/project/florra/backend/myproject/media/products/calacatta_gold.png",
-        "text_representation": "A Glossy finish Floor tile named Calacatta Gold. Size: 80x80 cm."
+        "text_representation": "A Glossy High-End finish Floor tile named Calacatta Gold. Size: 80x80 cm. Color: White with Gold Veins."
     },
     {
         "id": 9,
         "tile_name": "Charcoal Slate",
         "name": "Charcoal Slate",
+        "tile_no": "FL-009",
         "category": "Floor",
         "size": "60x60 cm",
-        "finish": "Rustic",
+        "finish": "Rough Slate",
+        "color": "Dark Charcoal Grey",
+        "price": "80",
         "image": "products/charcoal_slate.png",
         "image_path": "C:/Users/akash/Desktop/project/florra/backend/myproject/media/products/charcoal_slate.png",
-        "text_representation": "A Rustic finish Floor tile named Charcoal Slate. Size: 60x60 cm."
+        "text_representation": "A Rough Slate finish Floor tile named Charcoal Slate. Size: 60x60 cm. Color: Dark Charcoal Grey."
     },
     {
         "id": 10,
         "tile_name": "Cream Marble",
         "name": "Cream Marble",
+        "tile_no": "FL-010",
         "category": "Bedroom",
         "size": "60x60 cm",
-        "finish": "Satin",
+        "finish": "Satin Smooth",
+        "color": "Cream",
+        "price": "70",
         "image": "products/cream_marble.png",
         "image_path": "C:/Users/akash/Desktop/project/florra/backend/myproject/media/products/cream_marble.png",
-        "text_representation": "A Satin finish Bedroom tile named Cream Marble. Size: 60x60 cm."
+        "text_representation": "A Satin Smooth finish Bedroom tile named Cream Marble. Size: 60x60 cm. Color: Cream."
     },
     {
         "id": 11,
         "tile_name": "Red Terracotta",
         "name": "Red Terracotta",
+        "tile_no": "FL-011",
         "category": "Floor",
         "size": "30x30 cm",
-        "finish": "Matte",
+        "finish": "Earthy Matte",
+        "color": "Terracotta Red",
+        "price": "45",
         "image": "products/red_terracotta.png",
         "image_path": "C:/Users/akash/Desktop/project/florra/backend/myproject/media/products/red_terracotta.png",
-        "text_representation": "A Matte finish Floor tile named Red Terracotta. Size: 30x30 cm."
+        "text_representation": "A Earthy Matte finish Floor tile named Red Terracotta. Size: 30x30 cm. Color: Terracotta Red."
     }
-]
+]

@@ -34,9 +34,16 @@ public class ChatProductAdapter extends RecyclerView.Adapter<ChatProductAdapter.
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = products.get(position);
-        holder.tvName.setText(product.getTileName());
-        holder.tvDetails.setText(product.getCategory() + " | " + product.getSize() + " | " + product.getFinish());
-        holder.tvPrice.setText("₹" + product.getPrice() + "/sqft");
+        holder.tvName.setText(product.getTileName() != null ? product.getTileName() : "Unnamed Tile");
+        
+        String size = product.getSize() != null ? product.getSize() : "Standard";
+        String finish = product.getFinish() != null ? product.getFinish() : "Natural";
+        
+        holder.tvTagSize.setText(size);
+        holder.tvTagFinish.setText(finish);
+        
+        String price = product.getPrice() != null ? product.getPrice() : "0";
+        holder.tvPrice.setText("₹" + price + "/sqft");
 
         String imageUrl = product.getImage();
         if (imageUrl != null && !imageUrl.isEmpty()) {
@@ -57,13 +64,14 @@ public class ChatProductAdapter extends RecyclerView.Adapter<ChatProductAdapter.
 
     static class ProductViewHolder extends RecyclerView.ViewHolder {
         ImageView ivImage;
-        TextView tvName, tvDetails, tvPrice;
+        TextView tvName, tvPrice, tvTagSize, tvTagFinish;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
             ivImage = itemView.findViewById(R.id.ivProductImage);
             tvName = itemView.findViewById(R.id.tvProductName);
-            tvDetails = itemView.findViewById(R.id.tvProductDetails);
+            tvTagSize = itemView.findViewById(R.id.tvTagSize);
+            tvTagFinish = itemView.findViewById(R.id.tvTagFinish);
             tvPrice = itemView.findViewById(R.id.tvProductPrice);
         }
     }

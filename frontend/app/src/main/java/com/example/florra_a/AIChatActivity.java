@@ -62,6 +62,7 @@ public class AIChatActivity extends AppCompatActivity {
     private Uri photoURI;
     private String currentPhotoPath;
     private Uri selectedImageUri;
+    private android.widget.ImageView ivImagePreview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +97,7 @@ public class AIChatActivity extends AppCompatActivity {
         actionCompare = findViewById(R.id.actionCompare);
         actionQuote = findViewById(R.id.actionQuote);
         actionStock = findViewById(R.id.actionStock);
+        ivImagePreview = findViewById(R.id.ivImagePreview);
     }
 
     private void setupRecyclerView() {
@@ -164,8 +166,9 @@ public class AIChatActivity extends AppCompatActivity {
 
         // 4. API Call
         if (selectedImageUri != null) {
-            sendImageSearchRequest(selectedImageUri);
+            sendImageSearchRequest(selectedImageUri, messageText);
             selectedImageUri = null; // Reset after sending
+            ivImagePreview.setVisibility(View.GONE);
         } else {
             sendTextChatRequest(messageText);
         }
@@ -192,13 +195,13 @@ public class AIChatActivity extends AppCompatActivity {
         });
     }
 
-    private void sendImageSearchRequest(Uri imageUri) {
+    private void sendImageSearchRequest(Uri imageUri, String message) {
         try {
             File file = new File(getPathFromUri(imageUri));
             RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
             MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
 
-            ChatbotClient.getApiService().searchImage(body).enqueue(new Callback<ChatbotApiService.ChatResponse>() {
+            ChatbotClient.getApiService().searchImage(body, message).enqueue(new Callback<ChatbotApiService.ChatResponse>() {
                 @Override
                 public void onResponse(Call<ChatbotApiService.ChatResponse> call, Response<ChatbotApiService.ChatResponse> response) {
                     removeTypingIndicator();
@@ -314,10 +317,12 @@ public class AIChatActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
                 selectedImageUri = photoURI;
-                sendMessage(); // Auto send for visual search
+                ivImagePreview.setImageURI(selectedImageUri);
+                ivImagePreview.setVisibility(View.VISIBLE);
             } else if (requestCode == REQUEST_PICK_IMAGE && data != null) {
                 selectedImageUri = data.getData();
-                sendMessage(); // Auto send for visual search
+                ivImagePreview.setImageURI(selectedImageUri);
+                ivImagePreview.setVisibility(View.VISIBLE);
             }
         }
     }

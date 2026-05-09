@@ -21,17 +21,19 @@
 
             // Set fullscreen
             requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    // Set status bar to white with dark icons
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
-        }
+            // Set status bar to dark teal to match header
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                getWindow().setStatusBarColor(android.graphics.Color.parseColor("#014D4E"));
+                // Remove light status bar flag to keep icons white
+                getWindow().getDecorView().setSystemUiVisibility(0);
+            }
 
-            // Handle notch and status bar
+            // Handle notch and status bar appearance
             WindowInsetsControllerCompat windowInsetsController =
                     WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
             if (windowInsetsController != null) {
-                windowInsetsController.setAppearanceLightStatusBars(true);
+                // False means light icons (white) on dark background
+                windowInsetsController.setAppearanceLightStatusBars(false);
                 windowInsetsController.setAppearanceLightNavigationBars(true);
             }
 
@@ -46,7 +48,7 @@
 
         private void setupNavigation() {
             // Dashboard button - Already on this screen
-            Button btnDashboard = findViewById(R.id.bottomDashboard);
+            View btnDashboard = findViewById(R.id.bottomDashboard);
             if (btnDashboard != null) {
                 btnDashboard.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -58,7 +60,7 @@
             }
 
             // Catalog button
-            Button btnCatalog = findViewById(R.id.bottomInventory);
+            View btnCatalog = findViewById(R.id.bottomInventory);
             if (btnCatalog != null) {
                 btnCatalog.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -72,7 +74,7 @@
             }
 
             // Enquiries button
-            Button btnEnquiries = findViewById(R.id.bottomQuotes);
+            View btnEnquiries = findViewById(R.id.bottomQuotes);
             if (btnEnquiries != null) {
                 btnEnquiries.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -85,7 +87,7 @@
             }
 
             // Account button
-            Button btnAccount = findViewById(R.id.bottomAccount);
+            View btnAccount = findViewById(R.id.bottomAccount);
             if (btnAccount != null) {
                 btnAccount.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -100,7 +102,7 @@
             // ========== CARD CLICK LISTENERS ==========
 
             // TOTAL TILES CARD
-            CardView cardTotalTiles = findViewById(R.id.cardTotalTiles);
+            View cardTotalTiles = findViewById(R.id.cardTotalTiles);
             if (cardTotalTiles != null) {
                 cardTotalTiles.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -113,7 +115,7 @@
             }
 
             // ENQUIRIES CARD
-            CardView cardEnquiries = findViewById(R.id.cardEnquiries);
+            View cardEnquiries = findViewById(R.id.cardEnquiries);
             if (cardEnquiries != null) {
                 cardEnquiries.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -126,7 +128,7 @@
             }
 
             // QUOTATIONS CARD
-            CardView cardQuotations = findViewById(R.id.cardQuotations);
+            View cardQuotations = findViewById(R.id.cardQuotations);
             if (cardQuotations != null) {
                 cardQuotations.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -137,7 +139,7 @@
             }
 
             // LOW STOCK CARD
-            CardView cardLowStock = findViewById(R.id.cardLowStock);
+            View cardLowStock = findViewById(R.id.cardLowStock);
             if (cardLowStock != null) {
                 cardLowStock.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -152,7 +154,7 @@
             }
 
             // INVENTORY CARD (Management Section)
-            CardView cardInventory = findViewById(R.id.cardInventory);
+            View cardInventory = findViewById(R.id.cardInventory);
             if (cardInventory != null) {
                 cardInventory.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -165,7 +167,7 @@
             }
 
             // PRODUCT CARD
-            CardView cardProduct = findViewById(R.id.cardProduct);
+            View cardProduct = findViewById(R.id.cardProduct);
             if (cardProduct != null) {
                 cardProduct.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -178,7 +180,7 @@
             }
 
             // ENQUIRIES MANAGEMENT CARD
-            CardView cardEnquiriesMgmt = findViewById(R.id.cardEnquiriesMgmt);
+            View cardEnquiriesMgmt = findViewById(R.id.cardEnquiriesMgmt);
             if (cardEnquiriesMgmt != null) {
                 cardEnquiriesMgmt.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -191,7 +193,7 @@
             }
 
             // QUOTATIONS MANAGEMENT CARD
-            CardView cardQuotationsMgmt = findViewById(R.id.cardQuotationsMgmt);
+            View cardQuotationsMgmt = findViewById(R.id.cardQuotationsMgmt);
             if (cardQuotationsMgmt != null) {
                 cardQuotationsMgmt.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -202,7 +204,7 @@
             }
 
             // SALES PREDICTION CARD
-            CardView cardSalesPrediction = findViewById(R.id.cardSalesPrediction);
+            View cardSalesPrediction = findViewById(R.id.cardSalesPrediction);
             if (cardSalesPrediction != null) {
                 cardSalesPrediction.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -215,7 +217,7 @@
             }
 
             // STOCK ALERTS CARD
-            CardView cardStockAlerts = findViewById(R.id.cardStockAlerts);
+            View cardStockAlerts = findViewById(R.id.cardStockAlerts);
             if (cardStockAlerts != null) {
                 cardStockAlerts.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -232,7 +234,7 @@
             // NOTE: Using the correct IDs from the updated XML
 
             // Activity Item 1: New Enquiry
-            CardView cardActivityNewEnquiry = findViewById(R.id.cardActivityNewEnquiry);
+            View cardActivityNewEnquiry = findViewById(R.id.cardActivityNewEnquiry);
             if (cardActivityNewEnquiry != null) {
                 cardActivityNewEnquiry.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -245,7 +247,7 @@
             }
 
             // Activity Item 2: Quotation Approved
-            CardView cardActivityQuotationApproved = findViewById(R.id.cardActivityQuotationApproved);
+            View cardActivityQuotationApproved = findViewById(R.id.cardActivityQuotationApproved);
             if (cardActivityQuotationApproved != null) {
                 cardActivityQuotationApproved.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -257,7 +259,7 @@
             }
 
             // Activity Item 3: Stock Updated
-            CardView cardActivityStockUpdated = findViewById(R.id.cardActivityStockUpdated);
+            View cardActivityStockUpdated = findViewById(R.id.cardActivityStockUpdated);
             if (cardActivityStockUpdated != null) {
                 cardActivityStockUpdated.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -272,7 +274,7 @@
             // In AdminDashboardActivity.java, add this inside setupNavigation() method:
 
             // Generate Bill Card (previously Stock Alerts)
-            CardView cardGenerateBill = findViewById(R.id.cardStockAlerts);
+            View cardGenerateBill = findViewById(R.id.cardStockAlerts);
             if (cardStockAlerts != null) {
                 cardStockAlerts.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -287,7 +289,7 @@
             // In setupNavigation() method of AdminDashboardActivity.java:
 
             // Quotations Management Card (now Saved Bills)
-            CardView cardSavedBills = findViewById(R.id.cardQuotationsMgmt);
+            View cardSavedBills = findViewById(R.id.cardQuotationsMgmt);
             if (cardSavedBills != null) {  // <-- Use the same variable name!
                 cardSavedBills.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -299,16 +301,15 @@
                 });
             }
 
-            // ========== MENU BUTTON ==========
+            // ========== NOTIFICATIONS ==========
 
-            // Menu button (top left)
-            ImageView btnMenu = findViewById(R.id.btnMenu);
-            if (btnMenu != null) {
-                btnMenu.setOnClickListener(new View.OnClickListener() {
+            // Notifications button
+            View btnNotifications = findViewById(R.id.btnNotifications);
+            if (btnNotifications != null) {
+                btnNotifications.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Show side menu or options
-                        showMenuOptions();
+                        Toast.makeText(AdminDashboardActivity.this, "Notifications coming soon", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

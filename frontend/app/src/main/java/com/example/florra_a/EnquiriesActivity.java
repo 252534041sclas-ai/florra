@@ -23,22 +23,11 @@ public class EnquiriesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set fullscreen
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-                // Set status bar to white with dark icons
+        // Set status bar to dark teal
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+            getWindow().getDecorView().setSystemUiVisibility(0); // White icons
+            getWindow().setStatusBarColor(android.graphics.Color.parseColor("#014D4E"));
         }
-
-        // Enable edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        // Handle notch and status bar
-        WindowInsetsControllerCompat windowInsetsController =
-                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.setAppearanceLightStatusBars(false);
-        windowInsetsController.setAppearanceLightNavigationBars(false);
 
         setContentView(R.layout.activity_enquiries);
 
@@ -176,30 +165,31 @@ public class EnquiriesActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-                   // Dashboard button
-        Button btnDashboard = findViewById(R.id.bottomDashboard);
+        // Dashboard button
+        View btnDashboard = findViewById(R.id.bottomDashboard);
         if (btnDashboard != null) {
             btnDashboard.setOnClickListener(v -> {
                 Intent intent = new Intent(EnquiriesActivity.this, AdminDashboardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
 
         // Catalog button
-        Button btnCatalog = findViewById(R.id.bottomInventory);
+        View btnCatalog = findViewById(R.id.bottomInventory);
         if (btnCatalog != null) {
             btnCatalog.setOnClickListener(v -> {
                 Intent intent = new Intent(EnquiriesActivity.this, AdminCatalogActivity.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
 
         // Enquiries button - Already here
-        Button btnEnquiries = findViewById(R.id.bottomQuotes);
+        View btnEnquiries = findViewById(R.id.bottomQuotes);
         if (btnEnquiries != null) {
             btnEnquiries.setOnClickListener(v -> {
                 // Already on enquiries
@@ -207,13 +197,13 @@ public class EnquiriesActivity extends AppCompatActivity {
         }
 
         // Account button
-        Button btnAccount = findViewById(R.id.bottomAccount);
+        View btnAccount = findViewById(R.id.bottomAccount);
         if (btnAccount != null) {
             btnAccount.setOnClickListener(v -> {
                 Intent intent = new Intent(EnquiriesActivity.this, AdminAccountActivity.class);
                 startActivity(intent);
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
     }

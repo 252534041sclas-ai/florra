@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.example.florra_a.adapters.RecommendationAdapter;
 import com.example.florra_a.models.Product;
 
@@ -22,8 +25,11 @@ public class AIRecommendationActivity extends AppCompatActivity {
 
     private RecyclerView rvRecommendations;
     private TileAdapter adapter;
-    private List<Product> recommendedProducts;
+    private List<Product> originalProducts;
+    private List<Product> filteredProducts;
     private TextView tvMatchCount;
+    private String currentCategory = "All";
+    private String currentFilterType = "top";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +61,18 @@ public class AIRecommendationActivity extends AppCompatActivity {
     private void loadRecommendations() {
         // Get data from intent
         if (getIntent().hasExtra("recommendations")) {
-            recommendedProducts = (List<Product>) getIntent().getSerializableExtra("recommendations");
+            originalProducts = (List<Product>) getIntent().getSerializableExtra("recommendations");
         }
 
-        if (recommendedProducts == null) {
-            recommendedProducts = new ArrayList<>();
+        if (originalProducts == null) {
+            originalProducts = new ArrayList<>();
         }
 
-        tvMatchCount.setText("Found " + recommendedProducts.size() + " similar matches");
+        filteredProducts = new ArrayList<>(originalProducts);
 
-        adapter = new TileAdapter(this, recommendedProducts);
+        tvMatchCount.setText("Found " + filteredProducts.size() + " similar matches");
+
+        adapter = new TileAdapter(this, filteredProducts);
         adapter.setOnItemClickListener(new TileAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Product product) {
@@ -119,18 +127,155 @@ public class AIRecommendationActivity extends AppCompatActivity {
     private void setupClickListeners() {
         findViewById(R.id.btnBack).setOnClickListener(v -> onBackPressed());
 
-        findViewById(R.id.btnSort).setOnClickListener(v -> 
-            Toast.makeText(this, "Sort Options", Toast.LENGTH_SHORT).show());
+        findViewById(R.id.btnFilterIcon).setOnClickListener(v -> showFilterBottomSheet());
         
         findViewById(R.id.btnRefineSearch).setOnClickListener(v -> 
              Toast.makeText(this, "Refine Search Parameters", Toast.LENGTH_SHORT).show());
         
-        // Setup filter button listeners (visual only for now)
-        int[] filterIds = {R.id.btnTopMatches, R.id.btnTexture, R.id.btnColorPalette};
-        for (int id : filterIds) {
-            findViewById(id).setOnClickListener(v -> {
-                 Toast.makeText(this, "Filter applied", Toast.LENGTH_SHORT).show();
+        // Setup filter button listeners
+        findViewById(R.id.btnTopMatches).setOnClickListener(v -> applyFilter("top"));
+        findViewById(R.id.btnTexture).setOnClickListener(v -> applyFilter("texture"));
+        findViewById(R.id.btnColorPalette).setOnClickListener(v -> applyFilter("color"));
+        findViewById(R.id.btnPattern).setOnClickListener(v -> applyFilter("pattern"));
+    }
+
+    private void applyFilter(String type) {
+        this.currentFilterType = type;
+        refreshList();
+    }
+
+    private void refreshList() {
+        List<Product> baseList = new ArrayList<>();
+        
+        // Step 1: Filter by Category first
+        if (currentCategory.equals("All")) {
+            baseList.addAll(originalProducts);
+        } else {
+            for (Product p : originalProducts) {
+                if (currentCategory.equalsIgnoreCase(p.getCategory())) baseList.add(p);
+            }
+        }
+
+        // Step 2: Apply Secondary Filter/Sort
+        filteredProducts.clear();
+        resetChips();
+        int activeChipId = 0;
+
+        switch (currentFilterType) {
+            case "top":
+                filteredProducts.addAll(baseList);
+                java.util.Collections.sort(filteredProducts, (p1, p2) -> 
+                    Double.compare(p2.getSimilarityScore(), p1.getSimilarityScore()));
+                activeChipId = R.id.btnTopMatches;
+                break;
+            case "texture":
+                for (Product p : baseList) {
+                    if (p.getFinish() != null && !p.getFinish().isEmpty()) filteredProducts.add(p);
+                }
+                activeChipId = R.id.btnTexture;
+                break;
+            case "color":
+                for (Product p : baseList) {
+                    if (p.getColor() != null && !p.getColor().isEmpty()) filteredProducts.add(p);
+                }
+                activeChipId = R.id.btnColorPalette;
+                break;
+            case "pattern":
+                for (Product p : baseList) {
+                    if (p.getTileName().toLowerCase().contains("marquina") || 
+                        p.getTileName().toLowerCase().contains("carrara") ||
+                        p.getTileName().toLowerCase().contains("oak")) filteredProducts.add(p);
+                }
+                activeChipId = R.id.btnPattern;
+                break;
+        }
+
+        if (activeChipId != 0) {
+            View v = findViewById(activeChipId);
+            if (v != null) {
+                v.setBackgroundResource(R.drawable.bg_chip_selected);
+                if (v instanceof TextView) ((TextView)v).setTextColor(android.graphics.Color.WHITE);
+            }
+        }
+
+        adapter.notifyDataSetChanged();
+        String categoryText = currentCategory.equals("All") ? "" : "[" + currentCategory + "] ";
+        tvMatchCount.setText(categoryText + "Showing " + filteredProducts.size() + " matches");
+    }
+
+    private void showCategoryFilter(View v) {
+        try {
+            android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
+            popup.getMenu().add("All");
+            popup.getMenu().add("Floor");
+            popup.getMenu().add("Wall");
+            popup.getMenu().add("Bathroom");
+            popup.getMenu().add("Living");
+            popup.getMenu().add("Bedroom");
+
+            popup.setOnMenuItemClickListener(item -> {
+                try {
+                    currentCategory = item.getTitle().toString();
+                    refreshList();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Filter logic error", Toast.LENGTH_SHORT).show();
+                }
+                return true;
             });
+            popup.show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Error showing categories", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showFilterBottomSheet() {
+        try {
+            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this, R.style.BottomSheetDialogTheme);
+            View bottomSheetView = getLayoutInflater().inflate(R.layout.layout_filter_bottom_sheet, null);
+            
+            if (bottomSheetView == null) {
+                Toast.makeText(this, "Error inflating layout", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            bottomSheetDialog.setContentView(bottomSheetView);
+
+            ChipGroup cgCategories = bottomSheetView.findViewById(R.id.cgCategories);
+            android.widget.Button btnApply = bottomSheetView.findViewById(R.id.btnApplyFilters);
+
+                btnApply.setOnClickListener(v -> {
+                try {
+                    int selectedId = cgCategories.getCheckedChipId();
+                    if (selectedId != -1) {
+                        Chip selectedChip = bottomSheetView.findViewById(selectedId);
+                        currentCategory = selectedChip.getText().toString();
+                        refreshList();
+                    }
+                    bottomSheetDialog.dismiss();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Filter Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+            bottomSheetDialog.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Bottom Sheet Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            // Fallback to simple popup if bottom sheet fails
+            showCategoryFilter(findViewById(R.id.btnFilterIcon));
+        }
+    }
+
+    private void resetChips() {
+        int[] chipIds = {R.id.btnTopMatches, R.id.btnTexture, R.id.btnColorPalette, R.id.btnPattern};
+        for (int id : chipIds) {
+            View chipView = findViewById(id);
+            if (chipView != null) {
+                chipView.setBackgroundResource(R.drawable.bg_chip_unselected);
+                if (chipView instanceof TextView) {
+                    ((TextView)chipView).setTextColor(android.graphics.Color.parseColor("#475569"));
+                }
+            }
         }
     }
 
