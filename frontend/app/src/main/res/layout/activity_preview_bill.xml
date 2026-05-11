@@ -1,310 +1,597 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f6f6f8"
+    android:background="#F8FAFB"
     android:fitsSystemWindows="true">
 
-    <!-- Top Header -->
+    <!-- Fixed Header Section -->
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#ffffff"
-        android:gravity="center_vertical"
-        android:padding="16dp"
-        android:elevation="4dp"
-        android:layout_alignParentTop="true">
+        android:orientation="vertical"
+        android:elevation="4dp">
 
-        <!-- Back Button -->
-        <LinearLayout
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:clickable="true"
-            android:focusable="true">
+        <!-- Title Bar (White) -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/white"
+            android:paddingHorizontal="16dp">
+
+            <LinearLayout
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+                
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_arrow_back"
+                    app:tint="@color/black" />
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="←"
-                android:textColor="#111118"
-                android:textSize="20sp" />
+                android:layout_centerInParent="true"
+                android:text="Bill Preview"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-black" />
 
-        </LinearLayout>
-
-        <!-- Title -->
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Bill Preview"
-            android:textColor="#111118"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingEnd="40dp" />
-
+        </RelativeLayout>
     </LinearLayout>
 
-    <!-- Main Content ScrollView -->
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/headerLayout"
-        android:layout_above="@id/bottomLayout"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:paddingBottom="140dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
-            <!-- Bill Container Card -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/billContainer"
+            <!-- Bill Container -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#ffffff"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
-                android:layout_marginBottom="16dp">
+                android:layout_margin="16dp"
+                android:orientation="vertical">
 
-                <RelativeLayout
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/billContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp">
 
-                    <!-- Top Green Bar -->
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="2dp"
-                        android:background="#000000" />
-
-                    <!-- Company Header -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="24dp"
-                        android:layout_marginTop="2dp"
-                        android:background="?attr/selectableItemBackground">
+                        android:orientation="vertical">
 
-                        <!-- Company Info Row -->
+                        <!-- Top Black Line -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1.5dp"
+                            android:background="@color/black" />
+
+                        <!-- Store Info Section -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                            <!-- Logo/Icon -->
-                            <LinearLayout
-                                android:layout_width="48dp"
-                                android:layout_height="48dp"
-                                android:background="#00000010"
-                                android:gravity="center"
-                                android:padding="8dp"
-                                android:layout_marginEnd="12dp">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="◼"
-                                    android:textColor="#000000"
-                                    android:textSize="24sp" />
-
-                            </LinearLayout>
-
-                            <!-- Company Details -->
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Florra Tiles Studio"
-                                    android:textColor="#000000"
-                                    android:textSize="18sp"
-                                    android:textStyle="bold"
-                                    android:layout_marginBottom="4dp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="123 Design Avenue, Metro City"
-                                    android:textColor="#636388"
-                                    android:textSize="12sp"
-                                    android:layout_marginBottom="2dp" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="GSTIN: 29ABCDE1234F125"
-                                    android:textColor="#636388"
-                                    android:textSize="12sp" />
-
-                            </LinearLayout>
-
-                            <!-- Authorized Dealer Badge -->
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Authorized Dealer"
-                                android:textColor="#166534"
-                                android:textSize="10sp"
-                                android:textStyle="bold"
-                                android:background="#dcfce7"
-                                android:paddingHorizontal="8dp"
-                                android:paddingVertical="4dp"
-                                android:gravity="center" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <!-- Bill No and Date -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="#f6f6f8"
-                        android:padding="16dp"
-                        android:id="@+id/billInfoLayout">
-
-                        <!-- Bill No -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="BILL NO"
-                                android:textColor="#636388"
-                                android:textSize="10sp"
-                                android:textStyle="bold"
-                                android:letterSpacing="0.1"
-                                android:layout_marginBottom="4dp" />
-
-                            <TextView
-                                android:id="@+id/tvBillNo"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="#INV-2024-001"
-                                android:textColor="#111118"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                        <!-- Date -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:orientation="vertical"
-                            android:gravity="end">
+                            android:padding="20dp"
+                            android:background="@drawable/border_bottom_dashed">
 
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="24dp">
+
+                                <!-- Store Info Left -->
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:gravity="center_vertical">
+
+                                    <!-- Store Icon -->
+                                    <LinearLayout
+                                        android:layout_width="32dp"
+                                        android:layout_height="32dp"
+                                        android:layout_marginEnd="8dp"
+                                        android:background="@color/gray_100"
+                                        android:gravity="center"
+                                        android:orientation="vertical">
+
+                                        <ImageView
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp"
+                                            android:src="@drawable/ic_receipt"
+                                            android:tint="@color/black" />
+
+                                    </LinearLayout>
+
+                                    <!-- Store Name -->
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Florra Tile Studio"
+                                        android:textColor="@color/black"
+                                        android:textSize="16sp"
+                                        android:textStyle="bold" />
+
+                                </LinearLayout>
+
+                                <!-- Preview Badge -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:background="#FEF3C7"
+                                    android:paddingHorizontal="8dp"
+                                    android:paddingVertical="4dp"
+                                    android:text="PREVIEW"
+                                    android:textColor="#92400E"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.1"
+                                    android:gravity="center" />
+
+                            </RelativeLayout>
+
+                            <!-- Tagline -->
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="DATE"
-                                android:textColor="#636388"
-                                android:textSize="10sp"
-                                android:textStyle="bold"
-                                android:letterSpacing="0.1"
-                                android:layout_marginBottom="4dp" />
+                                android:layout_marginStart="40dp"
+                                android:text="Premium Ceramics &amp; Stones"
+                                android:textColor="@color/viewbill_text_muted"
+                                android:textSize="10sp" />
 
-                            <TextView
-                                android:id="@+id/tvDate"
-                                android:layout_width="wrap_content"
+                            <!-- Bill Number and Date -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Oct 24, 2023"
-                                android:textColor="#111118"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:layout_marginTop="16dp"
+                                android:orientation="horizontal">
+
+                                <!-- Bill Number -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="BILL NUMBER"
+                                        android:textColor="@color/viewbill_text_muted"
+                                        android:textSize="10sp"
+                                        android:textStyle="bold"
+                                        android:letterSpacing="0.1" />
+
+                                    <TextView
+                                        android:id="@+id/tvBillNo"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="4dp"
+                                        android:text="#INV-000"
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+
+                                </LinearLayout>
+
+                                <!-- Date -->
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:gravity="end"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="DATE"
+                                        android:textColor="@color/viewbill_text_muted"
+                                        android:textSize="10sp"
+                                        android:textStyle="bold"
+                                        android:letterSpacing="0.1" />
+
+                                    <TextView
+                                        android:id="@+id/tvDate"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="4dp"
+                                        android:text="Oct 24, 2023"
+                                        android:textColor="@color/black"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+
+                                </LinearLayout>
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
-                    </LinearLayout>
-
-                    <!-- Bill To Section -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="24dp"
-                        android:layout_below="@id/billInfoLayout"
-                        android:id="@+id/billToLayout">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="BILL TO"
-                            android:textColor="#636388"
-                            android:textSize="10sp"
-                            android:textStyle="bold"
-                            android:letterSpacing="0.1"
-                            android:layout_marginBottom="12dp" />
-
-                        <!-- Customer Details -->
+                        <!-- Customer Details Section -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
+                            android:orientation="vertical"
+                            android:padding="20dp"
+                            android:background="@color/viewbill_gray_50">
 
-                            <!-- Person Icon -->
-                            <TextView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:text="👤"
-                                android:textSize="16sp"
-                                android:layout_marginEnd="12dp" />
-
-                            <!-- Customer Info -->
+                            <!-- Section Header -->
                             <LinearLayout
-                                android:layout_width="0dp"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
+                                android:layout_marginBottom="12dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <ImageView
+                                    android:layout_width="16dp"
+                                    android:layout_height="16dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:src="@drawable/ic_person"
+                                    android:tint="@color/black" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="CUSTOMER DETAILS"
+                                    android:textColor="@color/black"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.1" />
+
+                            </LinearLayout>
+
+                            <!-- Customer Details Grid -->
+                            <GridLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:columnCount="2"
+                                android:rowCount="3"
+                                android:alignmentMode="alignBounds"
+                                android:columnOrderPreserved="false">
+
+                                <!-- Name -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_columnWeight="1"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="Name:"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="14sp" />
 
                                 <TextView
                                     android:id="@+id/tvCustomerName"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Mr. Rajesh Kumar"
-                                    android:textColor="#111118"
+                                    android:layout_columnWeight="1"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="Rahul Sharma"
+                                    android:textColor="@color/black"
                                     android:textSize="14sp"
-                                    android:textStyle="bold"
-                                    android:layout_marginBottom="4dp" />
+                                    android:textStyle="bold" />
+
+                                <!-- Mobile -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_columnWeight="1"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="Mobile:"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="14sp" />
 
                                 <TextView
                                     android:id="@+id/tvCustomerPhone"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_columnWeight="1"
+                                    android:layout_marginBottom="8dp"
                                     android:text="+91 98765 43210"
-                                    android:textColor="#636388"
-                                    android:textSize="12sp"
-                                    android:layout_marginBottom="2dp" />
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                                <!-- Address -->
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_columnWeight="1"
+                                    android:text="Address:"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="14sp" />
 
                                 <TextView
                                     android:id="@+id/tvCustomerAddress"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="45 Green Park, Near Central Mall, Metro City, 560001"
-                                    android:textColor="#636388"
-                                    android:textSize="12sp"
-                                    android:lineSpacingExtra="2dp" />
+                                    android:layout_columnWeight="1"
+                                    android:text="123, Green Avenue, City Center"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                            </GridLayout>
+
+                        </LinearLayout>
+
+                        <!-- Items Summary Section -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp">
+
+                            <!-- Section Header -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="16dp"
+                                android:text="ITEMS SUMMARY"
+                                android:textColor="@color/black"
+                                android:textSize="10sp"
+                                android:textStyle="bold"
+                                android:letterSpacing="0.1" />
+
+                            <!-- Table Header -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:orientation="horizontal"
+                                android:background="@drawable/border_bottom_solid">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1.2"
+                                    android:text="ITEM"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.1" />
+
+                                <TextView
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="NO"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.1" />
+
+                                <TextView
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="QTY"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.1" />
+
+                                <TextView
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="end"
+                                    android:text="PRICE"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.1" />
+
+                                <TextView
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="end"
+                                    android:text="TOTAL"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.1" />
+
+                            </LinearLayout>
+
+                            <!-- Dynamic Items Container -->
+                            <LinearLayout
+                                android:id="@+id/llItemsContainer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical" />
+
+                        </LinearLayout>
+
+                        <!-- Calculation Section -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp">
+
+                            <!-- Subtotal -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Subtotal"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/tvSubtotal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="₹0.00"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <!-- GST -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Tax Amount"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/tvTaxAmount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="₹0.00"
+                                    android:textColor="@color/black"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <!-- Discount -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="16dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Discount"
+                                    android:textColor="@color/viewbill_status_paid_text"
+                                    android:textSize="14sp" />
+
+                                <TextView
+                                    android:id="@+id/tvDiscountAmount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="-₹0.00"
+                                    android:textColor="@color/viewbill_status_paid_text"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <!-- Divider -->
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="@drawable/border_top_dashed"
+                                android:paddingTop="12dp" />
+
+                            <!-- Grand Total -->
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:paddingTop="12dp">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Grand Total"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvGrandTotal"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="₹0.00"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <!-- Thank You Section -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="20dp"
+                            android:background="@color/viewbill_gray_50"
+                            android:gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="24dp"
+                                android:text="Thank you for doing business with us!"
+                                android:textColor="@color/viewbill_text_muted"
+                                android:textSize="12sp"
+                                android:fontStyle="italic" />
+
+                            <!-- Signature -->
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:gravity="end">
+
+                                <View
+                                    android:layout_width="96dp"
+                                    android:layout_height="1dp"
+                                    android:layout_marginBottom="4dp"
+                                    android:background="@color/viewbill_gray_400" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Authorized Signatory"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.1" />
 
                             </LinearLayout>
 
@@ -312,335 +599,86 @@
 
                     </LinearLayout>
 
-                    <!-- Items Table Header -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:background="#f9fafb"
-                        android:paddingHorizontal="24dp"
-                        android:paddingVertical="12dp"
-                        android:layout_below="@id/billToLayout"
-                        android:id="@+id/tableHeader">
+                </androidx.cardview.widget.CardView>
 
-                        <!-- Item Column -->
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="3"
-                            android:text="Item"
-                            android:textColor="#636388"
-                            android:textSize="10sp"
-                            android:textStyle="bold"
-                            android:letterSpacing="0.1" />
+                <!-- Preview Time -->
+                <TextView
+                    android:id="@+id/tvPreviewTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Preview generated on Oct 24, 2023 at 10:45 AM"
+                    android:textColor="@color/viewbill_text_muted"
+                    android:textSize="11sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp" />
 
-                        <!-- Qty Column -->
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Qty"
-                            android:textColor="#636388"
-                            android:textSize="10sp"
-                            android:textStyle="bold"
-                            android:letterSpacing="0.1"
-                            android:gravity="center" />
-
-                        <!-- Rate Column -->
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Rate"
-                            android:textColor="#636388"
-                            android:textSize="10sp"
-                            android:textStyle="bold"
-                            android:letterSpacing="0.1"
-                            android:gravity="end" />
-
-                        <!-- Amount Column -->
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Amount"
-                            android:textColor="#636388"
-                            android:textSize="10sp"
-                            android:textStyle="bold"
-                            android:letterSpacing="0.1"
-                            android:gravity="end" />
-
-                    </LinearLayout>
-
-                    <!-- Items Container -->
-                    <LinearLayout
-                        android:id="@+id/llItemsContainer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_below="@id/tableHeader" />
-
-                    <!-- Summary Section -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="24dp"
-                        android:layout_below="@id/llItemsContainer"
-                        android:id="@+id/summaryLayout"
-                        android:background="#f9fafb">
-
-                        <!-- Subtotal -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="8dp">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Subtotal"
-                                android:textColor="#636388"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tvSubtotal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="$181.00"
-                                android:textColor="#111118"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                        <!-- Tax -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="8dp">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Tax (10% GST)"
-                                android:textColor="#636388"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tvTaxAmount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="$18.10"
-                                android:textColor="#111118"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                        <!-- Discount -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="12dp">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Discount"
-                                android:textColor="#166534"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tvDiscountAmount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="-$5.00"
-                                android:textColor="#166534"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                        <!-- Divider -->
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#e5e7eb"
-                            android:layout_marginBottom="12dp" />
-
-                        <!-- Grand Total -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Grand Total"
-                                android:textColor="#111118"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/tvGrandTotal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="$194.10"
-                                android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <!-- Terms & Conditions -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="24dp"
-                        android:layout_below="@id/summaryLayout"
-                        android:id="@+id/termsLayout">
-
-                        <!-- Terms -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_marginEnd="16dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Terms &amp; Conditions"
-                                android:textColor="#111118"
-                                android:textSize="12sp"
-                                android:textStyle="bold"
-                                android:layout_marginBottom="4dp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1. Goods once sold will not be taken back.\n2. Subject to Metro City jurisdiction only."
-                                android:textColor="#636388"
-                                android:textSize="11sp"
-                                android:lineSpacingExtra="4dp"
-                                android:layout_marginBottom="12dp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Thank you for your business"
-                                android:textColor="#111118"
-                                android:textSize="12sp"
-                                 android:textStyle="italic" />
-
-                        </LinearLayout>
-
-                        <!-- Signature -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:gravity="end|bottom">
-
-                            <!-- Dashed Line -->
-                            <View
-                                android:layout_width="128dp"
-                                android:layout_height="1dp"
-                                android:background="@drawable/dashed_line"
-                                android:layout_marginBottom="8dp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Authorized Signatory"
-                                android:textColor="#636388"
-                                android:textSize="11sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Preview Time -->
-            <TextView
-                android:id="@+id/tvPreviewTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Preview generated on Oct 24, 2023 at 10:45 AM"
-                android:textColor="#636388"
-                android:textSize="11sp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp" />
+            </LinearLayout>
 
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom Buttons -->
+    <!-- Bottom Action Buttons Container -->
     <LinearLayout
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#ffffff"
-        android:elevation="8dp"
-        android:padding="16dp"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:elevation="16dp"
+        android:orientation="vertical">
 
-        <!-- Back to Edit Button -->
-        <Button
-            android:id="@+id/btnBackToEdit"
-            android:layout_width="0dp"
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#F1F5F9" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/bg_outline_button"
-            android:text="Back to Edit"
-            android:textColor="#111118"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:paddingVertical="14dp"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:stateListAnimator="@null" />
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="48dp">
 
-        <!-- Share / Download Button -->
-        <Button
-            android:id="@+id/btnShareDownload"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/bg_primary_button"
-            android:text="Share / Download"
-            android:textColor="#ffffff"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:paddingVertical="14dp"
-            android:gravity="center"
-            android:stateListAnimator="@null" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBackToEdit"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="Back to Edit"
+                android:textColor="#334155"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-medium"
+                android:textAllCaps="false"
+                app:backgroundTint="#F8FAFC"
+                app:strokeColor="#CBD5E1"
+                app:strokeWidth="1.5dp"
+                app:cornerRadius="14dp" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnShare"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1.3"
+                android:text="Share Bill"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif-bold"
+                android:textAllCaps="false"
+                app:backgroundTint="@color/black"
+                app:icon="@drawable/ic_share"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/white"
+                app:cornerRadius="14dp"
+                app:elevation="4dp" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

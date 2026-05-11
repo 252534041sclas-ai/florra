@@ -10,7 +10,7 @@
         android:id="@+id/header_section"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="#014d4e"
+        android:background="#000000"
         android:orientation="vertical" />
 
     <!-- Main Content in Rounded Container -->
@@ -41,7 +41,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:src="@drawable/ic_arrow_back"
-                    app:tint="#014d4e"
+                    app:tint="#000000"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
@@ -266,7 +266,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone"
-            android:indeterminateTint="#014d4e" />
+            android:indeterminateTint="#000000" />
 
     </androidx.cardview.widget.CardView>
 
@@ -351,13 +351,13 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_chat"
-                    app:tint="#014d4e" />
+                    app:tint="#000000" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Enquiries"
                     android:textSize="10sp"
-                    android:textColor="#014d4e"
+                    android:textColor="#000000"
                     android:textStyle="bold" />
             </LinearLayout>
 

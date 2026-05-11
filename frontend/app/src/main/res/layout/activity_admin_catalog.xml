@@ -11,7 +11,7 @@
         android:id="@+id/header_section"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="#014d4e"
+        android:background="#000000"
         android:orientation="vertical" />
 
     <!-- Main Content in Rounded Container -->
@@ -51,7 +51,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/ic_arrow_back"
-                        app:tint="#014d4e"
+                        app:tint="#000000"
                         android:padding="8dp"
                         android:clickable="true"
                         android:focusable="true" />
@@ -68,7 +68,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Admin"
-                            android:textColor="#014d4e"
+                            android:textColor="#000000"
                             android:textSize="22sp"
                             android:fontFamily="sans-serif-black"
                             android:letterSpacing="-0.02" />
@@ -90,7 +90,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/ic_search"
-                        app:tint="#014d4e"
+                        app:tint="#000000"
                         android:background="@drawable/bg_circle_icon"
                         android:clickable="true"
                         android:focusable="true" />
@@ -133,7 +133,7 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/ic_close"
-                        app:tint="#014d4e"
+                        app:tint="#000000"
                         android:padding="10dp"
                         android:clickable="true"
                         android:focusable="true" />
@@ -388,13 +388,13 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_category"
-                    app:tint="#014d4e" />
+                    app:tint="#000000" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Catalog"
                     android:textSize="10sp"
-                    android:textColor="#014d4e"
+                    android:textColor="#000000"
                     android:textStyle="bold" />
             </LinearLayout>
 

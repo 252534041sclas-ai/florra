@@ -128,6 +128,7 @@ public class ViewBillActivity extends AppCompatActivity {
                 
                 View itemView = inflater.inflate(R.layout.item_preview_row, llItemsContainer, false);
                 ((android.widget.TextView) itemView.findViewById(R.id.tvItemName)).setText(item.getItemName());
+                ((android.widget.TextView) itemView.findViewById(R.id.tvItemNo)).setText(item.getTileNo() != null ? item.getTileNo() : "-");
                 ((android.widget.TextView) itemView.findViewById(R.id.tvItemDetails)).setText(item.getSize());
                 ((android.widget.TextView) itemView.findViewById(R.id.tvItemQty)).setText(String.valueOf(item.getQuantity())); 
                 ((android.widget.TextView) itemView.findViewById(R.id.tvItemRate)).setText("₹" + (int)item.getRate());

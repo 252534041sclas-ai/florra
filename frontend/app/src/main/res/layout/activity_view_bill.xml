@@ -372,8 +372,18 @@
                                 <TextView
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1"
+                                    android:layout_weight="1.2"
                                     android:text="ITEM"
+                                    android:textColor="@color/viewbill_text_muted"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold"
+                                    android:letterSpacing="0.1" />
+
+                                <TextView
+                                    android:layout_width="40dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:text="NO"
                                     android:textColor="@color/viewbill_text_muted"
                                     android:textSize="10sp"
                                     android:textStyle="bold"

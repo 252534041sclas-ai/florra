@@ -10,7 +10,7 @@
         android:id="@+id/header_section"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="#014d4e"
+        android:background="#000000"
         android:orientation="vertical" />
 
     <!-- Main Content in Rounded Container -->
@@ -44,7 +44,7 @@
                     android:layout_centerVertical="true"
                     android:background="@drawable/bg_icon_white"
                     android:text="←"
-                    android:textColor="#014d4e"
+                    android:textColor="#000000"
                     android:textSize="20sp"
                     android:stateListAnimator="@null" />
 
@@ -782,13 +782,13 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_person"
-                    app:tint="#014d4e" />
+                    app:tint="#000000" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Account"
                     android:textSize="10sp"
-                    android:textColor="#014d4e"
+                    android:textColor="#000000"
                     android:textStyle="bold" />
             </LinearLayout>
 

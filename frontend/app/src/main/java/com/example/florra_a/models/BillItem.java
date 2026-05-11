@@ -19,12 +19,16 @@ public class BillItem implements Serializable {
     @SerializedName("amount")
     private double amount;
 
+    @SerializedName("tile_no")
+    private String tileNo;
+
     // Optional: product_id if we want to link it back, but simple text is fine for now
     
     public BillItem() {}
 
-    public BillItem(String item_name, String size, int quantity, double rate, double amount) {
+    public BillItem(String item_name, String tileNo, String size, int quantity, double rate, double amount) {
         this.item_name = item_name;
+        this.tileNo = tileNo;
         this.size = size;
         this.quantity = quantity;
         this.rate = rate;
@@ -45,4 +49,7 @@ public class BillItem implements Serializable {
 
     public double getAmount() { return amount; }
     public void setAmount(double amount) { this.amount = amount; }
+
+    public String getTileNo() { return tileNo; }
+    public void setTileNo(String tileNo) { this.tileNo = tileNo; }
 }

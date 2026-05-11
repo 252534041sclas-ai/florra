@@ -11,7 +11,7 @@
         android:id="@+id/header_section"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:background="#014d4e"
+        android:background="#000000"
         android:orientation="vertical"
         android:paddingTop="12dp">
 
@@ -129,7 +129,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:padding="16dp"
-                            android:background="#F0F9F9">
+                            android:background="#F1F5F9">
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -141,13 +141,13 @@
                                     android:layout_weight="1"
                                     android:text="1. TOTAL TILES"
                                     android:textSize="10sp"
-                                    android:textColor="#00695C"
+                                    android:textColor="#000000"
                                     android:textStyle="bold" />
                                 <ImageView
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
                                     android:src="@drawable/ic_grid_view"
-                                    app:tint="#00695C" />
+                                    app:tint="#000000" />
                             </LinearLayout>
                             <TextView
                                 android:layout_width="wrap_content"
@@ -264,7 +264,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:padding="16dp"
-                            android:background="#F1F8E9">
+                            android:background="#F1F5F9">
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -276,13 +276,13 @@
                                     android:layout_weight="1"
                                     android:text="4. REVENUE (MTD)"
                                     android:textSize="10sp"
-                                    android:textColor="#33691E"
+                                    android:textColor="#000000"
                                     android:textStyle="bold" />
                                 <ImageView
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
                                     android:src="@drawable/ic_request_quote"
-                                    app:tint="#33691E" />
+                                    app:tint="#000000" />
                             </LinearLayout>
                             <TextView
                                 android:layout_width="wrap_content"
@@ -329,7 +329,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:src="@drawable/ic_inventory"
-                            app:tint="#014d4e" />
+                            app:tint="#000000" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -357,7 +357,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:src="@drawable/ic_chart"
-                            app:tint="#014d4e" />
+                            app:tint="#000000" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -385,7 +385,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:src="@drawable/ic_person"
-                            app:tint="#014d4e" />
+                            app:tint="#000000" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -413,7 +413,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:src="@drawable/ic_receipt"
-                            app:tint="#014d4e" />
+                            app:tint="#000000" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -441,7 +441,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:src="@drawable/ic_grid_view"
-                            app:tint="#014d4e" />
+                            app:tint="#000000" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -468,7 +468,7 @@
                             android:layout_width="32dp"
                             android:layout_height="32dp"
                             android:src="@drawable/ic_description"
-                            app:tint="#014d4e" />
+                            app:tint="#000000" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -622,13 +622,13 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_dashboard_filled"
-                    app:tint="#014d4e" />
+                    app:tint="#000000" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Home"
                     android:textSize="10sp"
-                    android:textColor="#014d4e"
+                    android:textColor="#000000"
                     android:textStyle="bold" />
             </LinearLayout>
 

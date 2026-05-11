@@ -14,14 +14,25 @@
         android:textColor="#111118"
         android:layout_marginBottom="16dp" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/etItemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Item Name (e.g. Marble)"
+        android:hint="Item Name"
         android:background="@drawable/bg_input_field"
         android:padding="12dp"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginBottom="12dp"
+        android:completionThreshold="1" />
+
+    <AutoCompleteTextView
+        android:id="@+id/etItemNo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Product Number (Tile No)"
+        android:background="@drawable/bg_input_field"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"
+        android:completionThreshold="1" />
 
     <EditText
         android:id="@+id/etItemSize"

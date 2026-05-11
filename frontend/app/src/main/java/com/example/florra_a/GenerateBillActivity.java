@@ -11,6 +11,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AutoCompleteTextView;
+import android.widget.ArrayAdapter;
+import com.example.florra_a.models.Product;
+import com.example.florra_a.network.RetrofitClient;
+import com.example.florra_a.network.ApiService;
+import java.util.ArrayList;
+import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
@@ -45,6 +55,12 @@ public class GenerateBillActivity extends AppCompatActivity {
     private double gstPercentage = 18.0;
     private double discount = 0.0;
     private double loading = 0.0;
+    
+    // Product list for search
+    private List<Product> allProducts = new ArrayList<>();
+    private List<String> productSuggestions = new ArrayList<>();
+    private List<String> numberSuggestions = new ArrayList<>();
+    private boolean isAutoPopulating = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,21 +68,20 @@ public class GenerateBillActivity extends AppCompatActivity {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
                 // Set status bar to white with dark icons
+        // Set status bar to white with dark icons
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+            WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+            controller.setAppearanceLightStatusBars(true);
         }
-
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-        WindowInsetsControllerCompat controller =
-                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        controller.setAppearanceLightStatusBars(false);
 
         setContentView(R.layout.activity_generate_bill);
 
         initViews();
         setListeners();
         calculateTotals();
+        fetchProducts();
     }
 
     private void initViews() {
@@ -162,10 +177,37 @@ public class GenerateBillActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate(R.layout.dialog_add_bill_item, null);
         builder.setView(view);
 
-        final EditText etItemName = view.findViewById(R.id.etItemName);
+        final AutoCompleteTextView etItemName = view.findViewById(R.id.etItemName);
+        final AutoCompleteTextView etItemNo = view.findViewById(R.id.etItemNo);
         final EditText etItemSize = view.findViewById(R.id.etItemSize);
         final EditText etItemQty = view.findViewById(R.id.etItemQty);
         final EditText etItemRate = view.findViewById(R.id.etItemRate);
+
+        // Setup Name AutoComplete
+        if (!productSuggestions.isEmpty()) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, productSuggestions);
+            etItemName.setAdapter(adapter);
+            etItemName.setOnItemClickListener((parent, v, position, id) -> {
+                String selected = (String) parent.getItemAtPosition(position);
+                autoPopulateBySelection(selected, true, etItemName, etItemNo, etItemSize, etItemRate);
+            });
+            etItemName.addTextChangedListener(new SimpleTextWatcher(s -> {
+                if (!isAutoPopulating) autoPopulateBySelection(s, true, etItemName, etItemNo, etItemSize, etItemRate);
+            }));
+        }
+
+        // Setup Number AutoComplete
+        if (!numberSuggestions.isEmpty()) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, numberSuggestions);
+            etItemNo.setAdapter(adapter);
+            etItemNo.setOnItemClickListener((parent, v, position, id) -> {
+                String selected = (String) parent.getItemAtPosition(position);
+                autoPopulateBySelection(selected, false, etItemName, etItemNo, etItemSize, etItemRate);
+            });
+            etItemNo.addTextChangedListener(new SimpleTextWatcher(s -> {
+                if (!isAutoPopulating) autoPopulateBySelection(s, false, etItemName, etItemNo, etItemSize, etItemRate);
+            }));
+        }
 
         builder.setPositiveButton("Add", null); // Set to null first to override onClick
         builder.setNegativeButton("Cancel", null);
@@ -175,6 +217,7 @@ public class GenerateBillActivity extends AppCompatActivity {
 
         dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             String name = etItemName.getText().toString().trim();
+            String no = etItemNo.getText().toString().trim();
             String size = etItemSize.getText().toString().trim();
             String qtyStr = etItemQty.getText().toString().trim();
             String rateStr = etItemRate.getText().toString().trim();
@@ -188,7 +231,7 @@ public class GenerateBillActivity extends AppCompatActivity {
             double rate = Double.parseDouble(rateStr);
             double amount = qty * rate;
 
-            com.example.florra_a.models.BillItem item = new com.example.florra_a.models.BillItem(name, size, qty, rate, amount);
+            com.example.florra_a.models.BillItem item = new com.example.florra_a.models.BillItem(name, no, size, qty, rate, amount);
             billItems.add(item);
             billItemAdapter.notifyItemInserted(billItems.size() - 1);
             
@@ -242,7 +285,45 @@ public class GenerateBillActivity extends AppCompatActivity {
                 .show();
     }
 
-    // 🔥 BACKEND INTEGRATION (FINAL)
+    private void autoPopulateBySelection(String input, boolean isNameInput, EditText etName, EditText etNo, EditText etSize, EditText etRate) {
+        if (input == null || input.isEmpty() || isAutoPopulating) return;
+        
+        isAutoPopulating = true;
+        try {
+            for (Product p : allProducts) {
+                String nameMatch = p.getTileName() + " (" + (p.getTileNo() != null ? p.getTileNo() : "N/A") + ")";
+                String noMatch = p.getTileNo();
+                
+                boolean matched = false;
+                if (isNameInput) {
+                    if (nameMatch.equals(input) || p.getTileName().equalsIgnoreCase(input)) matched = true;
+                } else {
+                    if (noMatch != null && noMatch.equalsIgnoreCase(input)) matched = true;
+                }
+
+                if (matched) {
+                    if (isNameInput) etNo.setText(p.getTileNo());
+                    else etName.setText(p.getTileName());
+                    
+                    etSize.setText(p.getSize());
+                    etRate.setText(p.getPrice());
+                    break;
+                }
+            }
+        } finally {
+            isAutoPopulating = false;
+        }
+    }
+
+    // Simple helper for TextWatcher
+    private class SimpleTextWatcher implements android.text.TextWatcher {
+        private final java.util.function.Consumer<String> consumer;
+        public SimpleTextWatcher(java.util.function.Consumer<String> consumer) { this.consumer = consumer; }
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        @Override public void afterTextChanged(android.text.Editable s) { consumer.accept(s.toString()); }
+    }
+
     private void saveBillToBackend() {
         // Collect data from EditTexts
         String billNo = tvBillNo.getText().toString();
@@ -287,6 +368,30 @@ public class GenerateBillActivity extends AppCompatActivity {
             public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {
                 Toast.makeText(GenerateBillActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 android.util.Log.e("GenerateBill", "Failure: " + t.getMessage());
+            }
+        });
+    }
+
+    private void fetchProducts() {
+        ApiService apiService = RetrofitClient.getApiService();
+        apiService.getProducts().enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    allProducts = response.body();
+                    productSuggestions.clear();
+                    numberSuggestions.clear();
+                    for (Product p : allProducts) {
+                        String suggestion = p.getTileName() + " (" + (p.getTileNo() != null ? p.getTileNo() : "N/A") + ")";
+                        productSuggestions.add(suggestion);
+                        if (p.getTileNo() != null) numberSuggestions.add(p.getTileNo());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                // Fail silently or log
             }
         });
     }

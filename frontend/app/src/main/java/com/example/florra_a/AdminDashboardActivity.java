@@ -23,7 +23,7 @@
             requestWindowFeature(Window.FEATURE_NO_TITLE);
             // Set status bar to dark teal to match header
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                getWindow().setStatusBarColor(android.graphics.Color.parseColor("#014D4E"));
+                getWindow().setStatusBarColor(android.graphics.Color.parseColor("#000000"));
                 // Remove light status bar flag to keep icons white
                 getWindow().getDecorView().setSystemUiVisibility(0);
             }
@@ -229,13 +229,12 @@
             }
 
             // STOCK ALERTS CARD
-            View cardStockAlerts = findViewById(R.id.cardStockAlerts);
-            if (cardStockAlerts != null) {
-                cardStockAlerts.setOnClickListener(new View.OnClickListener() {
+            View cardBilling = findViewById(R.id.cardStockAlerts);
+            if (cardBilling != null) {
+                cardBilling.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(AdminDashboardActivity.this, InventoryActivity.class);
-                        intent.putExtra("filter", "low_stock");
+                        Intent intent = new Intent(AdminDashboardActivity.this, GenerateBillActivity.class);
                         startActivity(intent);
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }

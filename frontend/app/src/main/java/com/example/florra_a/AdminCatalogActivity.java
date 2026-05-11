@@ -36,7 +36,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
         // Set status bar to dark teal
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(0); // White icons
-            getWindow().setStatusBarColor(android.graphics.Color.parseColor("#014D4E"));
+            getWindow().setStatusBarColor(android.graphics.Color.parseColor("#000000"));
         }
 
         setContentView(R.layout.activity_admin_catalog);

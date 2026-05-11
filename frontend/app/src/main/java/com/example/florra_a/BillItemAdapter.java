@@ -28,6 +28,7 @@ public class BillItemAdapter extends RecyclerView.Adapter<BillItemAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         BillItem item = items.get(position);
         holder.tvItemName.setText(item.getItemName());
+        holder.tvItemNo.setText(item.getTileNo() != null ? item.getTileNo() : "-");
         holder.tvItemSize.setText(item.getSize());
         holder.tvItemQty.setText(String.valueOf(item.getQuantity()));
         holder.tvItemRate.setText("₹" + (int)item.getRate());
@@ -40,11 +41,12 @@ public class BillItemAdapter extends RecyclerView.Adapter<BillItemAdapter.ViewHo
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvItemName, tvItemSize, tvItemQty, tvItemRate, tvItemAmount;
+        TextView tvItemName, tvItemNo, tvItemSize, tvItemQty, tvItemRate, tvItemAmount;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvItemName = itemView.findViewById(R.id.tvItemName);
+            tvItemNo = itemView.findViewById(R.id.tvItemNo);
             tvItemSize = itemView.findViewById(R.id.tvItemSize);
             tvItemQty = itemView.findViewById(R.id.tvItemQty);
             tvItemRate = itemView.findViewById(R.id.tvItemRate);

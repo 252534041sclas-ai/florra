@@ -3,15 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingHorizontal="24dp"
     android:paddingVertical="12dp"
-    android:background="?attr/selectableItemBackground">
+    android:gravity="center_vertical">
 
     <!-- Item Details -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_weight="1.2"
         android:orientation="vertical">
 
         <TextView
@@ -19,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Item Name"
-            android:textColor="#111118"
+            android:textColor="@color/black"
             android:textSize="13sp"
             android:textStyle="bold"
             android:layout_marginBottom="2dp" />
@@ -29,41 +28,48 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Size info"
-            android:textColor="#636388"
+            android:textColor="@color/viewbill_text_muted"
             android:textSize="11sp" />
 
     </LinearLayout>
 
+    <!-- Item Number -->
+    <TextView
+        android:id="@+id/tvItemNo"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:text="No"
+        android:textColor="@color/viewbill_text_muted"
+        android:textSize="12sp"
+        android:gravity="center" />
+
     <!-- Quantity -->
     <TextView
         android:id="@+id/tvItemQty"
-        android:layout_width="0dp"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="0"
-        android:textColor="#111118"
+        android:textColor="@color/black"
         android:textSize="13sp"
         android:gravity="center" />
 
     <!-- Rate -->
     <TextView
         android:id="@+id/tvItemRate"
-        android:layout_width="0dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="$0"
-        android:textColor="#111118"
+        android:text="₹0"
+        android:textColor="@color/black"
         android:textSize="13sp"
         android:gravity="end" />
 
     <!-- Amount -->
     <TextView
         android:id="@+id/tvItemAmount"
-        android:layout_width="0dp"
+        android:layout_width="60dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="$0"
-        android:textColor="#111118"
+        android:text="₹0"
+        android:textColor="@color/black"
         android:textSize="13sp"
         android:textStyle="bold"
         android:gravity="end" />
