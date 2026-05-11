@@ -2,6 +2,7 @@ package com.example.florra_a.network;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import com.example.florra_a.utils.SharedPrefManager;
 
 import java.io.IOException;
 
@@ -19,14 +20,14 @@ public class AuthInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        SharedPreferences prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
-        String token = prefs.getString("auth_token", "");
+        String token = SharedPrefManager.getInstance(context).getToken();
 
         Request.Builder requestBuilder = chain.request().newBuilder();
 
-        if (!token.isEmpty()) {
+        if (token != null && !token.isEmpty()) {
             android.util.Log.d("AuthInterceptor", "Attaching Token: " + token);
-            requestBuilder.addHeader("Authorization", "Bearer " + token);
+            // Change from "Bearer " to "Token " to match the backend expectation
+            requestBuilder.header("Authorization", "Token " + token);
         } else {
             android.util.Log.e("AuthInterceptor", "Token is EMPTY!");
         }

@@ -15,7 +15,7 @@ class AdminTokenAuthentication(BaseAuthentication):
         try:
             token = AdminToken.objects.get(key=key)
         except AdminToken.DoesNotExist:
-            raise AuthenticationFailed('Invalid token')
+            return None
 
         # Since AdminUser is not a standard User model, 
         # we return the AdminUser object and the token.

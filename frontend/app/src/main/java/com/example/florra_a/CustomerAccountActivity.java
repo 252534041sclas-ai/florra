@@ -2,6 +2,7 @@ package com.example.florra_a;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import com.example.florra_a.utils.SharedPrefManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -40,10 +41,10 @@ public class CustomerAccountActivity extends AppCompatActivity {
     }
 
     private void loadUserData() {
-        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        String name = prefs.getString("full_name", "Customer");
-        String email = prefs.getString("email", "customer@florra.design");
-        String profileImageUrl = prefs.getString("profile_image", null);
+        SharedPrefManager prefManager = SharedPrefManager.getInstance(this);
+        String name = prefManager.getFullName();
+        String email = prefManager.getEmail();
+        String profileImageUrl = prefManager.getProfileImage();
 
         android.widget.TextView tvUserName = findViewById(R.id.tvUserName);
         android.widget.TextView tvUserEmail = findViewById(R.id.tvUserEmail);
@@ -55,10 +56,16 @@ public class CustomerAccountActivity extends AppCompatActivity {
         if (profileImageUrl != null && !profileImageUrl.isEmpty() && ivProfile != null) {
             String fullUrl = profileImageUrl;
             if (!fullUrl.startsWith("http")) {
-                fullUrl = com.example.florra_a.network.RetrofitClient.BASE_URL + fullUrl;
+                // Ensure no double slashes
+                String baseUrl = com.example.florra_a.network.RetrofitClient.BASE_URL;
+                if (baseUrl.endsWith("/") && fullUrl.startsWith("/")) {
+                    fullUrl = baseUrl + fullUrl.substring(1);
+                } else if (!baseUrl.endsWith("/") && !fullUrl.startsWith("/")) {
+                    fullUrl = baseUrl + "/" + fullUrl;
+                } else {
+                    fullUrl = baseUrl + fullUrl;
+                }
             }
-            // Fix double slash issue if present
-             fullUrl = fullUrl.replace(com.example.florra_a.network.RetrofitClient.BASE_URL + "/", com.example.florra_a.network.RetrofitClient.BASE_URL);
 
             com.bumptech.glide.Glide.with(this)
                 .load(fullUrl)
@@ -283,11 +290,8 @@ public class CustomerAccountActivity extends AppCompatActivity {
     }
 
     private void performLogout() {
-        // Clear SharedPreferences (login data)
-        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
+        // Clear SharedPreferences using SharedPrefManager
+        SharedPrefManager.getInstance(this).logout();
 
         // Show logout message
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();

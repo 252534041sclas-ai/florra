@@ -73,15 +73,13 @@
                         android:layout_height="112dp"
                         android:background="@drawable/bg_profile_circle">
 
-                        <!-- Placeholder for profile image -->
                         <ImageView
                             android:id="@+id/ivProfile"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:src="@drawable/ic_person"
                             android:scaleType="centerCrop"
-                            android:contentDescription="Profile Image"
-                            android:tint="@color/slate_400" />
+                            android:contentDescription="Profile Image" />
 
                     </RelativeLayout>
 

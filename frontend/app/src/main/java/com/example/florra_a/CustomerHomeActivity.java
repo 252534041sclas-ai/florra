@@ -64,9 +64,8 @@ public class CustomerHomeActivity extends AppCompatActivity {
         // Setup Welcome Message
         TextView tvWelcomeUser = findViewById(R.id.tvWelcomeUser);
         if (tvWelcomeUser != null) {
-            android.content.SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-            String fullName = sharedPreferences.getString("full_name", "User");
-            tvWelcomeUser.setText("Welcome, " + fullName);
+            String fullName = com.example.florra_a.utils.SharedPrefManager.getInstance(this).getFullName();
+            tvWelcomeUser.setText("Welcome, " + (fullName != null ? fullName : "User"));
         }
         
         // Setup Horizontal RecyclerView for New Arrivals

@@ -16,6 +16,7 @@ import com.example.florra_a.models.UpdateProfileRequest;
 import com.example.florra_a.models.AuthResponse;
 import com.example.florra_a.network.RetrofitClient;
 import com.example.florra_a.network.ApiService;
+import com.example.florra_a.utils.SharedPrefManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -80,23 +81,29 @@ public class EditProfileActivity extends AppCompatActivity {
     }
     
     private void loadUserData() {
-        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        String fullName = prefs.getString("full_name", "");
-        String email = prefs.getString("email", "");
-        String mobile = prefs.getString("mobile", "");
+        SharedPrefManager prefManager = SharedPrefManager.getInstance(this);
+        String fullName = prefManager.getFullName();
+        String email = prefManager.getEmail();
+        String mobile = ""; // Mobile might not be in SharedPrefManager, using empty or getting from prefs if needed
         
         etFullName.setText(fullName);
         etEmail.setText(email);
         etMobile.setText(mobile);
         
-        String profileImageUrl = prefs.getString("profile_image", null);
+        String profileImageUrl = prefManager.getProfileImage();
         if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
             String fullUrl = profileImageUrl;
             if (!fullUrl.startsWith("http")) {
-                fullUrl = com.example.florra_a.network.RetrofitClient.BASE_URL + fullUrl;
+                // Ensure no double slashes
+                String baseUrl = com.example.florra_a.network.RetrofitClient.BASE_URL;
+                if (baseUrl.endsWith("/") && fullUrl.startsWith("/")) {
+                    fullUrl = baseUrl + fullUrl.substring(1);
+                } else if (!baseUrl.endsWith("/") && !fullUrl.startsWith("/")) {
+                    fullUrl = baseUrl + "/" + fullUrl;
+                } else {
+                    fullUrl = baseUrl + fullUrl;
+                }
             }
-             // Fix double slash issue if present
-             fullUrl = fullUrl.replace(com.example.florra_a.network.RetrofitClient.BASE_URL + "/", com.example.florra_a.network.RetrofitClient.BASE_URL);
 
             ivProfile.setColorFilter(null); // Clear tint for existing image
             Glide.with(this)
@@ -278,15 +285,14 @@ public class EditProfileActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     AuthResponse authResponse = response.body();
                     
-                    // Update SharedPreferences
-                    SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString("full_name", authResponse.getFullName());
-                    editor.putString("email", authResponse.getEmail()); 
-                    if (authResponse.getProfileImage() != null) {
-                        editor.putString("profile_image", authResponse.getProfileImage());
-                    }
-                    editor.apply();
+                    // Update SharedPreferences using SharedPrefManager
+                    SharedPrefManager.getInstance(EditProfileActivity.this).saveUser(
+                        authResponse.getEmail(),
+                        authResponse.getFullName(),
+                        SharedPrefManager.getInstance(EditProfileActivity.this).getToken(), // Keep current token
+                        SharedPrefManager.getInstance(EditProfileActivity.this).isAdmin(),
+                        authResponse.getProfileImage()
+                    );
 
                     Toast.makeText(EditProfileActivity.this, "Profile saved successfully!", Toast.LENGTH_SHORT).show();
                     goBack();

@@ -59,9 +59,12 @@ public class FavoritesActivity extends AppCompatActivity implements FavoritesAda
 
     private void initializeViews() {
         recyclerFavorites = findViewById(R.id.recyclerFavorites);
-        tvFavoritesCount = findViewById(R.id.tvFavoritesCount);
-        tvNoFavorites = findViewById(R.id.tvNoFavorites);
+        tvFavoritesCount  = findViewById(R.id.tvFavoritesCount);
+        tvNoFavorites     = findViewById(R.id.tvNoFavorites);
         tvRequestQuoteText = findViewById(R.id.tvRequestQuoteText);
+
+        // Always use 2-column grid for item_tile.xml
+        recyclerFavorites.setLayoutManager(new GridLayoutManager(this, 2));
     }
 
     private void loadFavorites() {
@@ -97,13 +100,6 @@ public class FavoritesActivity extends AppCompatActivity implements FavoritesAda
         } else {
             recyclerFavorites.setVisibility(View.VISIBLE);
             tvNoFavorites.setVisibility(View.GONE);
-            
-            // Set Layout Manager if not set
-            if (recyclerFavorites.getLayoutManager() == null) {
-                 recyclerFavorites.setLayoutManager(new GridLayoutManager(this, 2));
-            }
-            
-            // Set Adapter
             adapter = new FavoritesAdapter(this, list, this);
             recyclerFavorites.setAdapter(adapter);
         }

@@ -19,6 +19,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
+import com.example.florra_a.utils.SharedPrefManager;
 
 public class AdminAccountActivity extends AppCompatActivity {
 
@@ -86,16 +87,29 @@ public class AdminAccountActivity extends AppCompatActivity {
 
     private void loadProfileImage() {
         try {
-            // The profile image URL
-            String profileImageUrl = "https://lh3.googleusercontent.com/aida-public/AB6AXuB7A0vo_l2v1FXZFzyvYBbUew2LBVTSZla6MCGIiDJBpTzBtJaD651obQWhd789__6kiefzM_P94pjG8ui_YK9njt0jj9VzDTejy2WUxb3mtRuUqueUOWZILdw8KkVNwLAKNPHw8cfgsd_oYzlZJ66kc0UVAUHSw7Y2nUDX9kR_vHHRl0op43OZrA_Ldp0ENLOtkIEQ4biGuuMRukbUJYHLudw73Ez7UUbloAkXCB_wfPTunxgvkpjYbKARxrkhZ18Ksh8CI8msgyp9";
+            SharedPrefManager prefManager = SharedPrefManager.getInstance(this);
+            String profileImageUrl = prefManager.getProfileImage();
 
-            // Load image with Picasso
-            Picasso.get()
-                    .load(profileImageUrl)
-                    .placeholder(R.drawable.ic_profile_placeholder)
-                    .error(R.drawable.ic_profile_placeholder)
-                    .transform(new CircleTransform())
-                    .into(ivProfile);
+            if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                if (!profileImageUrl.startsWith("http")) {
+                    String baseUrl = com.example.florra_a.network.RetrofitClient.BASE_URL;
+                    if (baseUrl.endsWith("/") && profileImageUrl.startsWith("/")) {
+                        profileImageUrl = baseUrl + profileImageUrl.substring(1);
+                    } else if (!baseUrl.endsWith("/") && !profileImageUrl.startsWith("/")) {
+                        profileImageUrl = baseUrl + "/" + profileImageUrl;
+                    } else {
+                        profileImageUrl = baseUrl + profileImageUrl;
+                    }
+                }
+
+                // Load image with Picasso
+                Picasso.get()
+                        .load(profileImageUrl)
+                        .placeholder(R.drawable.ic_profile_placeholder)
+                        .error(R.drawable.ic_profile_placeholder)
+                        .transform(new CircleTransform())
+                        .into(ivProfile);
+            }
         } catch (Exception e) {
             Toast.makeText(this, "Error loading profile image", Toast.LENGTH_SHORT).show();
         }
@@ -228,8 +242,8 @@ public class AdminAccountActivity extends AppCompatActivity {
     }
 
     private void performLogout() {
-        // Clear user data
-        getSharedPreferences("user_prefs", MODE_PRIVATE).edit().clear().apply();
+        // Clear user data using SharedPrefManager
+        SharedPrefManager.getInstance(this).logout();
 
         Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show();
 

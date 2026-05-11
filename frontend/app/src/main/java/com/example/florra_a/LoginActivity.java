@@ -21,6 +21,7 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.example.florra_a.models.AuthResponse;
 import com.example.florra_a.models.LoginRequest;
 import com.example.florra_a.network.RetrofitClient;
+import com.example.florra_a.utils.SharedPrefManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -86,12 +87,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkLoginStatus() {
-        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean("is_logged_in", false);
-        String userType = sharedPreferences.getString("user_type", "");
-
-        if (isLoggedIn) {
-            if ("admin".equals(userType)) {
+        SharedPrefManager prefManager = SharedPrefManager.getInstance(this);
+        if (prefManager.isLoggedIn()) {
+            if (prefManager.isAdmin()) {
                 // Navigate to admin dashboard
                 Intent intent = new Intent(LoginActivity.this, AdminDashboardActivity.class);
                 startActivity(intent);
@@ -440,22 +438,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void saveUserData(String email, String fullName, String token, boolean isAdmin, String profileImage) {
-        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-        // Save basic user info
-        editor.putBoolean("is_logged_in", true);
-        editor.putString("user_type", isAdmin ? "admin" : "customer");
-        editor.putString("email", email);
-        editor.putString("full_name", fullName != null ? fullName : (isAdmin ? "Admin User" : "Customer User"));
-        editor.putString("auth_token", token);
-        
-        if (profileImage != null) {
-            editor.putString("profile_image", profileImage);
-        }
-
-        editor.apply();
-
+        SharedPrefManager.getInstance(this).saveUser(email, fullName, token, isAdmin, profileImage);
         Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
     }
 

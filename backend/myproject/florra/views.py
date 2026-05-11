@@ -94,12 +94,14 @@ class CustomerLoginView(APIView):
             if not user.is_active:
                 return Response({"message": "Account is disabled"}, status=status.HTTP_400_BAD_REQUEST)
 
-            token, _ = Token.objects.get_or_create(user=user)
+            from .models import CustomerToken
+            token, _ = CustomerToken.objects.get_or_create(user=user)
             return Response({
                 "token": token.key,
                 "email": user.email,
                 "full_name": user.full_name,
-                "user_type": "customer"
+                "user_type": "customer",
+                "profile_image": user.profile_image.url if user.profile_image else None
             })
         except CustomerUser.DoesNotExist:
             return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)

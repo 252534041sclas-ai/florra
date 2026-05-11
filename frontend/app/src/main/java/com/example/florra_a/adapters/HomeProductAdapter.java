@@ -55,35 +55,41 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
         // item_tile.xml has "₹3.50" in tilePrice and "/sq.ft" in tileDetails
         holder.tvProductPrice.setText("₹" + product.getPrice());
         
-        // Bind Finish if available
-        if (product.getFinish() != null && !product.getFinish().isEmpty()) {
-            holder.tvProductFinish.setText(product.getFinish());
-            holder.tvProductFinish.setVisibility(View.VISIBLE);
+        // Bind Finish
+        String finish = product.getFinish();
+        if (finish == null) finish = product.getCategory();
+        holder.tvProductFinish.setText(finish != null ? finish.toUpperCase() : "PORCELAIN");
+
+        // Bind Stock Status
+        String stockStatus = product.getStockStatus();
+        if (stockStatus == null) stockStatus = product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK";
+        holder.tvStockBadge.setText(stockStatus);
+        
+        if ("LOW STOCK".equalsIgnoreCase(stockStatus) || "OUT OF STOCK".equalsIgnoreCase(stockStatus)) {
+            holder.tvStockBadge.setTextColor(context.getResources().getColor(R.color.orange_600));
+            holder.layoutStockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
         } else {
-            holder.tvProductFinish.setVisibility(View.GONE);
+            holder.tvStockBadge.setTextColor(context.getResources().getColor(R.color.green_600));
+            holder.layoutStockBadge.setBackgroundResource(R.drawable.bg_tag_stock);
         }
 
-        // Load image (standard logic)
+        // Load image (unified logic with TileAdapter)
         String imageUrl = product.getImage();
         if (imageUrl != null && !imageUrl.isEmpty()) {
              if (!imageUrl.startsWith("http")) {
                  if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
+                 if (!imageUrl.startsWith("media/")) imageUrl = "media/" + imageUrl;
                  imageUrl = RetrofitClient.BASE_URL + imageUrl;
-             } else {
-                 String baseHost = RetrofitClient.BASE_URL
-                         .replace("http://", "")
-                         .replace("https://", "")
-                         .split(":")[0];
-                 imageUrl = imageUrl.replace("127.0.0.1", baseHost)
-                                    .replace("localhost", baseHost);
              }
              
             Glide.with(context)
                     .load(imageUrl)
-                    .placeholder(R.drawable.ic_tile_placeholder)
+                    .placeholder(R.drawable.tile_placeholder)
+                    .error(R.drawable.tile_placeholder)
+                    .centerCrop()
                     .into(holder.imgProduct);
         } else {
-            holder.imgProduct.setImageResource(R.drawable.ic_tile_placeholder);
+            holder.imgProduct.setImageResource(R.drawable.tile_placeholder);
         }
         
         // Show and Handle Favorite Button
@@ -228,8 +234,9 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgProduct;
-        View btnFavorite; // Changed to View because it's a LinearLayout in item_tile
-        TextView tvProductName, tvProductSize, tvProductPrice, tvProductFinish;
+        View btnFavorite;
+        TextView tvProductName, tvProductSize, tvProductPrice, tvProductFinish, tvStockBadge;
+        android.view.View layoutStockBadge;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -239,6 +246,8 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
             tvProductPrice = itemView.findViewById(R.id.tilePrice);
             tvProductFinish = itemView.findViewById(R.id.tileFinish);
             btnFavorite = itemView.findViewById(R.id.btnFavorite);
+            tvStockBadge = itemView.findViewById(R.id.stockBadgeText);
+            layoutStockBadge = itemView.findViewById(R.id.stockBadge);
         }
     }
 }
