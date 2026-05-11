@@ -687,7 +687,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:background="@drawable/bg_download_button"
+                android:background="@drawable/bg_black_button_large"
                 android:paddingVertical="16dp"
                 android:layout_marginBottom="12dp"
                 android:clickable="true"
@@ -697,14 +697,14 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_download"
-                    android:tint="@color/slate_600"
+                    android:tint="@color/white"
                     android:layout_marginEnd="8dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Download Quotation (PDF)"
-                    android:textColor="@color/slate_700"
+                    android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 

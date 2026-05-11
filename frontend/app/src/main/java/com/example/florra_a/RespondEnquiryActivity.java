@@ -47,8 +47,8 @@ public class RespondEnquiryActivity extends AppCompatActivity {
         setupTextWatchers();
         
         // Get Enquiry Data
-        if (getIntent().hasExtra("enquiry_data")) {
-            currentEnquiry = (com.example.florra_a.models.Enquiry) getIntent().getSerializableExtra("enquiry_data");
+        if (getIntent().hasExtra("enquiry")) {
+            currentEnquiry = (com.example.florra_a.models.Enquiry) getIntent().getSerializableExtra("enquiry");
             populateData();
         }
     }

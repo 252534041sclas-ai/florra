@@ -83,6 +83,7 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void setupFilterButtons() {
         LinearLayout btnAllTiles = findViewById(R.id.btnAllTiles);
+        LinearLayout btnFloor   = findViewById(R.id.btnFloor);
         LinearLayout btnWall = findViewById(R.id.btnWall);
         LinearLayout btnLiving = findViewById(R.id.btnLiving);
         LinearLayout btnBathroom = findViewById(R.id.btnBathroom);
@@ -94,6 +95,9 @@ public class CatalogActivity extends AppCompatActivity {
 
         // Set initial state based on selectedFilter
         switch (selectedFilter.toLowerCase()) {
+            case "floor":
+                activateButton(btnFloor, "Floor");
+                break;
             case "wall":
                 activateButton(btnWall, "Wall");
                 break;
@@ -126,6 +130,9 @@ public class CatalogActivity extends AppCompatActivity {
                 if (id == R.id.btnAllTiles) {
                     filter = "all";
                     title = "All Tiles";
+                } else if (id == R.id.btnFloor) {
+                    filter = "floor";
+                    title = "Floor";
                 } else if (id == R.id.btnWall) {
                     filter = "wall";
                     title = "Wall";
@@ -149,6 +156,7 @@ public class CatalogActivity extends AppCompatActivity {
         };
 
         if (btnAllTiles != null) btnAllTiles.setOnClickListener(filterClickListener);
+        if (btnFloor    != null) btnFloor.setOnClickListener(filterClickListener);
         if (btnWall != null) btnWall.setOnClickListener(filterClickListener);
         if (btnLiving != null) btnLiving.setOnClickListener(filterClickListener);
         if (btnBathroom != null) btnBathroom.setOnClickListener(filterClickListener);
@@ -159,6 +167,7 @@ public class CatalogActivity extends AppCompatActivity {
     private void resetFilterButtons() {
         int[][] buttonIds = {
                 {R.id.btnAllTiles, R.drawable.bg_filter_inactive},
+                {R.id.btnFloor,    R.drawable.bg_filter_inactive},
                 {R.id.btnWall, R.drawable.bg_filter_inactive},
                 {R.id.btnLiving, R.drawable.bg_filter_inactive},
                 {R.id.btnBathroom, R.drawable.bg_filter_inactive},

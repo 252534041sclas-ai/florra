@@ -26,6 +26,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
     private TileAdapter tileAdapter;
     private List<Product> allProducts = new ArrayList<>();
     private String selectedFilter = "all"; // Default filter
+    private boolean isSelectionMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +46,20 @@ public class AdminCatalogActivity extends AppCompatActivity {
         if (intent != null && intent.hasExtra("filter_type")) {
             selectedFilter = intent.getStringExtra("filter_type");
         }
+        if (intent != null && intent.getBooleanExtra("is_selection_mode", false)) {
+            isSelectionMode = true;
+            // Update UI for selection mode
+            TextView tvTitle = findViewById(R.id.tvTitle);
+            if (tvTitle != null) tvTitle.setText("Select Product");
+            View bottomNav = findViewById(R.id.bottomNav);
+            if (bottomNav != null) bottomNav.setVisibility(View.GONE);
+        }
 
         setupAllClickListeners();
         setupRecyclerView();
-        setupBottomNavigation();
+        if (!isSelectionMode) {
+            setupBottomNavigation();
+        }
         fetchProducts();
     }
 
@@ -176,6 +187,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
 
     private void setupFilterButtons() {
         LinearLayout btnAllTiles = findViewById(R.id.btnAllTiles);
+        LinearLayout btnFloor   = findViewById(R.id.btnFloor);
         LinearLayout btnWall = findViewById(R.id.btnWall);
         LinearLayout btnLiving = findViewById(R.id.btnLiving);
         LinearLayout btnBathroom = findViewById(R.id.btnBathroom);
@@ -187,6 +199,9 @@ public class AdminCatalogActivity extends AppCompatActivity {
 
         // Set initial state based on selectedFilter
         switch (selectedFilter.toLowerCase()) {
+            case "floor":
+                activateButton(btnFloor, "Floor");
+                break;
             case "wall":
                 activateButton(btnWall, "Wall");
                 break;
@@ -219,6 +234,9 @@ public class AdminCatalogActivity extends AppCompatActivity {
                 if (id == R.id.btnAllTiles) {
                     filter = "all";
                     title = "All Tiles";
+                } else if (id == R.id.btnFloor) {
+                    filter = "floor";
+                    title = "Floor";
                 } else if (id == R.id.btnWall) {
                     filter = "wall";
                     title = "Wall";
@@ -242,6 +260,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
         };
 
         if (btnAllTiles != null) btnAllTiles.setOnClickListener(filterClickListener);
+        if (btnFloor    != null) btnFloor.setOnClickListener(filterClickListener);
         if (btnWall != null) btnWall.setOnClickListener(filterClickListener);
         if (btnLiving != null) btnLiving.setOnClickListener(filterClickListener);
         if (btnBathroom != null) btnBathroom.setOnClickListener(filterClickListener);
@@ -252,6 +271,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
     private void resetFilterButtons() {
         int[][] buttonIds = {
                 {R.id.btnAllTiles, R.drawable.bg_filter_inactive},
+                {R.id.btnFloor,    R.drawable.bg_filter_inactive},
                 {R.id.btnWall, R.drawable.bg_filter_inactive},
                 {R.id.btnLiving, R.drawable.bg_filter_inactive},
                 {R.id.btnBathroom, R.drawable.bg_filter_inactive},
@@ -290,8 +310,15 @@ public class AdminCatalogActivity extends AppCompatActivity {
             tileAdapter.setOnItemClickListener(new TileAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(Product product) {
-                    // Open ADMIN Product Details
-                    openAdminProductDetails(product);
+                    if (isSelectionMode) {
+                        Intent resultIntent = new Intent();
+                        resultIntent.putExtra("selected_product", product);
+                        setResult(RESULT_OK, resultIntent);
+                        finish();
+                    } else {
+                        // Open ADMIN Product Details
+                        openAdminProductDetails(product);
+                    }
                 }
 
                 @Override

@@ -71,9 +71,10 @@ public class AdminNotificationsActivity extends AppCompatActivity {
     private android.widget.HorizontalScrollView scrollProductResults;
     private android.widget.LinearLayout llProductChips;
     private androidx.cardview.widget.CardView cardSelectedProduct;
-    private ImageView ivSelectedProduct;
+    private ImageView ivSelectedProduct, ivPreviewImage;
     private TextView tvSelectedProductName, tvSelectedProductInfo;
     private ImageView btnRemoveProduct;
+    private android.view.View btnSelectFromCatalog;
     private com.example.florra_a.models.Product selectedProduct = null;
     private java.util.List<com.example.florra_a.models.Product> searchResults = new java.util.ArrayList<>();
     private android.os.Handler searchHandler = new android.os.Handler();
@@ -169,9 +170,11 @@ public class AdminNotificationsActivity extends AppCompatActivity {
         llProductChips        = findViewById(R.id.llProductChips);
         cardSelectedProduct   = findViewById(R.id.cardSelectedProduct);
         ivSelectedProduct     = findViewById(R.id.ivSelectedProduct);
+        ivPreviewImage        = findViewById(R.id.ivPreviewImage);
         tvSelectedProductName = findViewById(R.id.tvSelectedProductName);
         tvSelectedProductInfo = findViewById(R.id.tvSelectedProductInfo);
         btnRemoveProduct      = findViewById(R.id.btnRemoveProduct);
+        btnSelectFromCatalog  = findViewById(R.id.btnSelectFromCatalog);
 
         // Header buttons
         findViewById(R.id.btnBack).setOnClickListener(v -> onBackPressed());
@@ -296,6 +299,15 @@ public class AdminNotificationsActivity extends AppCompatActivity {
         if (requestCode == 101) {
             // Refresh after responding
             loadQuotationRequests();
+        } else if (requestCode == 102 && resultCode == RESULT_OK && data != null) {
+            // Handle product selection from catalog
+            if (data.hasExtra("selected_product")) {
+                com.example.florra_a.models.Product product = 
+                    (com.example.florra_a.models.Product) data.getSerializableExtra("selected_product");
+                if (product != null) {
+                    selectProduct(product);
+                }
+            }
         }
     }
 
@@ -416,6 +428,12 @@ public class AdminNotificationsActivity extends AppCompatActivity {
         });
 
         btnRemoveProduct.setOnClickListener(v -> clearSelectedProduct());
+        btnSelectFromCatalog.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AdminCatalogActivity.class);
+            intent.putExtra("is_selection_mode", true);
+            startActivityForResult(intent, 102);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        });
     }
 
     private void searchProducts(String query) {
@@ -502,6 +520,14 @@ public class AdminNotificationsActivity extends AppCompatActivity {
                 .placeholder(R.drawable.bg_filter_inactive)
                 .centerCrop()
                 .into(ivSelectedProduct);
+
+            // Also update preview icon
+            ivPreviewImage.setPadding(0, 0, 0, 0);
+            ivPreviewImage.setImageTintList(null);
+            com.bumptech.glide.Glide.with(this)
+                .load(p.getImage())
+                .centerCrop()
+                .into(ivPreviewImage);
         }
 
         cardSelectedProduct.setVisibility(android.view.View.VISIBLE);
@@ -510,6 +536,12 @@ public class AdminNotificationsActivity extends AppCompatActivity {
     private void clearSelectedProduct() {
         selectedProduct = null;
         cardSelectedProduct.setVisibility(android.view.View.GONE);
+        
+        // Reset preview icon
+        ivPreviewImage.setImageResource(R.drawable.ic_notifications);
+        ivPreviewImage.setImageTintList(android.content.res.ColorStateList.valueOf(Color.WHITE));
+        int padding = (int)(10 * getResources().getDisplayMetrics().density);
+        ivPreviewImage.setPadding(padding, padding, padding, padding);
     }
 
     // ─────────────────────────────────────────────────────────────────────────

@@ -40,8 +40,8 @@ public class ProductsActivity extends AppCompatActivity {
         // Handle notch and status bar
         WindowInsetsControllerCompat windowInsetsController =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.setAppearanceLightStatusBars(false);
-        windowInsetsController.setAppearanceLightNavigationBars(false);
+        windowInsetsController.setAppearanceLightStatusBars(true);
+        windowInsetsController.setAppearanceLightNavigationBars(true);
 
         setContentView(R.layout.activity_products);
 
@@ -49,9 +49,6 @@ public class ProductsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerViewProducts);
         recyclerView.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
         
-        // Show toast
-        // Toast.makeText(this, "Products List", Toast.LENGTH_SHORT).show();
-
         // Setup navigation
         setupNavigation();
         
@@ -74,19 +71,17 @@ public class ProductsActivity extends AppCompatActivity {
             @Override
             public void onResponse(retrofit2.Call<java.util.List<com.example.florra_a.models.Product>> call, retrofit2.Response<java.util.List<com.example.florra_a.models.Product>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<com.example.florra_a.models.Product> productList = response.body();
-                    productAdapter = new ProductAdapter(ProductsActivity.this, productList);
+                    fullProductList = response.body();
+                    productAdapter = new ProductAdapter(ProductsActivity.this, fullProductList);
                     recyclerView.setAdapter(productAdapter);
                 } else {
                     Toast.makeText(ProductsActivity.this, "Failed to load products: " + response.code(), Toast.LENGTH_SHORT).show();
-                    android.util.Log.e("ProductsActivity", "Error: " + response.code() + " " + response.message());
                 }
             }
 
             @Override
             public void onFailure(retrofit2.Call<java.util.List<com.example.florra_a.models.Product>> call, Throwable t) {
-                Toast.makeText(ProductsActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                android.util.Log.e("ProductsActivity", "Failure: " + t.getMessage());
+                Toast.makeText(ProductsActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -95,41 +90,144 @@ public class ProductsActivity extends AppCompatActivity {
         // Back button
         ImageView btnBack = findViewById(R.id.btnBack);
         if (btnBack != null) {
-            btnBack.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
+            btnBack.setOnClickListener(v -> onBackPressed());
         }
 
         // More options button
         ImageView btnMore = findViewById(R.id.btnMore);
         if (btnMore != null) {
-            btnMore.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(ProductsActivity.this, "More options", Toast.LENGTH_SHORT).show();
-                }
+            btnMore.setOnClickListener(v -> Toast.makeText(ProductsActivity.this, "More options", Toast.LENGTH_SHORT).show());
+        }
+
+        // Filter buttons
+        Button btnAll = findViewById(R.id.btnAll);
+        if (btnAll != null) {
+            btnAll.setOnClickListener(v -> {
+                fetchProducts(); // Reload all
+                Toast.makeText(ProductsActivity.this, "Showing all products", Toast.LENGTH_SHORT).show();
             });
         }
 
-        // Filter buttons (Logic can be added later)
-        Button btnAll = findViewById(R.id.btnAll);
-        if (btnAll != null) {
-            btnAll.setOnClickListener(v -> Toast.makeText(ProductsActivity.this, "Showing all products", Toast.LENGTH_SHORT).show());
+        Button btnCategory = findViewById(R.id.btnCategory);
+        if (btnCategory != null) {
+            btnCategory.setOnClickListener(v -> showCategoryMenu(v));
+        }
+
+        Button btnSize = findViewById(R.id.btnSize);
+        if (btnSize != null) {
+            btnSize.setOnClickListener(v -> showSizeMenu(v));
+        }
+
+        Button btnStock = findViewById(R.id.btnStock);
+        if (btnStock != null) {
+            btnStock.setOnClickListener(v -> showStockMenu(v));
         }
 
         // Add Product button
-        Button btnAddProduct = findViewById(R.id.btnAddProduct);
+        View btnAddProduct = findViewById(R.id.btnAddProduct);
         if (btnAddProduct != null) {
-            btnAddProduct.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(ProductsActivity.this, AddProductActivity.class);
-                    startActivity(intent);
-                }
+            btnAddProduct.setOnClickListener(v -> {
+                Intent intent = new Intent(ProductsActivity.this, AddProductActivity.class);
+                startActivity(intent);
             });
+        }
+    }
+
+    private void showCategoryMenu(View v) {
+        android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
+        popup.getMenu().add("All");
+        popup.getMenu().add("Wall");
+        popup.getMenu().add("Floor");
+        popup.getMenu().add("Kitchen");
+        popup.getMenu().add("Bathroom");
+        popup.getMenu().add("Living");
+        popup.getMenu().add("Bedroom");
+
+        popup.setOnMenuItemClickListener(item -> {
+            String category = item.getTitle().toString();
+            ((Button)v).setText(category);
+            if (category.equals("All")) {
+                fetchProducts();
+            } else {
+                filterByLogic("category", category);
+            }
+            return true;
+        });
+        popup.show();
+    }
+
+    private void showSizeMenu(View v) {
+        android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
+        popup.getMenu().add("All");
+        popup.getMenu().add("12x12");
+        popup.getMenu().add("12x18");
+        popup.getMenu().add("12x24");
+        popup.getMenu().add("24x24");
+        popup.getMenu().add("24x48");
+        popup.getMenu().add("32x64");
+        popup.getMenu().add("48x48");
+
+        popup.setOnMenuItemClickListener(item -> {
+            String size = item.getTitle().toString();
+            ((Button)v).setText(size);
+            if (size.equals("All")) {
+                fetchProducts();
+            } else {
+                filterByLogic("size", size);
+            }
+            return true;
+        });
+        popup.show();
+    }
+
+    private void showStockMenu(View v) {
+        android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
+        popup.getMenu().add("All");
+        popup.getMenu().add("In Stock");
+        popup.getMenu().add("Out of Stock");
+        popup.getMenu().add("Low Stock (<20)");
+
+        popup.setOnMenuItemClickListener(item -> {
+            String stockType = item.getTitle().toString();
+            ((Button)v).setText(stockType);
+            if (stockType.equals("All")) {
+                fetchProducts();
+            } else {
+                filterByLogic("stock", stockType);
+            }
+            return true;
+        });
+        popup.show();
+    }
+
+    private List<Product> fullProductList = new java.util.ArrayList<>();
+
+    private void filterByLogic(String type, String value) {
+        if (fullProductList == null || fullProductList.isEmpty()) return;
+
+        List<Product> filteredList = new java.util.ArrayList<>();
+        String query = value.toLowerCase();
+
+        for (Product product : fullProductList) {
+            boolean matches = false;
+            if (type.equals("category")) {
+                matches = product.getCategory() != null && product.getCategory().toLowerCase().contains(query);
+            } else if (type.equals("size")) {
+                matches = product.getSize() != null && product.getSize().toLowerCase().contains(query);
+            } else if (type.equals("stock")) {
+                int stock = product.getStock();
+                if (value.equals("In Stock")) matches = stock > 0;
+                else if (value.equals("Out of Stock")) matches = stock == 0;
+                else if (value.equals("Low Stock (<20)")) matches = stock > 0 && stock < 20;
+            }
+
+            if (matches) {
+                filteredList.add(product);
+            }
+        }
+
+        if (productAdapter != null) {
+            productAdapter.updateList(filteredList);
         }
     }
 

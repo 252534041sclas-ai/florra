@@ -84,9 +84,25 @@ class ProductCreateView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def post(self, request):
+        send_notification = request.data.get('send_notification') == 'true'
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            product = serializer.save()
+
+            if send_notification:
+                try:
+                    from florra.models import CustomerUser, Notification
+                    customers = CustomerUser.objects.all()
+                    for customer in customers:
+                        Notification.objects.create(
+                            user=customer,
+                            title="New Arrival! 🚀",
+                            message=f"Exciting news! We just added {product.tile_name} to our catalog. Check it out now!",
+                            notification_type="system"
+                        )
+                except Exception as e:
+                    print(f"ERROR: Failed to send broadcast notifications: {e}")
+
             return Response(
                 {"message": "Product added successfully"},
                 status=status.HTTP_201_CREATED
@@ -120,7 +136,24 @@ class ProductDetailView(APIView):
 
         serializer = ProductSerializer(product, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            product = serializer.save()
+            
+            # Broadcast notification if requested
+            send_notification = request.data.get('send_notification')
+            if send_notification == 'true':
+                try:
+                    from florra.models import CustomerUser, Notification
+                    customers = CustomerUser.objects.all()
+                    for customer in customers:
+                        Notification.objects.create(
+                            customer=customer,
+                            title="Product Update!",
+                            message=f"Check out the latest updates for {product.tile_name}. Available now!",
+                            notification_type="system"
+                        )
+                except Exception as e:
+                    print(f"ERROR: Failed to send broadcast notifications: {e}")
+
             return Response({"message": "Product updated"})
         return Response(serializer.errors, status=400)
 
@@ -130,14 +163,27 @@ class ProductDetailView(APIView):
         if not product:
             return Response({"message": "Not found"}, status=404)
 
-        serializer = ProductSerializer(
-            product,
-            data=request.data,
-            partial=True
-        )
+        serializer = ProductSerializer(product, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Product updated"})
+            product = serializer.save()
+
+            # Broadcast notification if requested
+            send_notification = request.data.get('send_notification')
+            if send_notification == 'true':
+                try:
+                    from florra.models import CustomerUser, Notification
+                    customers = CustomerUser.objects.all()
+                    for customer in customers:
+                        Notification.objects.create(
+                            customer=customer,
+                            title="Product Restock!",
+                            message=f"{product.tile_name} has been updated. Don't miss out!",
+                            notification_type="system"
+                        )
+                except Exception as e:
+                    print(f"ERROR: Failed to send broadcast notifications: {e}")
+
+            return Response({"message": "Product partially updated"})
         return Response(serializer.errors, status=400)
 
     def delete(self, request, pk):

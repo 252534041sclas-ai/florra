@@ -181,6 +181,28 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <!-- Floor -->
+            <LinearLayout
+                android:id="@+id/btnFloor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_filter_inactive"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Floor"
+                    android:textColor="@color/slate_600"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
             <!-- Wall -->
             <LinearLayout
                 android:id="@+id/btnWall"

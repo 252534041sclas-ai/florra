@@ -49,7 +49,7 @@ public class AddProductActivity extends AppCompatActivity {
     private EditText editThickness; // New
     private EditText editCoverage; // New
     private EditText editWarehouse; // New
-    private Switch switchActive;
+    private Switch switchActive, switchNotification;
     private Button btnSave;
     private Button btnCancel;
 
@@ -110,6 +110,7 @@ public class AddProductActivity extends AppCompatActivity {
         editWarehouse = findViewById(R.id.editWarehouse); // Bind
         editDescription = findViewById(R.id.editDescription);
         switchActive = findViewById(R.id.switchActive);
+        switchNotification = findViewById(R.id.switchNotification);
         btnSave = findViewById(R.id.btnSave);
         btnCancel = findViewById(R.id.btnCancel);
 
@@ -493,6 +494,7 @@ public class AddProductActivity extends AppCompatActivity {
         // selectedColor = "White"; // Removed
 
         switchActive.setChecked(true);
+        switchNotification.setChecked(false);
 
         // Reset image view
         removeSelectedImage();
@@ -511,6 +513,7 @@ public class AddProductActivity extends AppCompatActivity {
         String warehouse = editWarehouse.getText().toString().trim(); // Get Warehouse
         String description = editDescription.getText().toString().trim();
         boolean isActive = switchActive.isChecked();
+        boolean sendNotification = switchNotification.isChecked();
         
         String color = autoCompleteColor.getText().toString().trim(); // Get Color
 
@@ -558,6 +561,7 @@ public class AddProductActivity extends AppCompatActivity {
         textFields.put("warehouse", createPartFromString(warehouse)); // Add Warehouse
         textFields.put("description", createPartFromString(description));
         textFields.put("is_active", createPartFromString(String.valueOf(isActive)));
+        textFields.put("send_notification", createPartFromString(String.valueOf(sendNotification)));
 
         // Handle Image
         okhttp3.MultipartBody.Part imagePart = null;

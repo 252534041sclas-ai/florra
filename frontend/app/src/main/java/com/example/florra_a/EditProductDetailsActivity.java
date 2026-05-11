@@ -12,6 +12,8 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
 import android.graphics.Color; // Added for color manipulation if needed, or just use resources
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -27,15 +29,18 @@ import java.util.Map;
 
 public class EditProductDetailsActivity extends AppCompatActivity {
 
-    private ImageView btnBack, btnDelete, ivProductImage;
-    private Button btnChangePhoto, btnCancel, btnSave;
+    private ImageView btnBack, btnDelete, mainImageView, btnRemoveMainImage;
+    private FrameLayout uploadMainImage;
+    private LinearLayout defaultUploadView;
+    private Button btnCancel, btnSave;
     // Finish Buttons
     private Button btnFinishGlossy, btnFinishMatte, btnFinishSatin, btnFinishRustic;
     
-    private EditText etTileName, etTileNo, etBrandName, etPrice, etStock, etDescription;
-    private Spinner spCategory, spSize; // Removed spFinish
+    private EditText editTileName, editTileNo, editBrandName, editPrice, editStock, editDescription;
+    private EditText editThickness, editCoverage, editWarehouse;
+    private Spinner spinnerCategory, spinnerSize;
     private android.widget.AutoCompleteTextView autoCompleteColor;
-    private Switch switchActive;
+    private Switch switchActive, switchNotification;
     private int productId = -1;
     private Uri selectedImageUri;
 
@@ -60,16 +65,19 @@ public class EditProductDetailsActivity extends AppCompatActivity {
     private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         btnDelete = findViewById(R.id.btnDelete);
-        ivProductImage = findViewById(R.id.ivProductImage);
-        btnChangePhoto = findViewById(R.id.btnChangePhoto);
+        
+        // Image UI
+        uploadMainImage = findViewById(R.id.uploadMainImage);
+        defaultUploadView = findViewById(R.id.defaultUploadView);
+        mainImageView = findViewById(R.id.mainImageView);
+        btnRemoveMainImage = findViewById(R.id.btnRemoveMainImage);
 
-        etTileName = findViewById(R.id.etTileName);
-        etTileNo = findViewById(R.id.etTileNo);
-        etBrandName = findViewById(R.id.etBrandName);
+        editTileName = findViewById(R.id.editTileName);
+        editTileNo = findViewById(R.id.editTileNo);
+        editBrandName = findViewById(R.id.editBrandName);
 
-        spCategory = findViewById(R.id.spCategory);
-        spSize = findViewById(R.id.spSize);
-        // spFinish removed
+        spinnerCategory = findViewById(R.id.spinnerCategory);
+        spinnerSize = findViewById(R.id.spinnerSize);
         
         // Finish Buttons
         btnFinishGlossy = findViewById(R.id.btnFinishGlossy);
@@ -78,33 +86,36 @@ public class EditProductDetailsActivity extends AppCompatActivity {
         btnFinishRustic = findViewById(R.id.btnFinishRustic);
 
         autoCompleteColor = findViewById(R.id.autoCompleteColor);
+        
+        editThickness = findViewById(R.id.editThickness);
+        editCoverage = findViewById(R.id.editCoverage);
 
-        etPrice = findViewById(R.id.etPrice);
-        etStock = findViewById(R.id.etStock);
-        etDescription = findViewById(R.id.etDescription);
+        editPrice = findViewById(R.id.editPrice);
+        editStock = findViewById(R.id.editStock);
+        editWarehouse = findViewById(R.id.editWarehouse);
+        editDescription = findViewById(R.id.editDescription);
         
         switchActive = findViewById(R.id.switchActive);
+        switchNotification = findViewById(R.id.switchNotification);
 
         btnCancel = findViewById(R.id.btnCancel);
         btnSave = findViewById(R.id.btnSave);
     }
 
     private void setupSpinners() {
-        String[] categories = {"Select", "Living", "Bathroom", "Wall", "Bedroom", "kitchen", "Floor"};
+        String[] categories = {"Select", "Living", "Bathroom", "Wall", "Bedroom", "Kitchen", "Floor"};
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, categories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spCategory.setAdapter(categoryAdapter);
-        spCategory.setSelection(0);
+        spinnerCategory.setAdapter(categoryAdapter);
+        spinnerCategory.setSelection(0);
 
         String[] sizes = {"Select", "600x600 mm", "600x1200 mm", "300x300 mm", "800x800 mm"};
         ArrayAdapter<String> sizeAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, sizes);
         sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spSize.setAdapter(sizeAdapter);
-        spSize.setSelection(0);
-
-        // Finish spinner setup removed
+        spinnerSize.setAdapter(sizeAdapter);
+        spinnerSize.setSelection(0);
     }
     
     private void setupFinishButtons() {
@@ -159,12 +170,12 @@ public class EditProductDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null) {
             productId = intent.getIntExtra("product_id", -1);
-            etTileName.setText(intent.getStringExtra("product_name"));
-            etTileNo.setText(intent.getStringExtra("product_tile_no"));
-            etBrandName.setText(intent.getStringExtra("product_brand"));
+            editTileName.setText(intent.getStringExtra("product_name"));
+            editTileNo.setText(intent.getStringExtra("product_tile_no"));
+            editBrandName.setText(intent.getStringExtra("product_brand"));
             
-            setSpinnerValue(spCategory, intent.getStringExtra("product_category"));
-            setSpinnerValue(spSize, intent.getStringExtra("product_size"));
+            setSpinnerValue(spinnerCategory, intent.getStringExtra("product_category"));
+            setSpinnerValue(spinnerSize, intent.getStringExtra("product_size"));
             
             // Set Finish
             String finish = intent.getStringExtra("product_finish");
@@ -177,9 +188,15 @@ public class EditProductDetailsActivity extends AppCompatActivity {
             }
             
             autoCompleteColor.setText(intent.getStringExtra("product_color"));
-            etPrice.setText(intent.getStringExtra("product_price"));
-            etStock.setText(intent.getStringExtra("product_stock"));
-            etDescription.setText(intent.getStringExtra("product_description"));
+            
+            // New fields
+            editThickness.setText(intent.getStringExtra("product_thickness"));
+            editCoverage.setText(intent.getStringExtra("product_coverage"));
+            editWarehouse.setText(intent.getStringExtra("product_warehouse"));
+
+            editPrice.setText(intent.getStringExtra("product_price"));
+            editStock.setText(intent.getStringExtra("product_stock"));
+            editDescription.setText(intent.getStringExtra("product_description"));
             switchActive.setChecked(intent.getBooleanExtra("product_is_active", true));
             
              // Load Image
@@ -191,7 +208,11 @@ public class EditProductDetailsActivity extends AppCompatActivity {
                 com.bumptech.glide.Glide.with(this)
                         .load(imageUrl)
                         .placeholder(R.drawable.ic_tile_placeholder)
-                        .into(ivProductImage);
+                        .into(mainImageView);
+                
+                mainImageView.setVisibility(View.VISIBLE);
+                defaultUploadView.setVisibility(View.GONE);
+                btnRemoveMainImage.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -210,7 +231,16 @@ public class EditProductDetailsActivity extends AppCompatActivity {
     private void setupClickListeners() {
         btnBack.setOnClickListener(v -> finish());
         btnDelete.setOnClickListener(v -> showDeleteConfirmation());
-        btnChangePhoto.setOnClickListener(v -> showImagePickerOptions());
+        
+        uploadMainImage.setOnClickListener(v -> showImagePickerOptions());
+        btnRemoveMainImage.setOnClickListener(v -> {
+            selectedImageUri = null;
+            mainImageView.setImageDrawable(null);
+            mainImageView.setVisibility(View.GONE);
+            defaultUploadView.setVisibility(View.VISIBLE);
+            btnRemoveMainImage.setVisibility(View.GONE);
+        });
+
         btnCancel.setOnClickListener(v -> finish());
         btnSave.setOnClickListener(v -> saveProductDetails());
     }
@@ -253,15 +283,19 @@ public class EditProductDetailsActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == PICK_IMAGE && data != null) {
                 selectedImageUri = data.getData();
-                ivProductImage.setImageURI(selectedImageUri);
+                mainImageView.setImageURI(selectedImageUri);
+                mainImageView.setVisibility(View.VISIBLE);
+                defaultUploadView.setVisibility(View.GONE);
+                btnRemoveMainImage.setVisibility(View.VISIBLE);
                 Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show();
             } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-                // In a real app we'd get the bitmap or use a file provider
                  Bundle extras = data.getExtras();
                  if (extras != null) {
                      android.graphics.Bitmap imageBitmap = (android.graphics.Bitmap) extras.get("data");
-                     ivProductImage.setImageBitmap(imageBitmap);
-                     // Note: You'd need to save this bitmap to a file to upload it as a URI
+                     mainImageView.setImageBitmap(imageBitmap);
+                     mainImageView.setVisibility(View.VISIBLE);
+                     defaultUploadView.setVisibility(View.GONE);
+                     btnRemoveMainImage.setVisibility(View.VISIBLE);
                      Toast.makeText(this, "Photo taken", Toast.LENGTH_SHORT).show();
                  }
             }
@@ -283,25 +317,29 @@ public class EditProductDetailsActivity extends AppCompatActivity {
     }
 
     private void saveProductDetails() {
-        String tileName = etTileName.getText().toString().trim();
-        String tileNo = etTileNo.getText().toString().trim();
-        String brandName = etBrandName.getText().toString().trim();
-        String price = etPrice.getText().toString().trim();
-        String stock = etStock.getText().toString().trim();
-        String description = etDescription.getText().toString().trim();
+        String tileName = editTileName.getText().toString().trim();
+        String tileNo = editTileNo.getText().toString().trim();
+        String brandName = editBrandName.getText().toString().trim();
+        String price = editPrice.getText().toString().trim();
+        String stock = editStock.getText().toString().trim();
+        String description = editDescription.getText().toString().trim();
         
-        String category = spCategory.getSelectedItem().toString();
-        String size = spSize.getSelectedItem().toString();
-        // Use selectedFinish variable
+        String thickness = editThickness.getText().toString().trim();
+        String coverage = editCoverage.getText().toString().trim();
+        String warehouse = editWarehouse.getText().toString().trim();
+        
+        String category = spinnerCategory.getSelectedItem().toString();
+        String size = spinnerSize.getSelectedItem().toString();
         String finish = selectedFinish;
         String color = autoCompleteColor.getText().toString().trim();
         boolean isActive = switchActive.isChecked();
+        boolean sendNotification = switchNotification.isChecked();
 
         // VALIDATION
-        if (tileName.isEmpty()) { etTileName.setError("Required"); return; }
-        if (tileNo.isEmpty()) { etTileNo.setError("Required"); return; }
-        if (price.isEmpty()) { etPrice.setError("Required"); return; }
-        if (stock.isEmpty()) { etStock.setError("Required"); return; }
+        if (tileName.isEmpty()) { editTileName.setError("Required"); return; }
+        if (tileNo.isEmpty()) { editTileNo.setError("Required"); return; }
+        if (price.isEmpty()) { editPrice.setError("Required"); return; }
+        if (stock.isEmpty()) { editStock.setError("Required"); return; }
         if (color.isEmpty()) { autoCompleteColor.setError("Required"); return; }
 
         if (category.equals("Select")) {
@@ -322,10 +360,14 @@ public class EditProductDetailsActivity extends AppCompatActivity {
         textFields.put("size", createPartFromString(size));
         textFields.put("finish", createPartFromString(finish));
         textFields.put("color", createPartFromString(color));
+        textFields.put("thickness", createPartFromString(thickness));
+        textFields.put("coverage", createPartFromString(coverage));
+        textFields.put("warehouse", createPartFromString(warehouse));
         textFields.put("price", createPartFromString(price));
         textFields.put("stock", createPartFromString(stock));
         textFields.put("description", createPartFromString(description));
         textFields.put("is_active", createPartFromString(String.valueOf(isActive)));
+        textFields.put("send_notification", createPartFromString(String.valueOf(sendNotification)));
 
         MultipartBody.Part imagePart = null;
         if (selectedImageUri != null) {
