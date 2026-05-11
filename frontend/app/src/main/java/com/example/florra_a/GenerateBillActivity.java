@@ -43,7 +43,7 @@ public class GenerateBillActivity extends AppCompatActivity {
     private EditText etGST, etDiscount, etLoading;
 
     // Buttons
-    private Button btnBack, btnPreview, btnSaveBill, btnAddItem;
+    private Button btnBack, btnGenerateBill, btnAddItem;
     
     // RecyclerView
     private androidx.recyclerview.widget.RecyclerView rvBillItems;
@@ -108,8 +108,7 @@ public class GenerateBillActivity extends AppCompatActivity {
 
         // Buttons
         btnBack = findViewById(R.id.btnBack);
-        btnPreview = findViewById(R.id.btnPreview);
-        btnSaveBill = findViewById(R.id.btnSaveBill);
+        btnGenerateBill = findViewById(R.id.btnGenerateBill);
         btnAddItem = findViewById(R.id.btnAddItem);
 
         // RecyclerView Setup
@@ -128,33 +127,10 @@ public class GenerateBillActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> onBackPressed());
 
-        btnSaveBill.setOnClickListener(v -> confirmSave());
+        btnGenerateBill.setOnClickListener(v -> confirmSave());
         
         btnAddItem.setOnClickListener(v -> showAddItemDialog());
 
-        // PREVIEW BILL INTEGRATION
-        btnPreview.setOnClickListener(v -> {
-            Intent intent = new Intent(GenerateBillActivity.this, PreviewBillActivity.class);
-            
-            // Pass Data
-            intent.putExtra("billNo", tvBillNo.getText().toString());
-            intent.putExtra("date", tvDate.getText().toString());
-            intent.putExtra("customerName", etCustomerName.getText().toString());
-            intent.putExtra("customerPhone", etCustomerPhone.getText().toString());
-            intent.putExtra("customerAddress", etCustomerAddress.getText().toString());
-            
-            // Pass Amounts (Formatted Strings or values)
-            intent.putExtra("subtotal", tvSubtotal.getText().toString());
-            intent.putExtra("gstAmount", tvGSTAmount.getText().toString()); 
-            intent.putExtra("discount", tvDiscountAmount.getText().toString());
-            intent.putExtra("loading", tvLoadingAmount.getText().toString());
-            intent.putExtra("grandTotal", tvGrandTotal.getText().toString());
-
-            // Pass Items List
-            intent.putExtra("items", (java.io.Serializable) billItems);
-
-            startActivity(intent);
-        });
 
         etGST.addTextChangedListener(simpleWatcher(value -> {
             gstPercentage = value;
@@ -346,6 +322,12 @@ public class GenerateBillActivity extends AppCompatActivity {
                 billItems
         );
 
+        // Show Progress
+        android.app.ProgressDialog progressDialog = new android.app.ProgressDialog(this);
+        progressDialog.setMessage("Generating Bill...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         // Call API
         com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();
         retrofit2.Call<okhttp3.ResponseBody> call = apiService.saveBill(bill);
@@ -353,19 +335,37 @@ public class GenerateBillActivity extends AppCompatActivity {
         call.enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
             @Override
             public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
+                progressDialog.dismiss();
                 if (response.isSuccessful()) {
-                    Toast.makeText(GenerateBillActivity.this, "Bill Saved Successfully", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(GenerateBillActivity.this, SavedBillsActivity.class);
+                    Toast.makeText(GenerateBillActivity.this, "Bill Generated Successfully", Toast.LENGTH_SHORT).show();
+                    
+                    // Open Preview instead of List
+                    Intent intent = new Intent(GenerateBillActivity.this, PreviewBillActivity.class);
+                    intent.putExtra("billNo", billNo);
+                    intent.putExtra("date", tvDate.getText().toString());
+                    intent.putExtra("customerName", customerName);
+                    intent.putExtra("customerPhone", customerPhone);
+                    intent.putExtra("customerAddress", customerAddress);
+                    intent.putExtra("subtotal", tvSubtotal.getText().toString());
+                    intent.putExtra("gstAmount", tvGSTAmount.getText().toString());
+                    intent.putExtra("discount", tvDiscountAmount.getText().toString());
+                    intent.putExtra("grandTotal", tvGrandTotal.getText().toString());
+                    intent.putExtra("items", (java.io.Serializable) billItems);
+                    
                     startActivity(intent);
                     finish();
                 } else {
                     Toast.makeText(GenerateBillActivity.this, "Save Failed: " + response.code(), Toast.LENGTH_SHORT).show();
                     android.util.Log.e("GenerateBill", "Error: " + response.message());
+                    
+                    // FALLBACK: Open Preview anyway if save fails but user wants to see it?
+                    // Actually, let's just show error for now as per "save save aagitu" request
                 }
             }
 
             @Override
             public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {
+                progressDialog.dismiss();
                 Toast.makeText(GenerateBillActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 android.util.Log.e("GenerateBill", "Failure: " + t.getMessage());
             }

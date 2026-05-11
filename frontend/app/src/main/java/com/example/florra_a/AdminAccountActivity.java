@@ -38,10 +38,12 @@ public class AdminAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set status bar to dark teal
+        // Set status bar to white with dark icons
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(0); // White icons
-            getWindow().setStatusBarColor(android.graphics.Color.parseColor("#000000"));
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+            WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+            controller.setAppearanceLightStatusBars(true);
         }
 
         setContentView(R.layout.activity_admin_account);

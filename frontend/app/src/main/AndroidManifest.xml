@@ -240,7 +240,7 @@
         <activity
             android:name=".GenerateBillActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.Florra" />
         <activity
             android:name=".PreviewBillActivity"
             android:theme="@style/Theme.Florra"
