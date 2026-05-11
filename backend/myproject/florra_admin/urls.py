@@ -16,4 +16,8 @@ urlpatterns = [
     path('enquiries/respond/', EnquiryRespondView.as_view()),
     path('sales-prediction/', SalesPredictionView.as_view()),
     path("inventory/", InventoryView.as_view()),
+    # Notification Management
+    path('notifications/', AdminNotificationListView.as_view(), name='admin-notifications'),
+    path('notifications/create/', AdminNotificationCreateView.as_view(), name='admin-notification-create'),
 ]
+

@@ -165,6 +165,18 @@ public class AdminAccountActivity extends AppCompatActivity {
             cardManageStaff.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Manage Staff", Toast.LENGTH_SHORT).show());
         }
 
+        // Dashboard Card
+        View cardGoToDashboard = findViewById(R.id.cardGoToDashboard);
+        if (cardGoToDashboard != null) {
+            cardGoToDashboard.setOnClickListener(v -> {
+                Intent intent = new Intent(AdminAccountActivity.this, AdminDashboardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                finish();
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            });
+        }
+
         // System & Support Cards
         if (cardHelp != null) {
             cardHelp.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Help & Support", Toast.LENGTH_SHORT).show());

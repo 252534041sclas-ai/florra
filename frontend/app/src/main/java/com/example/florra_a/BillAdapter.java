@@ -59,6 +59,12 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         }
 
         // Actions
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ViewBillActivity.class);
+            intent.putExtra("bill", bill);
+            context.startActivity(intent);
+        });
+
         holder.btnView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ViewBillActivity.class);
             intent.putExtra("bill", bill);

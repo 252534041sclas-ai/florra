@@ -16,42 +16,32 @@ public class SalesPredictionActivity extends AppCompatActivity {
 
     private android.widget.TextView tvPredictedSales, tvEstRevenue, tvGrowthPercentage;
     private android.widget.TextView tvHighDemandProduct, tvLowDemandProduct, tvStockSuggestion, tvChartValue;
-    private android.widget.TextView tvHighDemandDesc, tvLowDemandDesc; // New
-    private android.widget.TextView tvFilterTime;
-    private androidx.cardview.widget.CardView cardFilterTime;
+    private android.widget.TextView tvHighDemandDesc, tvLowDemandDesc; 
+    private android.widget.TextView tvFilterTime, tvFilterCategory;
+    private androidx.cardview.widget.CardView cardFilterTime, cardFilterCategory;
     private android.widget.TextView tvTrendName1, tvTrendValue1, tvTrendName2, tvTrendValue2;
-    private android.widget.TextView btnToggleActual, btnTogglePredicted; // New
+    private android.widget.TextView btnToggleActual, btnTogglePredicted; 
     private View bar1, bar2, bar3, bar4, bar5;
+    private View loadingOverlay;
     
-    private boolean isPredictedMode = true; // Default
-    private com.example.florra_a.models.SalesPredictionResponse currentData; // Store for toggling
+    private boolean isPredictedMode = true;
+    private com.example.florra_a.models.SalesPredictionResponse currentData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set fullscreen
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-                // Set status bar to white with dark icons
+        // Set status bar to white with dark icons
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(android.graphics.Color.WHITE);
         }
 
-        // Enable edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        // Handle notch and status bar
-        WindowInsetsControllerCompat windowInsetsController =
-                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.setAppearanceLightStatusBars(false);
-        windowInsetsController.setAppearanceLightNavigationBars(false);
-
         setContentView(R.layout.activity_sales_prediction);
 
         initializeViews();
         setupNavigation();
-        setupToggle(); // New
+        setupToggle(); 
         fetchSalesPrediction();
     }
 
@@ -73,9 +63,11 @@ public class SalesPredictionActivity extends AppCompatActivity {
         bar4 = findViewById(R.id.bar4);
         bar5 = findViewById(R.id.bar5);
 
-        // Filter
+        // Filters
         tvFilterTime = findViewById(R.id.tvFilterTime);
         cardFilterTime = findViewById(R.id.cardFilterTime);
+        tvFilterCategory = findViewById(R.id.tvFilterCategory);
+        cardFilterCategory = findViewById(R.id.cardFilterCategory);
         
         // Market Trends
         tvTrendName1 = findViewById(R.id.tvTrendName1);
@@ -86,26 +78,35 @@ public class SalesPredictionActivity extends AppCompatActivity {
         // Toggle
         btnToggleActual = findViewById(R.id.btnToggleActual);
         btnTogglePredicted = findViewById(R.id.btnTogglePredicted);
+        
+        loadingOverlay = findViewById(R.id.loadingOverlay);
     }
     
     private void fetchSalesPrediction() {
+        if (loadingOverlay != null) loadingOverlay.setVisibility(View.VISIBLE);
+        
+        String category = tvFilterCategory != null ? tvFilterCategory.getText().toString() : null;
+        if ("All Categories".equals(category)) category = null;
+
         com.example.florra_a.network.ApiService apiService = 
             com.example.florra_a.network.RetrofitClient.getApiService();
 
-        apiService.getSalesPrediction().enqueue(new retrofit2.Callback<com.example.florra_a.models.SalesPredictionResponse>() {
+        apiService.getSalesPrediction(category).enqueue(new retrofit2.Callback<com.example.florra_a.models.SalesPredictionResponse>() {
             @Override
             public void onResponse(retrofit2.Call<com.example.florra_a.models.SalesPredictionResponse> call, 
                                    retrofit2.Response<com.example.florra_a.models.SalesPredictionResponse> response) {
+                if (loadingOverlay != null) loadingOverlay.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     currentData = response.body();
                     updateUI();
                 } else {
-                    Toast.makeText(SalesPredictionActivity.this, "Failed to load prediction data", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SalesPredictionActivity.this, "No data for this selection", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(retrofit2.Call<com.example.florra_a.models.SalesPredictionResponse> call, Throwable t) {
+                if (loadingOverlay != null) loadingOverlay.setVisibility(View.GONE);
                 Toast.makeText(SalesPredictionActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -258,31 +259,53 @@ public class SalesPredictionActivity extends AppCompatActivity {
             setBarHeight(bar3, v3, max);
             setBarHeight(bar4, v4, max);
             setBarHeight(bar5, v5, max);
+            
+            // Set predicted colors
+            if (bar1 != null) {
+                bar1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#d4d4d8"))); // Zinc 300
+                bar2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#d4d4d8")));
+                bar3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#014D4E"))); // Primary
+                bar4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#93c5fd"))); // Blue 300
+                bar5.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#93c5fd")));
+            }
+        } else if (!isPredictedMode && bar1 != null) {
+            // Set actual colors
+            bar1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#71717a"))); // Zinc 500
+            bar2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#71717a")));
+            bar3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#71717a")));
+            bar4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#71717a")));
+            bar5.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#71717a")));
         }
     }
 
     private void setValues(int sales, double revenue, double growth) {
         if (tvPredictedSales != null) 
-            tvPredictedSales.setText(String.valueOf(sales));
+            tvPredictedSales.setText(java.text.NumberFormat.getNumberInstance().format(sales));
             
-        if (tvEstRevenue != null) 
-            tvEstRevenue.setText("₹" + (int)revenue);
+        if (tvEstRevenue != null) {
+            String formattedRevenue = java.text.NumberFormat.getCurrencyInstance(new java.util.Locale("en", "IN")).format(revenue);
+            tvEstRevenue.setText(formattedRevenue);
+        }
             
         if (tvChartValue != null) 
-            tvChartValue.setText(sales >= 1000 ? (sales/1000 + "k") : String.valueOf(sales));
+            tvChartValue.setText(sales >= 1000 ? (String.format("%.1fk", sales/1000.0)) : String.valueOf(sales));
 
         if (tvGrowthPercentage != null) {
             if (isPredictedMode) {
                 String sign = growth >= 0 ? "+" : "";
-                tvGrowthPercentage.setText(sign + growth + "%");
+                tvGrowthPercentage.setText(sign + String.format("%.1f%%", growth));
                 tvGrowthPercentage.setVisibility(View.VISIBLE);
+                
+                View growthParent = (View) tvGrowthPercentage.getParent();
                 if (growth < 0) {
-                     tvGrowthPercentage.setTextColor(android.graphics.Color.RED);
+                     tvGrowthPercentage.setTextColor(android.graphics.Color.parseColor("#dc2626")); // Red-600
+                     if (growthParent != null) growthParent.setBackgroundResource(R.drawable.bg_red_badge);
                 } else {
-                     tvGrowthPercentage.setTextColor(android.graphics.Color.parseColor("#15803d")); 
+                     tvGrowthPercentage.setTextColor(android.graphics.Color.parseColor("#15803d")); // Green-700
+                     if (growthParent != null) growthParent.setBackgroundResource(R.drawable.bg_green_badge);
                 }
             } else {
-                tvGrowthPercentage.setVisibility(View.INVISIBLE); // Hide growth for raw actuals
+                tvGrowthPercentage.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -291,12 +314,22 @@ public class SalesPredictionActivity extends AppCompatActivity {
         android.widget.LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) bar.getLayoutParams();
         int maxHeightDp = 150;
         float density = getResources().getDisplayMetrics().density;
-        int heightPixels = (int) ((value / max) * maxHeightDp * density);
+        int targetHeight = (int) ((value / max) * maxHeightDp * density);
+        if (targetHeight < 8 * density) targetHeight = (int) (8 * density);
         
-        if (heightPixels < 5 * density) heightPixels = (int) (5 * density); // Min height
+        // Animate from current height
+        int startHeight = params.height;
+        if (startHeight < 0) startHeight = 0;
         
-        params.height = heightPixels;
-        bar.setLayoutParams(params);
+        final int finalHeight = targetHeight;
+        android.animation.ValueAnimator animator = android.animation.ValueAnimator.ofInt(startHeight, finalHeight);
+        animator.setDuration(500);
+        animator.setInterpolator(new android.view.animation.DecelerateInterpolator());
+        animator.addUpdateListener(animation -> {
+            params.height = (int) animation.getAnimatedValue();
+            bar.setLayoutParams(params);
+        });
+        animator.start();
     }
 
     private void setupNavigation() {
@@ -342,15 +375,24 @@ public class SalesPredictionActivity extends AppCompatActivity {
                 }
             });
         }
+        
+        if (cardFilterCategory != null) {
+            cardFilterCategory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showCategoryFilterPopup(v);
+                }
+            });
+        }
     }
 
     private void showTimeFilterPopup(View v) {
         android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
         
         if (isPredictedMode) {
-             popup.getMenu().add("Monthly"); // Keep simple
+             popup.getMenu().add("Monthly"); 
         } else {
-             popup.getMenu().add("This Month"); // Mapped to Monthly/This Month logic
+             popup.getMenu().add("This Month"); 
              popup.getMenu().add("Past Month");
              popup.getMenu().add("Last 3 Months");
              popup.getMenu().add("Yearly");
@@ -364,8 +406,31 @@ public class SalesPredictionActivity extends AppCompatActivity {
                 }
                 
                 if (!isPredictedMode) {
-                    updateUI(); // Refresh data based on new filter
+                    updateUI(); 
                 }
+                return true;
+            }
+        });
+
+        popup.show();
+    }
+
+    private void showCategoryFilterPopup(View v) {
+        android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
+        popup.getMenu().add("All Categories");
+        popup.getMenu().add("Porcelain");
+        popup.getMenu().add("Ceramic");
+        popup.getMenu().add("Marble");
+        popup.getMenu().add("Vitrified");
+        popup.getMenu().add("Granite");
+
+        popup.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(android.view.MenuItem item) {
+                String selectedCategory = item.getTitle().toString();
+                if (tvFilterCategory != null) {
+                    tvFilterCategory.setText(selectedCategory);
+                }
+                fetchSalesPrediction(); 
                 return true;
             }
         });
@@ -393,19 +458,19 @@ public class SalesPredictionActivity extends AppCompatActivity {
         if (isPredictedMode) {
             // Predicted Selected
             btnTogglePredicted.setBackgroundResource(R.drawable.bg_button_primary);
-            btnTogglePredicted.setTextColor(getResources().getColor(R.color.white));
+            btnTogglePredicted.setTextColor(android.graphics.Color.WHITE);
             
-            btnToggleActual.setBackground(null);
-            btnToggleActual.setTextColor(getResources().getColor(R.color.zinc_500));
+            btnToggleActual.setBackgroundResource(android.R.color.transparent);
+            btnToggleActual.setTextColor(android.graphics.Color.parseColor("#71717a")); // Zinc 500
             
             if (tvFilterTime != null) tvFilterTime.setText("Monthly"); // Default/Reset
         } else {
             // Actual Selected
             btnToggleActual.setBackgroundResource(R.drawable.bg_button_primary);
-            btnToggleActual.setTextColor(getResources().getColor(R.color.white));
+            btnToggleActual.setTextColor(android.graphics.Color.WHITE);
             
-            btnTogglePredicted.setBackground(null);
-            btnTogglePredicted.setTextColor(getResources().getColor(R.color.zinc_500));
+            btnTogglePredicted.setBackgroundResource(android.R.color.transparent);
+            btnTogglePredicted.setTextColor(android.graphics.Color.parseColor("#71717a")); // Zinc 500
         }
     }
     

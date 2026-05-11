@@ -3,60 +3,74 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_light"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="false">
 
+    <!-- Top Header Section (Teal Background) -->
     <LinearLayout
+        android:id="@+id/header_section"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#014d4e"
+        android:orientation="vertical" />
+
+    <!-- Main Content in Rounded Container -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_below="@id/header_section"
+        android:layout_marginTop="-60dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="#F8FAFB">
 
-        <!-- Header -->
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/surface_light"
-            android:elevation="4dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="12dp">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingTop="12dp">
 
-            <Button
-                android:id="@+id/btnBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/bg_icon_white"
-                android:text="←"
-                android:textColor="@color/primary_color"
-                android:textSize="20sp"
-                android:stateListAnimator="@null" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="Admin Account"
-                android:textColor="@color/primary_color"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:letterSpacing="-0.02" />
-
-        </RelativeLayout>
-
-        <!-- Main Content Scrollable Area -->
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="16dp"
-            android:fillViewport="true">
-
-            <LinearLayout
+            <!-- Title Bar (Now inside the curve) -->
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="100dp">
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="12dp">
+
+                <Button
+                    android:id="@+id/btnBack"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bg_icon_white"
+                    android:text="←"
+                    android:textColor="#014d4e"
+                    android:textSize="20sp"
+                    android:stateListAnimator="@null" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="Admin Account"
+                    android:textColor="#1E293B"
+                    android:textSize="20sp"
+                    android:fontFamily="sans-serif-black" />
+            </RelativeLayout>
+
+            <!-- Main Content Scrollable Area -->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="100dp">
 
                 <!-- Profile Section -->
                 <androidx.cardview.widget.CardView
@@ -164,6 +178,84 @@
 
                     </LinearLayout>
 
+                </androidx.cardview.widget.CardView>
+
+                <!-- Quick Access Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="QUICK ACCESS"
+                    android:textColor="@color/zinc_500"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardGoToDashboard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/surface_light"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginBottom="24dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+
+                        <LinearLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_icon_container"
+                            android:gravity="center"
+                            android:layout_marginEnd="16dp">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_dashboard"
+                                android:tint="@color/primary_color" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Admin Dashboard"
+                                android:textColor="@color/primary_color"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Overview, Stats &amp; Management"
+                                android:textColor="@color/zinc_500"
+                                android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_chevron_right"
+                            android:tint="@color/zinc_400" />
+
+                    </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
                 <!-- Shop Management Section -->
@@ -581,10 +673,9 @@
                     android:layout_marginTop="16dp" />
 
             </LinearLayout>
-
         </ScrollView>
-
     </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <!-- Floating Bottom Navigation -->
     <androidx.cardview.widget.CardView

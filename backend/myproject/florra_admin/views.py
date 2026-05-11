@@ -266,9 +266,22 @@ class EnquiryCreateView(APIView):
         serializer = EnquirySerializer(data=request.data)
         if serializer.is_valid():
             if request.user.is_authenticated:
-                serializer.save(customer_email=request.user.email)
+                enquiry = serializer.save(customer_email=request.user.email)
             else:
-                serializer.save()
+                enquiry = serializer.save()
+
+            # 🔔 Auto-notify admin about new quotation request
+            try:
+                from .models import AdminNotification
+                AdminNotification.objects.create(
+                    title=f"New Quotation Request from {enquiry.customer_name}",
+                    message=enquiry.message[:200] if enquiry.message else "Customer sent a quotation request.",
+                    notification_type="alert",
+                    sent_by="System",
+                )
+            except Exception:
+                pass  # Don't fail if notification creation fails
+
             return Response(
                 {"message": "Enquiry submitted"},
                 status=status.HTTP_201_CREATED
@@ -634,6 +647,24 @@ class SalesPredictionView(APIView):
             }
         }
 
+        # Global/Predicted Demand (Top 2 across all recent bills)
+        high_demand = []
+        low_demand = []
+        
+        # Aggregate all items from bills in last 30 days
+        all_item_counts = {}
+        for bill in bills:
+            for item in BillItem.objects.filter(bill=bill):
+                all_item_counts[item.item_name] = all_item_counts.get(item.item_name, 0) + item.quantity
+        
+        if all_item_counts:
+            sorted_all = sorted(all_item_counts.items(), key=lambda x: x[1], reverse=True)
+            high_name = sorted_all[0][0]
+            low_name = sorted_all[-1][0]
+            
+            high_demand = Product.objects.filter(tile_name=high_name)
+            low_demand = Product.objects.filter(tile_name=low_name)
+
         # Global/Predicted Tile Nos
         high_pred_no = high_demand[0].tile_no if high_demand and high_demand[0].tile_no else ""
         low_pred_no = low_demand[0].tile_no if low_demand and low_demand[0].tile_no else ""
@@ -732,6 +763,69 @@ class CustomerNotificationView(APIView):
             }
         ]
         return Response(data)
+
+
+# ─────────────────────────────────────────
+# 🔔 ADMIN NOTIFICATION MANAGEMENT
+# ─────────────────────────────────────────
+from .models import AdminNotification
+
+class AdminNotificationListView(APIView):
+    """GET all notifications sent by admin (system log)"""
+    def get(self, request):
+        notifications = AdminNotification.objects.all().order_by('-created_at')
+        data = []
+        for n in notifications:
+            data.append({
+                "id": n.id,
+                "title": n.title,
+                "message": n.message,
+                "type": n.notification_type,
+                "sent_by": n.sent_by,
+                "timestamp": n.created_at.strftime("%Y-%m-%d %H:%M"),
+            })
+        return Response(data)
+
+
+class AdminNotificationCreateView(APIView):
+    """POST: Admin creates a new notification broadcast to all customers"""
+    def post(self, request):
+        title = request.data.get('title', '').strip()
+        message = request.data.get('message', '').strip()
+        notif_type = request.data.get('type', 'system').strip()
+
+        if not title or not message:
+            return Response(
+                {"error": "Title and message are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Save to AdminNotification log
+        notification = AdminNotification.objects.create(
+            title=title,
+            message=message,
+            notification_type=notif_type,
+        )
+
+        # Also push to ALL registered customers via the florra Notification model
+        from florra.models import CustomerUser, Notification as CustomerNotification
+        customers = CustomerUser.objects.filter(is_active=True)
+        created_count = 0
+        for customer in customers:
+            CustomerNotification.objects.create(
+                user=customer,
+                title=title,
+                message=message,
+                notification_type='system',
+                is_read=False,
+            )
+            created_count += 1
+
+        return Response({
+            "message": f"Notification sent to {created_count} customer(s).",
+            "notification_id": notification.id
+        }, status=status.HTTP_201_CREATED)
+
 
 
 

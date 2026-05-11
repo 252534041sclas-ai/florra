@@ -27,9 +27,7 @@ public class SavedBillsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set fullscreen
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-                // Set status bar to white with dark icons
+        // Set status bar to white with dark icons
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(android.graphics.Color.WHITE);
@@ -37,12 +35,6 @@ public class SavedBillsActivity extends AppCompatActivity {
 
         // Enable edge-to-edge
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        // Handle notch and status bar
-        WindowInsetsControllerCompat windowInsetsController =
-                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.setAppearanceLightStatusBars(false);
-        windowInsetsController.setAppearanceLightNavigationBars(false);
 
         setContentView(R.layout.activity_saved_bills);
 

@@ -15,9 +15,12 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 public class EnquiriesActivity extends AppCompatActivity {
 
+    private android.widget.ProgressBar progressBar;
     private androidx.recyclerview.widget.RecyclerView recyclerView;
     private com.example.florra_a.adapters.EnquiryAdapter adapter;
     private java.util.List<com.example.florra_a.models.Enquiry> allEnquiries = new java.util.ArrayList<>();
+    private android.widget.EditText etSearch;
+    private String currentFilter = "all";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +34,60 @@ public class EnquiriesActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_enquiries);
 
+        progressBar = findViewById(R.id.progressBar);
+        etSearch = findViewById(R.id.etSearch);
+        
         initRecyclerView();
-        setupNavigation(); // Re-use existing navigation
+        setupNavigation();
         fetchEnquiries();
         setupFilterButtons();
+        setupSearch();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        fetchEnquiries();
+    private void setupSearch() {
+        if (etSearch != null) {
+            etSearch.addTextChangedListener(new android.text.TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    applyFilters();
+                }
+
+                @Override
+                public void afterTextChanged(android.text.Editable s) {}
+            });
+        }
+    }
+
+    private void fetchEnquiries() {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        
+        com.example.florra_a.network.ApiService apiService = 
+            com.example.florra_a.network.RetrofitClient.getApiService();
+            
+        apiService.getEnquiries().enqueue(new retrofit2.Callback<java.util.List<com.example.florra_a.models.Enquiry>>() {
+            @Override
+            public void onResponse(retrofit2.Call<java.util.List<com.example.florra_a.models.Enquiry>> call,
+                                   retrofit2.Response<java.util.List<com.example.florra_a.models.Enquiry>> response) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                
+                if (response.isSuccessful() && response.body() != null) {
+                    allEnquiries = response.body();
+                    updateBadgeCounts();
+                    updateFilterSelection("all"); 
+                } else {
+                    Toast.makeText(EnquiriesActivity.this, "Failed to load enquiries", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<java.util.List<com.example.florra_a.models.Enquiry>> call, Throwable t) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                Toast.makeText(EnquiriesActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initRecyclerView() {
@@ -49,9 +96,6 @@ public class EnquiriesActivity extends AppCompatActivity {
         adapter = new com.example.florra_a.adapters.EnquiryAdapter(new java.util.ArrayList<>(), new com.example.florra_a.adapters.EnquiryAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(com.example.florra_a.models.Enquiry enquiry) {
-                // Debug Toast
-                Toast.makeText(EnquiriesActivity.this, "Opening response for ID: " + enquiry.getId(), Toast.LENGTH_SHORT).show();
-                
                 try {
                     Intent intent = new Intent(EnquiriesActivity.this, RespondEnquiryActivity.class);
                     intent.putExtra("enquiry_data", enquiry);
@@ -63,36 +107,6 @@ public class EnquiriesActivity extends AppCompatActivity {
             }
         });
         recyclerView.setAdapter(adapter);
-    }
-    
-    private void fetchEnquiries() {
-        com.example.florra_a.network.ApiService apiService = 
-            com.example.florra_a.network.RetrofitClient.getApiService();
-            
-        apiService.getEnquiries().enqueue(new retrofit2.Callback<java.util.List<com.example.florra_a.models.Enquiry>>() {
-            @Override
-            public void onResponse(retrofit2.Call<java.util.List<com.example.florra_a.models.Enquiry>> call,
-                                   retrofit2.Response<java.util.List<com.example.florra_a.models.Enquiry>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    android.util.Log.d("EnquiriesActivity", "Enquiries received: " + response.body().size());
-                    allEnquiries = response.body();
-                    updateFilterSelection("all"); // Show all by default
-                    if (allEnquiries.isEmpty()) {
-                         Toast.makeText(EnquiriesActivity.this, "No enquiries found in DB", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    android.util.Log.e("EnquiriesActivity", "Failed to load enquiries. Code: " + response.code() + ", Message: " + response.message());
-                    Toast.makeText(EnquiriesActivity.this, "Failed to load enquiries. Code: " + response.code(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(retrofit2.Call<java.util.List<com.example.florra_a.models.Enquiry>> call, Throwable t) {
-                android.util.Log.e("EnquiriesActivity", "Network Error: " + t.getMessage());
-                t.printStackTrace();
-                Toast.makeText(EnquiriesActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void setupNavigation() {
@@ -108,57 +122,113 @@ public class EnquiriesActivity extends AppCompatActivity {
     }
 
     private void setupFilterButtons() {
-        // All filter
         View btnAll = findViewById(R.id.btnAll);
         if (btnAll != null) btnAll.setOnClickListener(v -> updateFilterSelection("all"));
 
-        // New filter
         View btnNew = findViewById(R.id.btnNew);
         if (btnNew != null) btnNew.setOnClickListener(v -> updateFilterSelection("new"));
 
-        // Quoted filter
         View btnQuoted = findViewById(R.id.btnQuoted);
         if (btnQuoted != null) btnQuoted.setOnClickListener(v -> updateFilterSelection("quoted"));
 
-        // Follow-up filter
         View btnFollowUp = findViewById(R.id.btnFollowUp);
-        if (btnFollowUp != null) btnFollowUp.setOnClickListener(v -> updateFilterSelection("follow_up")); // underscore in backend? or hyphen? Check model.
+        if (btnFollowUp != null) btnFollowUp.setOnClickListener(v -> updateFilterSelection("follow_up"));
 
-        // Resolved filter
         View btnResolved = findViewById(R.id.btnResolved);
         if (btnResolved != null) btnResolved.setOnClickListener(v -> updateFilterSelection("resolved"));
     }
 
+    private void updateBadgeCounts() {
+        int newCount = 0;
+        for (com.example.florra_a.models.Enquiry e : allEnquiries) {
+            if ("new".equalsIgnoreCase(e.getStatus())) newCount++;
+        }
+        
+        TextView badgeNew = findViewById(R.id.badgeNew);
+        if (badgeNew != null) {
+            if (newCount > 0) {
+                badgeNew.setText(String.valueOf(newCount));
+                badgeNew.setVisibility(View.VISIBLE);
+            } else {
+                badgeNew.setVisibility(View.GONE);
+            }
+        }
+    }
+
     private void updateFilterSelection(String selectedFilter) {
+        this.currentFilter = selectedFilter;
+        
         // Reset all tabs UI
         int[] tabIds = {R.id.btnAll, R.id.btnNew, R.id.btnQuoted, R.id.btnFollowUp, R.id.btnResolved};
         for (int id : tabIds) {
             View tab = findViewById(id);
-            if (tab != null) tab.setBackgroundResource(R.drawable.bg_filter_tab_unselected);
+            if (tab != null) {
+                tab.setBackgroundResource(R.drawable.bg_filter_tab_unselected);
+                if (tab instanceof android.view.ViewGroup) {
+                    android.view.ViewGroup vg = (android.view.ViewGroup) tab;
+                    for (int i = 0; i < vg.getChildCount(); i++) {
+                        View child = vg.getChildAt(i);
+                        if (child instanceof TextView && child.getId() != R.id.badgeNew) {
+                            ((TextView) child).setTextColor(android.graphics.Color.parseColor("#64748B"));
+                        }
+                    }
+                }
+            }
         }
 
         // Set selected tab UI
+        View selectedTab = null;
         switch (selectedFilter) {
-            case "all": findViewById(R.id.btnAll).setBackgroundResource(R.drawable.bg_filter_tab_selected); break;
-            case "new": findViewById(R.id.btnNew).setBackgroundResource(R.drawable.bg_filter_tab_selected); break;
-            case "quoted": findViewById(R.id.btnQuoted).setBackgroundResource(R.drawable.bg_filter_tab_selected); break;
+            case "all": selectedTab = findViewById(R.id.btnAll); break;
+            case "new": selectedTab = findViewById(R.id.btnNew); break;
+            case "quoted": selectedTab = findViewById(R.id.btnQuoted); break;
             case "follow_up": 
-            case "follow-up": findViewById(R.id.btnFollowUp).setBackgroundResource(R.drawable.bg_filter_tab_selected); break;
-            case "resolved": findViewById(R.id.btnResolved).setBackgroundResource(R.drawable.bg_filter_tab_selected); break;
+            case "follow-up": selectedTab = findViewById(R.id.btnFollowUp); break;
+            case "resolved": selectedTab = findViewById(R.id.btnResolved); break;
+        }
+
+        if (selectedTab != null) {
+            selectedTab.setBackgroundResource(R.drawable.bg_filter_tab_selected);
+            if (selectedTab instanceof android.view.ViewGroup) {
+                android.view.ViewGroup vg = (android.view.ViewGroup) selectedTab;
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    View child = vg.getChildAt(i);
+                    if (child instanceof TextView && child.getId() != R.id.badgeNew) {
+                        ((TextView) child).setTextColor(android.graphics.Color.WHITE);
+                    }
+                }
+            }
         }
         
-        // Filter Data
+        applyFilters();
+    }
+
+    private void applyFilters() {
+        String query = etSearch != null ? etSearch.getText().toString().toLowerCase().trim() : "";
         java.util.List<com.example.florra_a.models.Enquiry> filteredList = new java.util.ArrayList<>();
-        if (selectedFilter.equals("all")) {
-            filteredList.addAll(allEnquiries);
-        } else {
-            for (com.example.florra_a.models.Enquiry e : allEnquiries) {
-                // Normalize status check
+        
+        for (com.example.florra_a.models.Enquiry e : allEnquiries) {
+            // 1. Filter by status (Tabs)
+            boolean matchesStatus = false;
+            if (currentFilter.equals("all")) {
+                matchesStatus = true;
+            } else {
                 String s = e.getStatus().toLowerCase().replace("-", "_").replace(" ", "_");
-                String f = selectedFilter.toLowerCase().replace("-", "_").replace(" ", "_");
-                if (s.equals(f)) {
-                    filteredList.add(e);
-                }
+                String f = currentFilter.toLowerCase().replace("-", "_").replace(" ", "_");
+                if (s.equals(f)) matchesStatus = true;
+            }
+            
+            // 2. Filter by Search Query
+            boolean matchesSearch = true;
+            if (!query.isEmpty()) {
+                String name = e.getCustomerName() != null ? e.getCustomerName().toLowerCase() : "";
+                String message = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
+                String id = String.valueOf(e.getId());
+                matchesSearch = name.contains(query) || message.contains(query) || id.contains(query);
+            }
+            
+            if (matchesStatus && matchesSearch) {
+                filteredList.add(e);
             }
         }
         adapter.updateData(filteredList);

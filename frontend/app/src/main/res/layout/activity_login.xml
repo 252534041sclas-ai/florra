@@ -36,21 +36,23 @@
                 android:layout_marginBottom="24dp"
                 android:gravity="center">
 
-                <!-- Gradient background for logo -->
+                <!-- Gradient background for logo (Hidden for new logo) -->
                 <View
                     android:id="@+id/logoBackground"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:background="@drawable/bg_logo_container"
-                    android:elevation="8dp" />
+                    android:elevation="8dp"
+                    android:visibility="gone" />
 
                 <!-- Logo icon -->
                 <ImageView
                     android:id="@+id/logoIcon"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_dashboard"
-                    android:tint="@color/primary" />
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:src="@drawable/florra_logo"
+                    android:scaleType="centerInside"
+                    android:elevation="10dp" />
 
             </RelativeLayout>
 
@@ -117,15 +119,16 @@
                 android:paddingHorizontal="16dp"
                 android:visibility="gone" />
 
-            <!-- Login type selector -->
+            <!-- Login type selector (Hidden - use secret gesture for Admin) -->
             <LinearLayout
                 android:id="@+id/loginTypeSelector"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_tab_selector"
+                android:layout_height="48dp"
                 android:orientation="horizontal"
+                android:background="@drawable/bg_tab_container"
                 android:padding="4dp"
                 android:layout_marginBottom="32dp"
+                android:visibility="gone"
                 android:elevation="2dp">
 
                 <Button
@@ -468,27 +471,6 @@
 
     </ScrollView>
 
-    <!-- Bottom version info (Only for Customer) -->
-    <LinearLayout
-        android:id="@+id/customerFooter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_alignParentBottom="true"
-        android:background="@color/slate_100"
-        android:paddingVertical="16dp"
-        android:fitsSystemWindows="true"
-        android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Florra App v1.0.2"
-            android:textColor="@color/slate_500"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
 
 </RelativeLayout>

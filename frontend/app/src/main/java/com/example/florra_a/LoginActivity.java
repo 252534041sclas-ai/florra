@@ -32,9 +32,9 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnCustomerLogin, btnAdminLogin, btnLogin, btnCreateAccount;
     private TextView txtWelcomeCustomer, txtWelcomeAdmin, txtDescCustomer, txtDescAdmin;
     private TextView btnForgotPassword, btnForgotPasswordAdmin, btnContactSupport;
-    private ImageView btnToggleCustomerPassword, btnToggleAdminPassword;
+    private ImageView btnToggleCustomerPassword, btnToggleAdminPassword, logoIcon;
     private EditText edtCustomerEmail, edtCustomerPassword, edtAdminEmail, edtAdminPassword;
-    private LinearLayout customerLoginLayout, adminLoginLayout, orDivider, adminFooter, customerFooter;
+    private LinearLayout customerLoginLayout, adminLoginLayout, orDivider, adminFooter;
 
     // State
     private boolean isCustomerPasswordVisible = false;
@@ -50,20 +50,18 @@ public class LoginActivity extends AppCompatActivity {
 
         // Set fullscreen and edge-to-edge
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-                // Set status bar to white with dark icons
+        // Set status bar to white with dark icons
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+            androidx.core.view.WindowInsetsControllerCompat controller = 
+                androidx.core.view.WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+            if (controller != null) {
+                controller.setAppearanceLightStatusBars(true);
+            }
         }
 
-        // Enable edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-
-        // Handle notch and status bar
-        WindowInsetsControllerCompat windowInsetsController =
-                WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.setAppearanceLightStatusBars(false);
-        windowInsetsController.setAppearanceLightNavigationBars(false);
+        // Ensure content doesn't go under status bar
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
 
         // Initialize Retrofit Client - Now handled in FlorraApplication
         // RetrofitClient.init(this);
@@ -80,8 +78,8 @@ public class LoginActivity extends AppCompatActivity {
         // Check if user is already logged in
         checkLoginStatus();
 
-        // Set initial state to Admin login (as per your requirement)
-        setAdminLoginMode();
+        // Set initial state to Customer login
+        setCustomerLoginMode();
 
         // Setup click listeners
         setupClickListeners();
@@ -125,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         // These might not exist in your XML
         orDivider = findViewById(R.id.orDivider);
         //adminFooter = findViewById(R.id.adminFooter);
-        customerFooter = findViewById(R.id.customerFooter);
+
 
         // Login button
         btnLogin = findViewById(R.id.btnLogin);
@@ -149,6 +147,9 @@ public class LoginActivity extends AppCompatActivity {
         edtCustomerPassword = findViewById(R.id.edtCustomerPassword);
         edtAdminEmail = findViewById(R.id.edtAdminEmail);
         edtAdminPassword = findViewById(R.id.edtAdminPassword);
+
+        // Logo for secret gesture
+        logoIcon = findViewById(R.id.logoIcon);
     }
 
     private void setupClickListeners() {
@@ -320,6 +321,56 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
+        // Secret Gesture: Long Press + Swipe Down on Logo
+        if (logoIcon != null) {
+            logoIcon.setOnTouchListener(new View.OnTouchListener() {
+                private long lastDownTime;
+                private float startRawY;
+                private boolean isLongPressed = false;
+                private static final long LONG_PRESS_THRESHOLD = 700; // ms
+                private static final float SWIPE_THRESHOLD = 180; // pixels
+
+                @Override
+                public boolean onTouch(View v, android.view.MotionEvent event) {
+                    switch (event.getAction()) {
+                        case android.view.MotionEvent.ACTION_DOWN:
+                            lastDownTime = System.currentTimeMillis();
+                            startRawY = event.getRawY();
+                            isLongPressed = false;
+                            return true;
+
+                        case android.view.MotionEvent.ACTION_MOVE:
+                            if (!isLongPressed && (System.currentTimeMillis() - lastDownTime) > LONG_PRESS_THRESHOLD) {
+                                isLongPressed = true;
+                                v.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS);
+                                // Prevent ScrollView from stealing the swipe
+                                if (v.getParent() != null) {
+                                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                                }
+                            }
+                            return true;
+
+                        case android.view.MotionEvent.ACTION_UP:
+                        case android.view.MotionEvent.ACTION_CANCEL:
+                            float endRawY = event.getRawY();
+                            if (isLongPressed && (endRawY - startRawY) > SWIPE_THRESHOLD) {
+                                if (isAdminMode) {
+                                    setCustomerLoginMode();
+                                } else {
+                                    setAdminLoginMode();
+                                }
+                            }
+                            v.performClick();
+                            // Reset parent interception
+                            if (v.getParent() != null) {
+                                v.getParent().requestDisallowInterceptTouchEvent(false);
+                            }
+                            return true;
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     private void loginCustomer(String email, String password) {
@@ -450,7 +501,6 @@ public class LoginActivity extends AppCompatActivity {
         if (orDivider != null) orDivider.setVisibility(View.VISIBLE);
         if (btnCreateAccount != null) btnCreateAccount.setVisibility(View.VISIBLE);
         if (adminFooter != null) adminFooter.setVisibility(View.GONE);
-        if (customerFooter != null) customerFooter.setVisibility(View.VISIBLE);
 
         // Update login button if needed
         if (btnLogin != null) btnLogin.setText("Log in");
@@ -484,7 +534,6 @@ public class LoginActivity extends AppCompatActivity {
         if (orDivider != null) orDivider.setVisibility(View.GONE);
         if (btnCreateAccount != null) btnCreateAccount.setVisibility(View.GONE);
         if (adminFooter != null) adminFooter.setVisibility(View.VISIBLE);
-        if (customerFooter != null) customerFooter.setVisibility(View.GONE);
 
         // Update login button if needed
         if (btnLogin != null) btnLogin.setText("Log in");

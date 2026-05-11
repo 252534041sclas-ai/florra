@@ -99,6 +99,16 @@
                 });
             }
 
+            // NOTIFICATION BELL (Header)
+            View btnNotifications = findViewById(R.id.btnNotifications);
+            if (btnNotifications != null) {
+                btnNotifications.setOnClickListener(v -> {
+                    Intent intent = new Intent(AdminDashboardActivity.this, AdminNotificationsActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                });
+            }
+
             // ========== CARD CLICK LISTENERS ==========
 
             // TOTAL TILES CARD
@@ -185,20 +195,22 @@
                 cardEnquiriesMgmt.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(AdminDashboardActivity.this, EnquiriesActivity.class);
+                        Intent intent = new Intent(AdminDashboardActivity.this, AdminCustomerListActivity.class);
                         startActivity(intent);
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
                 });
             }
 
-            // QUOTATIONS MANAGEMENT CARD
-            View cardQuotationsMgmt = findViewById(R.id.cardQuotationsMgmt);
-            if (cardQuotationsMgmt != null) {
-                cardQuotationsMgmt.setOnClickListener(new View.OnClickListener() {
+            // REPORTS MANAGEMENT CARD
+            View btnReportsDashboard = findViewById(R.id.btnReportsDashboard);
+            if (btnReportsDashboard != null) {
+                btnReportsDashboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(AdminDashboardActivity.this, "Quotations Management coming soon", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(AdminDashboardActivity.this, AdminReportsActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
                 });
             }
@@ -270,50 +282,6 @@
                     }
                 });
             }
-
-            // In AdminDashboardActivity.java, add this inside setupNavigation() method:
-
-            // Generate Bill Card (previously Stock Alerts)
-            View cardGenerateBill = findViewById(R.id.cardStockAlerts);
-            if (cardStockAlerts != null) {
-                cardStockAlerts.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(AdminDashboardActivity.this, GenerateBillActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    }
-                });
-            }
-
-            // In setupNavigation() method of AdminDashboardActivity.java:
-
-            // Quotations Management Card (now Saved Bills)
-            View cardSavedBills = findViewById(R.id.cardQuotationsMgmt);
-            if (cardSavedBills != null) {  // <-- Use the same variable name!
-                cardSavedBills.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(AdminDashboardActivity.this, SavedBillsActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                    }
-                });
-            }
-
-            // ========== NOTIFICATIONS ==========
-
-            // Notifications button
-            View btnNotifications = findViewById(R.id.btnNotifications);
-            if (btnNotifications != null) {
-                btnNotifications.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(AdminDashboardActivity.this, "Notifications coming soon", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
 
         }
 

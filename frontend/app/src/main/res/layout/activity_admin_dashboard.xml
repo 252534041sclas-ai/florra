@@ -23,15 +23,31 @@
             android:paddingVertical="16dp"
             android:gravity="center_vertical">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Florra Admin"
-                android:textColor="@color/white"
-                android:textSize="24sp"
-                android:fontFamily="sans-serif-black"
-                android:letterSpacing="-0.02" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Florra Admin"
+                    android:textColor="@color/white"
+                    android:textSize="24sp"
+                    android:fontFamily="sans-serif-black"
+                    android:letterSpacing="-0.02" />
+
+                <TextView
+                    android:id="@+id/tvWelcomeMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Welcome back to your dashboard"
+                    android:textColor="#B2FFFFFF"
+                    android:textSize="13sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/btnNotifications"
@@ -436,9 +452,8 @@
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <!-- Reports (Saved Bills) -->
                     <LinearLayout
-                        android:id="@+id/cardQuotationsMgmt"
+                        android:id="@+id/btnReportsDashboard"
                         android:layout_width="0dp"
                         android:layout_height="110dp"
                         android:layout_columnWeight="1"

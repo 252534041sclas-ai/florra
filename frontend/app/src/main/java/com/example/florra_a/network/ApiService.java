@@ -62,7 +62,7 @@ public interface ApiService {
     Call<java.util.List<com.example.florra_a.models.Bill>> getBills();
 
     @retrofit2.http.GET("api/admin/sales-prediction/")
-    Call<com.example.florra_a.models.SalesPredictionResponse> getSalesPrediction();
+    Call<com.example.florra_a.models.SalesPredictionResponse> getSalesPrediction(@retrofit2.http.Query("category") String category);
 
     @retrofit2.http.POST("api/admin/enquiries/create/")
     Call<com.example.florra_a.models.Enquiry> createEnquiry(@Body com.example.florra_a.models.Enquiry enquiry);
@@ -103,4 +103,11 @@ public interface ApiService {
 
     @retrofit2.http.DELETE("api/favorites/{id}/")
     Call<okhttp3.ResponseBody> removeFromFavorites(@retrofit2.http.Path("id") int id);
+
+    // === ADMIN NOTIFICATION ENDPOINTS ===
+    @retrofit2.http.GET("api/admin/notifications/")
+    Call<java.util.List<com.example.florra_a.models.AdminNotificationItem>> getAdminNotifications();
+
+    @retrofit2.http.POST("api/admin/notifications/create/")
+    Call<okhttp3.ResponseBody> createAdminNotification(@Body java.util.Map<String, String> body);
 }

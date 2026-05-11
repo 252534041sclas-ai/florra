@@ -189,6 +189,12 @@
 
         <!-- Admin Dashboard Activity -->
         <activity
+            android:name=".AdminReportsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Florra" />
+
+        <activity
             android:name=".AdminDashboardActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
@@ -198,11 +204,13 @@
         <activity
             android:name=".EnquiriesActivity"
             android:exported="false"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".AdminAccountActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".SalesPredictionActivity"
             android:exported="false"
@@ -214,7 +222,8 @@
         <activity
             android:name=".AdminCatalogActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".AddProductActivity"
             android:theme="@style/Theme.Florra" />
@@ -234,7 +243,7 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".PreviewBillActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:theme="@style/Theme.Florra"
             android:exported="false" />
         <activity android:name=".SavedBillsActivity" />
         <activity
@@ -244,7 +253,7 @@
         <activity
             android:name=".ViewBillActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.Florra" />
         <activity
             android:name=".RespondEnquiryActivity"
             android:exported="false"
@@ -263,6 +272,21 @@
         
         <activity
             android:name=".PaymentSuccessActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            
+        <activity
+            android:name=".AdminCustomerListActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            
+        <activity
+            android:name=".AdminCustomerDetailsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <activity
+            android:name=".AdminNotificationsActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
