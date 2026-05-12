@@ -100,7 +100,7 @@ public class EnquiriesActivity extends AppCompatActivity {
             public void onItemClick(com.example.florra_a.models.Enquiry enquiry) {
                 try {
                     Intent intent = new Intent(EnquiriesActivity.this, RespondEnquiryActivity.class);
-                    intent.putExtra("enquiry_data", enquiry);
+                    intent.putExtra("enquiry", enquiry);
                     startActivity(intent);
                 } catch (Exception e) {
                     Toast.makeText(EnquiriesActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();

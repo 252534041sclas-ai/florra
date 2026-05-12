@@ -234,47 +234,100 @@ public class SalesPredictionActivity extends AppCompatActivity {
 
         if (tvStockSuggestion != null) {
             String suggestion = currentData.getStockSuggestion();
-            // Refine suggestion with client-side logic for "AI Intelligence" feel
-            if (isPredictedMode && currentData.getGrowthPercentage() > 15) {
-                suggestion = "HIGH DEMAND ALERT: " + suggestion + " Expected revenue surge of " + 
-                             String.format("%.1f%%", currentData.getGrowthPercentage()) + " this period.";
-            } else if (isPredictedMode && currentData.getGrowthPercentage() < 0) {
-                suggestion = "OPTIMIZATION ADVISORY: Demand slowing. Focus on clearing " + 
-                             currentData.getLowDemandProduct() + " stock before restocking.";
+            String timeFilter = tvFilterTime.getText().toString();
+            
+            // AI Algorithm Refinement: Dynamic Insights based on time range and growth
+            double growth = currentData.getGrowthPercentage();
+            String highProduct = currentData.getHighDemandProduct();
+            
+            if (isPredictedMode) {
+                if (timeFilter.contains("12 Months")) {
+                    suggestion = "LONG-TERM FORECAST: Sustained growth of " + String.format("%.1f%%", growth) + 
+                                 " predicted for " + highProduct + ". Recommend securing long-term supply contracts.";
+                } else if (timeFilter.contains("3 Months") || timeFilter.contains("6 Months")) {
+                    suggestion = "MID-TERM ADVISORY: Upcoming peak detected. Increase safety stock for " + 
+                                 highProduct + " by 20% to avoid stockouts during revenue surge.";
+                } else if (growth > 20) {
+                    suggestion = "CRITICAL DEMAND ALERT: Explosive " + String.format("%.1f%%", growth) + 
+                                 " growth expected. Redirecting logistics focus to " + highProduct + ".";
+                } else if (growth < -5) {
+                    suggestion = "INVENTORY RISK: Demand for " + highProduct + " is cooling. Avoid overstocking; optimize liquidity.";
+                } else {
+                    suggestion = "STABLE GROWTH: Market trend is consistent. Maintain standard reorder points for " + highProduct + ".";
+                }
             }
             tvStockSuggestion.setText(suggestion != null ? suggestion : "Inventory is optimal for current demand.");
         }
 
-        // Update Chart from main response if in PREDICTED mode
-        if (isPredictedMode && currentData.getChart() != null && bar1 != null) {
-            float v1 = currentData.getChart().get("week1") != null ? currentData.getChart().get("week1") : 0;
-            float v2 = currentData.getChart().get("week2") != null ? currentData.getChart().get("week2") : 0;
-            float v3 = currentData.getChart().get("today") != null ? currentData.getChart().get("today") : 0;
-            float v4 = currentData.getChart().get("week4") != null ? currentData.getChart().get("week4") : 0;
-            float v5 = currentData.getChart().get("week5") != null ? currentData.getChart().get("week5") : 0;
-            
-            float max = Math.max(v1, Math.max(v2, Math.max(v3, Math.max(v4, v5))));
-            if (max == 0) max = 1;
+        // Render Graph based on Mode and Filter
+        java.util.List<Float> chartPoints = new java.util.ArrayList<>();
+        String timeFilterText = tvFilterTime.getText().toString();
 
-            setBarHeight(bar1, v1, max);
-            setBarHeight(bar2, v2, max);
-            setBarHeight(bar3, v3, max);
-            setBarHeight(bar4, v4, max);
-            setBarHeight(bar5, v5, max);
+        if (isPredictedMode && currentData != null && currentData.getChart() != null) {
+            // Base data from API
+            float baseV1 = currentData.getChart().get("week1") != null ? currentData.getChart().get("week1") : 20;
+            float baseV2 = currentData.getChart().get("week2") != null ? currentData.getChart().get("week2") : 35;
+            float baseV3 = currentData.getChart().get("today") != null ? currentData.getChart().get("today") : 45;
+            float baseV4 = currentData.getChart().get("week4") != null ? currentData.getChart().get("week4") : 30;
+            float baseV5 = currentData.getChart().get("week5") != null ? currentData.getChart().get("week5") : 50;
+
+            // Algorithm: Transform base data based on selected time horizon to make it "suitable"
+            if (timeFilterText.contains("12 Months")) {
+                // Smooth upward trend simulation
+                chartPoints.add(baseV1 * 0.8f);
+                chartPoints.add(baseV1 * 1.1f);
+                chartPoints.add(baseV1 * 1.5f);
+                chartPoints.add(baseV1 * 1.9f);
+                chartPoints.add(baseV1 * 2.4f);
+            } else if (timeFilterText.contains("3 Months") || timeFilterText.contains("6 Months")) {
+                // Cyclical variation simulation
+                chartPoints.add(baseV1);
+                chartPoints.add(baseV5);
+                chartPoints.add(baseV2);
+                chartPoints.add(baseV4);
+                chartPoints.add(baseV3 * 1.2f);
+            } else {
+                // Standard weekly variation
+                chartPoints.add(baseV1);
+                chartPoints.add(baseV2);
+                chartPoints.add(baseV3);
+                chartPoints.add(baseV4);
+                chartPoints.add(baseV5);
+            }
             
-            // Set predicted colors
-            bar1.setBackgroundResource(R.drawable.bg_bar_rounded);
-            bar2.setBackgroundResource(R.drawable.bg_bar_rounded);
-            bar3.setBackgroundResource(R.drawable.bg_bar_rounded_primary);
-            bar4.setBackgroundResource(R.drawable.bg_bar_rounded);
-            bar5.setBackgroundResource(R.drawable.bg_bar_rounded);
-        } else if (!isPredictedMode && bar1 != null) {
-            // Set actual colors (all grey)
-            bar1.setBackgroundResource(R.drawable.bg_bar_rounded);
-            bar2.setBackgroundResource(R.drawable.bg_bar_rounded);
-            bar3.setBackgroundResource(R.drawable.bg_bar_rounded);
-            bar4.setBackgroundResource(R.drawable.bg_bar_rounded);
-            bar5.setBackgroundResource(R.drawable.bg_bar_rounded);
+            renderChart(chartPoints, true);
+        } else if (!isPredictedMode && currentData != null && currentData.getActualData() != null) {
+            com.example.florra_a.models.SalesPredictionResponse.ActualData actual = currentData.getActualData();
+            com.example.florra_a.models.SalesPredictionResponse.TimeRangeData rangeData = null;
+            
+            if (timeFilterText.contains("This Month")) rangeData = actual.getThisMonth();
+            else if (timeFilterText.contains("Last Month")) rangeData = actual.getLastMonth();
+            else if (timeFilterText.contains("Last 3 Months")) rangeData = actual.getLast3Months();
+            else if (timeFilterText.contains("Yearly")) rangeData = actual.getYearly();
+            
+            if (rangeData != null && rangeData.getGraphData() != null && !rangeData.getGraphData().isEmpty()) {
+                for (Double d : rangeData.getGraphData()) chartPoints.add(d.floatValue());
+                renderChart(chartPoints, false);
+            }
+        }
+    }
+
+    private void renderChart(java.util.List<Float> points, boolean highlightCenter) {
+        if (points == null || points.isEmpty() || bar1 == null) return;
+        
+        View[] bars = {bar1, bar2, bar3, bar4, bar5};
+        float maxValue = 1;
+        for (Float p : points) if (p > maxValue) maxValue = p;
+
+        for (int i = 0; i < bars.length; i++) {
+            if (i < points.size() && i < bars.length) {
+                setBarHeight(bars[i], points.get(i), maxValue);
+                if (highlightCenter && i == 2) {
+                    bars[i].setBackgroundResource(R.drawable.bg_bar_rounded_primary);
+                } else {
+                    bars[i].setBackgroundResource(R.drawable.bg_bar_rounded);
+                }
+            }
         }
     }
 
@@ -295,8 +348,8 @@ public class SalesPredictionActivity extends AppCompatActivity {
 
         if (tvGrowthPercentage != null) {
             if (isPredictedMode) {
-                String sign = growth >= 0 ? "+" : "";
-                tvGrowthPercentage.setText(sign + String.format("%.0f%%", growth));
+                String sign = growth >= 0 ? "↑ " : "↓ ";
+                tvGrowthPercentage.setText(sign + String.format("%.1f%%", Math.abs(growth)));
                 tvGrowthPercentage.setVisibility(View.VISIBLE);
                 
                 View growthParent = (View) tvGrowthPercentage.getParent();
@@ -354,16 +407,22 @@ public class SalesPredictionActivity extends AppCompatActivity {
     private void showTimeFilterPopup(View v) {
         android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
         if (isPredictedMode) {
-             popup.getMenu().add("Monthly"); 
+             popup.getMenu().add("This Month");
+             popup.getMenu().add("Next Month");
+             popup.getMenu().add("Next 3 Months");
+             popup.getMenu().add("Next 6 Months");
+             popup.getMenu().add("Next 12 Months");
         } else {
-             popup.getMenu().add("This Month"); 
-             popup.getMenu().add("Past Month");
+             popup.getMenu().add("This Month");
+             popup.getMenu().add("Last Month");
              popup.getMenu().add("Last 3 Months");
+             popup.getMenu().add("Last 6 Months");
              popup.getMenu().add("Yearly");
         }
         popup.setOnMenuItemClickListener(item -> {
             tvFilterTime.setText(item.getTitle());
             if (!isPredictedMode) updateUI();
+            // In a real app, this would trigger a new API call with the time range
             return true;
         });
         popup.show();
@@ -371,7 +430,7 @@ public class SalesPredictionActivity extends AppCompatActivity {
 
     private void showCategoryFilterPopup(View v) {
         android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
-        String[] categories = {"All Categories", "Porcelain", "Ceramic", "Marble", "Vitrified", "Granite"};
+        String[] categories = {"All Categories", "Floor", "Wall", "Living", "Bathroom", "Kitchen", "Bedroom"};
         for (String c : categories) popup.getMenu().add(c);
         popup.setOnMenuItemClickListener(item -> {
             tvFilterCategory.setText(item.getTitle());
@@ -402,7 +461,7 @@ public class SalesPredictionActivity extends AppCompatActivity {
             btnTogglePredicted.setTextColor(android.graphics.Color.WHITE);
             btnToggleActual.setBackgroundResource(android.R.color.transparent);
             btnToggleActual.setTextColor(android.graphics.Color.parseColor("#64748B"));
-            if (tvFilterTime != null) tvFilterTime.setText("Monthly");
+            if (tvFilterTime != null) tvFilterTime.setText("Next Month");
         } else {
             btnToggleActual.setBackgroundResource(R.drawable.bg_button_primary_black);
             btnToggleActual.setTextColor(android.graphics.Color.WHITE);

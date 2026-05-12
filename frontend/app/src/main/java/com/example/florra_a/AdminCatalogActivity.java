@@ -122,7 +122,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
         }
 
         // Search button
-        ImageView btnSearch = findViewById(R.id.btnSearch);
+        View btnSearch = findViewById(R.id.btnSearch);
         LinearLayout searchContainer = findViewById(R.id.searchContainer);
         LinearLayout titleContainer = findViewById(R.id.titleContainer);
         android.widget.EditText etSearch = findViewById(R.id.etSearch);
