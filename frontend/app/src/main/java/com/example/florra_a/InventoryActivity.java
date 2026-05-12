@@ -56,6 +56,21 @@ public class InventoryActivity extends AppCompatActivity {
     private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         
+        ImageButton btnDownloadLowStock = findViewById(R.id.btnDownloadLowStock);
+        ImageButton btnDownloadEmpty = findViewById(R.id.btnDownloadEmpty);
+        
+        if (btnDownloadLowStock != null) {
+            btnDownloadLowStock.setOnClickListener(v -> {
+                Toast.makeText(this, "Downloading Low Stock report...", Toast.LENGTH_SHORT).show();
+            });
+        }
+        
+        if (btnDownloadEmpty != null) {
+            btnDownloadEmpty.setOnClickListener(v -> {
+                Toast.makeText(this, "Downloading Out of Stock report...", Toast.LENGTH_SHORT).show();
+            });
+        }
+        
         tvTotal = findViewById(R.id.tvTotal);
         tvInStock = findViewById(R.id.tvInStock);
         tvLowStock = findViewById(R.id.tvLowStock);

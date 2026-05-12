@@ -65,8 +65,8 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
         // Handle notch and status bar
         WindowInsetsControllerCompat windowInsetsController =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.setAppearanceLightStatusBars(false);
-        windowInsetsController.setAppearanceLightNavigationBars(false);
+        windowInsetsController.setAppearanceLightStatusBars(true);
+        windowInsetsController.setAppearanceLightNavigationBars(true);
 
         setContentView(R.layout.activity_adminproduct_details);
 
@@ -208,7 +208,7 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
         }
 
         if (currentProductSku != null && !currentProductSku.isEmpty()) {
-            String skuText = "SKU: " + currentProductSku;
+            String skuText = "No: " + currentProductSku;
             if (currentProductCategory != null && !currentProductCategory.isEmpty()) {
                 skuText += " • " + currentProductCategory;
             }
@@ -216,7 +216,7 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
         } else if (currentProductCategory != null && !currentProductCategory.isEmpty()) {
             tvProductSku.setText(currentProductCategory);
         } else {
-            tvProductSku.setText("SKU: --");
+            tvProductSku.setText("No: --");
         }
 
         // Price

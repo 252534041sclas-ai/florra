@@ -43,7 +43,7 @@ public class GenerateBillActivity extends AppCompatActivity {
     private EditText etGST, etDiscount, etLoading;
 
     // Buttons
-    private Button btnBack, btnGenerateBill, btnAddItem;
+    private Button btnBack, btnGenerateBill, btnAddItem, btnPreviewBill;
     
     // RecyclerView
     private androidx.recyclerview.widget.RecyclerView rvBillItems;
@@ -109,6 +109,7 @@ public class GenerateBillActivity extends AppCompatActivity {
         // Buttons
         btnBack = findViewById(R.id.btnBack);
         btnGenerateBill = findViewById(R.id.btnGenerateBill);
+        btnPreviewBill = findViewById(R.id.btnPreviewBill);
         btnAddItem = findViewById(R.id.btnAddItem);
 
         // RecyclerView Setup
@@ -127,7 +128,9 @@ public class GenerateBillActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> onBackPressed());
 
-        btnGenerateBill.setOnClickListener(v -> confirmSave());
+        btnGenerateBill.setOnClickListener(v -> showPreview());
+        
+        btnPreviewBill.setOnClickListener(v -> showPreview());
         
         btnAddItem.setOnClickListener(v -> showAddItemDialog());
 
@@ -247,20 +250,6 @@ public class GenerateBillActivity extends AppCompatActivity {
         tvGrandTotal.setText("₹" + (int) grandTotal);
     }
 
-    private void confirmSave() {
-        if (billItems.isEmpty()) {
-             Toast.makeText(this, "Please add at least one item", Toast.LENGTH_SHORT).show();
-             return;
-        }
-
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Save Bill")
-                .setMessage("Are you sure?")
-                .setPositiveButton("Save", (d, w) -> saveBillToBackend())
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
     private void autoPopulateBySelection(String input, boolean isNameInput, EditText etName, EditText etNo, EditText etSize, EditText etRate) {
         if (input == null || input.isEmpty() || isAutoPopulating) return;
         
@@ -300,76 +289,46 @@ public class GenerateBillActivity extends AppCompatActivity {
         @Override public void afterTextChanged(android.text.Editable s) { consumer.accept(s.toString()); }
     }
 
-    private void saveBillToBackend() {
-        // Collect data from EditTexts
-        String billNo = tvBillNo.getText().toString();
-        String customerName = etCustomerName.getText().toString();
-        String customerPhone = etCustomerPhone.getText().toString();
-        String customerAddress = etCustomerAddress.getText().toString();
-        
+    private void showPreview() {
+        String customerName = etCustomerName.getText().toString().trim();
+        String customerPhone = etCustomerPhone.getText().toString().trim();
+
         if (customerName.isEmpty()) {
             Toast.makeText(this, "Please enter customer name", Toast.LENGTH_SHORT).show();
+            etCustomerName.requestFocus();
             return;
         }
 
-        double gstAmount = (subtotal * gstPercentage) / 100;
-        double grandTotal = subtotal + gstAmount - discount + loading;
+        if (customerPhone.isEmpty()) {
+            Toast.makeText(this, "Please enter phone number", Toast.LENGTH_SHORT).show();
+            etCustomerPhone.requestFocus();
+            return;
+        }
 
-        // Create Bill Object
-        com.example.florra_a.models.Bill bill = new com.example.florra_a.models.Bill(
-                billNo, customerName, customerPhone, customerAddress,
-                subtotal, gstPercentage, gstAmount, discount, loading, grandTotal, "Unpaid",
-                billItems
-        );
+        if (billItems == null || billItems.isEmpty()) {
+            Toast.makeText(this, "Please add at least one item", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        String billNo = tvBillNo.getText().toString();
+        String customerAddress = etCustomerAddress.getText().toString();
 
-        // Show Progress
-        android.app.ProgressDialog progressDialog = new android.app.ProgressDialog(this);
-        progressDialog.setMessage("Generating Bill...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-
-        // Call API
-        com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();
-        retrofit2.Call<okhttp3.ResponseBody> call = apiService.saveBill(bill);
-
-        call.enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
-            @Override
-            public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
-                progressDialog.dismiss();
-                if (response.isSuccessful()) {
-                    Toast.makeText(GenerateBillActivity.this, "Bill Generated Successfully", Toast.LENGTH_SHORT).show();
-                    
-                    // Open Preview instead of List
-                    Intent intent = new Intent(GenerateBillActivity.this, PreviewBillActivity.class);
-                    intent.putExtra("billNo", billNo);
-                    intent.putExtra("date", tvDate.getText().toString());
-                    intent.putExtra("customerName", customerName);
-                    intent.putExtra("customerPhone", customerPhone);
-                    intent.putExtra("customerAddress", customerAddress);
-                    intent.putExtra("subtotal", tvSubtotal.getText().toString());
-                    intent.putExtra("gstAmount", tvGSTAmount.getText().toString());
-                    intent.putExtra("discount", tvDiscountAmount.getText().toString());
-                    intent.putExtra("grandTotal", tvGrandTotal.getText().toString());
-                    intent.putExtra("items", (java.io.Serializable) billItems);
-                    
-                    startActivity(intent);
-                    finish();
-                } else {
-                    Toast.makeText(GenerateBillActivity.this, "Save Failed: " + response.code(), Toast.LENGTH_SHORT).show();
-                    android.util.Log.e("GenerateBill", "Error: " + response.message());
-                    
-                    // FALLBACK: Open Preview anyway if save fails but user wants to see it?
-                    // Actually, let's just show error for now as per "save save aagitu" request
-                }
-            }
-
-            @Override
-            public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {
-                progressDialog.dismiss();
-                Toast.makeText(GenerateBillActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                android.util.Log.e("GenerateBill", "Failure: " + t.getMessage());
-            }
-        });
+        Intent intent = new Intent(this, PreviewBillActivity.class);
+        intent.putExtra("billNo", billNo);
+        intent.putExtra("date", tvDate.getText().toString());
+        intent.putExtra("customerName", customerName);
+        intent.putExtra("customerPhone", customerPhone);
+        intent.putExtra("customerAddress", customerAddress);
+        intent.putExtra("subtotal", tvSubtotal.getText().toString());
+        intent.putExtra("gstAmount", tvGSTAmount.getText().toString());
+        intent.putExtra("discount", tvDiscountAmount.getText().toString());
+        intent.putExtra("grandTotal", tvGrandTotal.getText().toString());
+        intent.putExtra("items", (java.io.Serializable) billItems);
+        intent.putExtra("gstPercentage", gstPercentage);
+        intent.putExtra("loading", loading);
+        intent.putExtra("isPreview", true);
+        
+        startActivity(intent);
     }
 
     private void fetchProducts() {

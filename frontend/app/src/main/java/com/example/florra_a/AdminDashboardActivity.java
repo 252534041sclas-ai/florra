@@ -59,13 +59,12 @@
                 });
             }
 
-            // Catalog button
+            // Catalog button (Modernized Admin Catalog)
             View btnCatalog = findViewById(R.id.bottomInventory);
             if (btnCatalog != null) {
                 btnCatalog.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // For now show toast, you can change later
                         Intent intent = new Intent(AdminDashboardActivity.this, AdminCatalogActivity.class);
                         startActivity(intent);
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -176,7 +175,7 @@
                 });
             }
 
-            // PRODUCT CARD
+            // PRODUCT CARD (Linked to Products)
             View cardProduct = findViewById(R.id.cardProduct);
             if (cardProduct != null) {
                 cardProduct.setOnClickListener(new View.OnClickListener() {
@@ -358,19 +357,71 @@
 
         // Optional: Update dashboard data dynamically
         private void updateDashboardData() {
-            // You can call this method to refresh dashboard data
-            // For example, from a refresh button or onResume()
+            com.example.florra_a.network.ApiService apiService = 
+                com.example.florra_a.network.RetrofitClient.getApiService();
 
-            // Update total tiles count
-            // Update enquiries count
-            // Update low stock count
-            // etc.
+            // Fetch Inventory Stats
+            apiService.getInventory(null, null, null).enqueue(new retrofit2.Callback<com.example.florra_a.models.InventoryResponse>() {
+                @Override
+                public void onResponse(retrofit2.Call<com.example.florra_a.models.InventoryResponse> call, 
+                                       retrofit2.Response<com.example.florra_a.models.InventoryResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        com.example.florra_a.models.InventoryResponse.InventoryStats stats = response.body().getStats();
+                        if (stats != null) {
+                            android.widget.TextView tvTotal = findViewById(R.id.tvTotalTilesCount);
+                            if (tvTotal != null) tvTotal.setText(String.format("%,d Tiles", stats.getTotal()));
+                        }
+                    }
+                }
+                @Override
+                public void onFailure(retrofit2.Call<com.example.florra_a.models.InventoryResponse> call, Throwable t) {}
+            });
+
+            // Fetch Enquiries
+            apiService.getEnquiries().enqueue(new retrofit2.Callback<java.util.List<com.example.florra_a.models.Enquiry>>() {
+                @Override
+                public void onResponse(retrofit2.Call<java.util.List<com.example.florra_a.models.Enquiry>> call, 
+                                       retrofit2.Response<java.util.List<com.example.florra_a.models.Enquiry>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        int count = response.body().size();
+                        android.widget.TextView tvEnquiries = findViewById(R.id.tvEnquiriesCount);
+                        if (tvEnquiries != null) tvEnquiries.setText(count + " Enquiries");
+                    }
+                }
+                @Override
+                public void onFailure(retrofit2.Call<java.util.List<com.example.florra_a.models.Enquiry>> call, Throwable t) {}
+            });
+
+            // Fetch Bills (Pending Bills)
+            apiService.getBills().enqueue(new retrofit2.Callback<java.util.List<com.example.florra_a.models.Bill>>() {
+                @Override
+                public void onResponse(retrofit2.Call<java.util.List<com.example.florra_a.models.Bill>> call, 
+                                       retrofit2.Response<java.util.List<com.example.florra_a.models.Bill>> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        int count = response.body().size();
+                        android.widget.TextView tvPending = findViewById(R.id.tvPendingBillsCount);
+                        if (tvPending != null) tvPending.setText(count + " Bills");
+                        
+                        // Calculate Revenue (MTD) - Simple sum for demo
+                        double revenue = 0;
+                        for (com.example.florra_a.models.Bill bill : response.body()) {
+                            revenue += bill  .getGrandTotal();
+                        }
+                        android.widget.TextView tvRev = findViewById(R.id.tvRevenueMtd);
+                        if (tvRev != null) {
+                            if (revenue >= 100000) tvRev.setText(String.format("₹%.1fL", revenue / 100000.0));
+                            else tvRev.setText("₹" + java.text.NumberFormat.getNumberInstance().format(revenue));
+                        }
+                    }
+                }
+                @Override
+                public void onFailure(retrofit2.Call<java.util.List<com.example.florra_a.models.Bill>> call, Throwable t) {}
+            });
         }
 
         @Override
         protected void onResume() {
             super.onResume();
-            // Optional: Refresh data when returning to dashboard
-            // updateDashboardData();
+            updateDashboardData();
         }
     }

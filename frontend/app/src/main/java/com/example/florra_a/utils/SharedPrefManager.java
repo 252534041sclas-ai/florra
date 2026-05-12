@@ -66,6 +66,10 @@ public class SharedPrefManager {
         return sharedPreferences.getString(KEY_PROFILE_IMAGE, null);
     }
 
+    public void saveProfileImage(String url) {
+        sharedPreferences.edit().putString(KEY_PROFILE_IMAGE, url).apply();
+    }
+
     public void logout() {
         sharedPreferences.edit().clear().commit();
     }

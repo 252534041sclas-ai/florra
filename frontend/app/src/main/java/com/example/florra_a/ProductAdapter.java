@@ -66,7 +66,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             holder.textStatus.setText("Active");
             holder.textStatus.setTextColor(context.getResources().getColor(R.color.emerald_700));
         } else {
-            holder.textStatus.setText("Inactive");
+            holder.textStatus.setText("Freeze");
             holder.textStatus.setTextColor(context.getResources().getColor(R.color.zinc_400));
         }
 
@@ -133,11 +133,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             intent.putExtra("product_is_active", product.isActive()); // New
             context.startActivity(intent);
         });
-
-        holder.btnMore.setOnClickListener(v -> {
-            Toast.makeText(context, "Options for " + product.getTileName(), Toast.LENGTH_SHORT).show();
-            // Implement showProductOptionsMenu logic here or via interface
-        });
     }
 
     @Override
@@ -156,7 +151,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textName, textDetails, textStock, textPrice, textStatus;
-        ImageView imageProduct, btnMore;
+        ImageView imageProduct;
         View stockContainer, stockDot;
 
         public ViewHolder(@NonNull View itemView) {
@@ -167,7 +162,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             textPrice = itemView.findViewById(R.id.textPrice);
             textStatus = itemView.findViewById(R.id.textStatus);
             imageProduct = itemView.findViewById(R.id.imageProduct);
-            btnMore = itemView.findViewById(R.id.btnMore);
             stockContainer = itemView.findViewById(R.id.stockContainer);
             stockDot = itemView.findViewById(R.id.stockDot);
         }

@@ -20,6 +20,22 @@ import androidx.core.view.WindowInsetsControllerCompat;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.example.florra_a.utils.SharedPrefManager;
+import android.net.Uri;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import com.example.florra_a.models.AuthResponse;
+import com.example.florra_a.network.ApiService;
+import com.example.florra_a.network.RetrofitClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import android.app.ProgressDialog;
 
 public class AdminAccountActivity extends AppCompatActivity {
 
@@ -33,6 +49,8 @@ public class AdminAccountActivity extends AppCompatActivity {
 
     // Profile Image
     private ImageView ivProfile;
+    private Button btnEditProfileImage;
+    private ActivityResultLauncher<Intent> pickImageLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +74,9 @@ public class AdminAccountActivity extends AppCompatActivity {
 
         // Load profile image
         loadProfileImage();
+
+        // Initialize Image Picker
+        initImagePicker();
     }
 
     private void initViews() {
@@ -66,6 +87,7 @@ public class AdminAccountActivity extends AppCompatActivity {
 
             // Profile Image
             ivProfile = findViewById(R.id.ivProfile);
+            btnEditProfileImage = findViewById(R.id.btnEditProfileImage);
 
             // Bottom navigation
             btnDashboard = findViewById(R.id.bottomDashboard);
@@ -168,6 +190,14 @@ public class AdminAccountActivity extends AppCompatActivity {
             btnLogout.setOnClickListener(v -> performLogout());
         }
 
+        if (btnEditProfileImage != null) {
+            btnEditProfileImage.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                pickImageLauncher.launch(intent);
+            });
+        }
+
         // Shop Management Cards
         if (cardEditShop != null) {
             cardEditShop.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Edit Shop Profile", Toast.LENGTH_SHORT).show());
@@ -254,6 +284,77 @@ public class AdminAccountActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void initImagePicker() {
+        pickImageLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri selectedImageUri = result.getData().getData();
+                    if (selectedImageUri != null) {
+                        uploadProfileImage(selectedImageUri);
+                    }
+                }
+            }
+        );
+    }
+
+    private void uploadProfileImage(Uri imageUri) {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Uploading image...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+            File tempFile = new File(getCacheDir(), "admin_profile_temp.jpg");
+            FileOutputStream outputStream = new FileOutputStream(tempFile);
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            outputStream.close();
+            inputStream.close();
+
+            RequestBody nameBody = RequestBody.create(MediaType.parse("text/plain"), SharedPrefManager.getInstance(this).getFullName());
+            RequestBody mobileBody = RequestBody.create(MediaType.parse("text/plain"), ""); // Mobile empty or get from prefs if available
+
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), tempFile);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("profile_image", tempFile.getName(), requestFile);
+
+            ApiService apiService = RetrofitClient.getApiService();
+            apiService.updateProfile(nameBody, mobileBody, body).enqueue(new Callback<AuthResponse>() {
+                @Override
+                public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                    progressDialog.dismiss();
+                    if (response.isSuccessful() && response.body() != null) {
+                        String newImageUrl = response.body().getProfileImage();
+                        SharedPrefManager.getInstance(AdminAccountActivity.this).saveProfileImage(newImageUrl);
+                        loadProfileImage(); // Refresh UI
+                        Toast.makeText(AdminAccountActivity.this, "Profile updated", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String errorMsg = "Upload failed: " + response.code();
+                        try {
+                            if (response.errorBody() != null) {
+                                errorMsg += " - " + response.errorBody().string();
+                            }
+                        } catch (Exception e) {}
+                        Toast.makeText(AdminAccountActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<AuthResponse> call, Throwable t) {
+                    progressDialog.dismiss();
+                    Toast.makeText(AdminAccountActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            progressDialog.dismiss();
+            Toast.makeText(this, "File error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

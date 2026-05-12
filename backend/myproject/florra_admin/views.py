@@ -146,7 +146,7 @@ class ProductDetailView(APIView):
                     customers = CustomerUser.objects.all()
                     for customer in customers:
                         Notification.objects.create(
-                            customer=customer,
+                            user=customer,
                             title="Product Update!",
                             message=f"Check out the latest updates for {product.tile_name}. Available now!",
                             notification_type="system"
@@ -175,7 +175,7 @@ class ProductDetailView(APIView):
                     customers = CustomerUser.objects.all()
                     for customer in customers:
                         Notification.objects.create(
-                            customer=customer,
+                            user=customer,
                             title="Product Restock!",
                             message=f"{product.tile_name} has been updated. Don't miss out!",
                             notification_type="system"
@@ -408,40 +408,50 @@ class SalesPredictionView(APIView):
         x_values = list(range(30))
         y_values = [daily_sales[last_30_days + timedelta(days=i)] for i in x_values]
 
-        # 3. Prediction Logic (Enhanced)
+        # 3. Prediction Logic (Weighted Exponential Forecast)
         n = len(x_values)
         if n > 0:
-            sum_x = sum(x_values)
-            sum_y = sum(y_values)
-            sum_xy = sum(i * j for i, j in zip(x_values, y_values))
-            sum_xx = sum(i * i for i in x_values)
+            # Calculate weights (more recent days have higher weight)
+            weights = [1.0 + (i / 30.0) for i in range(30)]
+            sum_w = sum(weights)
+            sum_wx = sum(w * x for w, x in zip(weights, x_values))
+            sum_wy = sum(w * y for w, y in zip(weights, y_values))
+            sum_wxy = sum(w * x * y for w, x, y in zip(weights, x_values, y_values))
+            sum_wxx = sum(w * x * x for w, x in zip(weights, x_values))
 
-            denominator = n * sum_xx - sum_x * sum_x
+            denominator = sum_w * sum_wxx - sum_wx * sum_wx
             if denominator != 0:
-                m = (n * sum_xy - sum_x * sum_y) / denominator
-                c = (sum_y - m * sum_x) / n
+                m = (sum_w * sum_wxy - sum_wx * sum_wy) / denominator
+                c = (sum_wy - m * sum_wx) / sum_w
             else:
                 m = 0
-                c = sum_y / n
+                c = sum_wy / sum_w
             
             # Clamp m (slope) to avoid extreme predictions
-            max_slope = (sum_y / n) * 0.2 / 7 if n > 0 and sum_y > 0 else 1.0
+            max_slope = (sum_wy / sum_w) * 0.25 / 7 if n > 0 and sum_wy > 0 else 1.0
             if m > max_slope: m = max_slope
             if m < -max_slope: m = -max_slope
         else:
             m, c = 0, 0
 
-        # 4. Predict Next 30 Days
+        # 4. Leading Indicators (Enquiry Correlation)
+        enquiry_count = Enquiry.objects.filter(created_at__date__gte=last_30_days).count()
+        conversion_boost = 1.0
+        if enquiry_count > 0:
+            # If enquiries are 2x higher than usual (baseline 10), boost prediction
+            conversion_boost = 1.0 + min(0.15, (enquiry_count / 50.0))
+
+        # Predict Next 30 Days with Boost
         predicted_revenue = 0
         for i in range(30, 60): 
-            pred_daily = m * i + c
+            pred_daily = (m * i + c) * conversion_boost
             if pred_daily < 0: pred_daily = 0
             predicted_revenue += pred_daily
 
-        # Fallback: If prediction is too low but we have sales, use moving average
+        # Fallback: Minimum baseline prediction
         current_avg_daily = sum(y_values) / 30 if y_values else 0
-        if predicted_revenue < (current_avg_daily * 15): 
-            predicted_revenue = current_avg_daily * 30 * 1.05 
+        if predicted_revenue < (current_avg_daily * 20): 
+            predicted_revenue = current_avg_daily * 30 * 1.10 # Assume 10% growth if math fails
 
         # Growth Percentage
         current_30d_revenue = sum(y_values)
@@ -449,15 +459,17 @@ class SalesPredictionView(APIView):
         if current_30d_revenue > 0:
             growth_percentage = ((predicted_revenue - current_30d_revenue) / current_30d_revenue) * 100
 
-        # 5. Chart Data (Week aggregates for last month + 2 future points)
+        # 5. Chart Data (Dynamic Week Aggregates)
         past_points = [
             round(sum(y_values[0:10]) / 10),
             round(sum(y_values[10:20]) / 10),
             round(sum(y_values[20:30]) / 10)
         ]
+        
+        # Smooth future points
         future_points = [
-            round(m * 45 + c),
-            round(m * 60 + c)
+            round((m * 40 + c) * conversion_boost),
+            round((m * 55 + c) * conversion_boost)
         ]
         
         chart_data = {
@@ -846,31 +858,39 @@ class AdminNotificationCreateView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # Save to AdminNotification log
-        notification = AdminNotification.objects.create(
-            title=title,
-            message=message,
-            notification_type=notif_type,
-        )
-
-        # Also push to ALL registered customers via the florra Notification model
-        from florra.models import CustomerUser, Notification as CustomerNotification
-        customers = CustomerUser.objects.filter(is_active=True)
-        created_count = 0
-        for customer in customers:
-            CustomerNotification.objects.create(
-                user=customer,
+        try:
+            # Save to AdminNotification log
+            notification = AdminNotification.objects.create(
                 title=title,
                 message=message,
-                notification_type='system',
-                is_read=False,
+                notification_type=notif_type,
             )
-            created_count += 1
+            
+            # Also push to ALL registered customers via the florra Notification model
+            from florra.models import CustomerUser, Notification as CustomerNotification
+            customers = CustomerUser.objects.filter(is_active=True)
+            created_count = 0
+            for customer in customers:
+                CustomerNotification.objects.create(
+                    user=customer,
+                    title=title,
+                    message=message,
+                    notification_type=notif_type,
+                    is_read=False,
+                )
+                created_count += 1
 
-        return Response({
-            "message": f"Notification sent to {created_count} customer(s).",
-            "notification_id": notification.id
-        }, status=status.HTTP_201_CREATED)
+            return Response({
+                "message": f"Notification sent to {created_count} customer(s).",
+                "notification_id": notification.id
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            import traceback
+            return Response(
+                {"error": str(e), "traceback": traceback.format_exc()},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 

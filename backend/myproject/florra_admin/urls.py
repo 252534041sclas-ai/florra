@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from .views_reports import *
 
 urlpatterns = [
     path('login/', AdminLoginView.as_view(), name='admin-login'),
@@ -19,5 +20,11 @@ urlpatterns = [
     # Notification Management
     path('notifications/', AdminNotificationListView.as_view(), name='admin-notifications'),
     path('notifications/create/', AdminNotificationCreateView.as_view(), name='admin-notification-create'),
+    
+    # Reports Module
+    path('reports/summary/', MonthlySalesSummaryView.as_view()),
+    path('reports/analytics/', SalesAnalyticsView.as_view()),
+    path('reports/customers/', CustomerReportView.as_view()),
+    path('reports/export-pdf/', ExportReportPDFView.as_view()),
 ]
 

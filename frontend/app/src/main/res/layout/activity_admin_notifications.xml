@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#014D4E"
+        android:background="#FFFFFF"
         android:paddingBottom="0dp">
 
         <LinearLayout
@@ -29,7 +29,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_arrow_back"
-                app:tint="@color/white"
+                app:tint="#000000"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
@@ -46,7 +46,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Notifications"
-                    android:textColor="@color/white"
+                    android:textColor="#000000"
                     android:textSize="20sp"
                     android:fontFamily="sans-serif-black" />
 
@@ -54,7 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Manage customer alerts"
-                    android:textColor="#B2FFFFFF"
+                    android:textColor="#64748B"
                     android:textSize="12sp" />
 
             </LinearLayout>
@@ -64,7 +64,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_refresh"
-                app:tint="@color/white"
+                app:tint="#000000"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
@@ -98,10 +98,11 @@
                     android:gravity="center">
 
                     <TextView
+                        android:id="@+id/tvRequests"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Requests"
-                        android:textColor="@color/white"
+                        android:textColor="#000000"
                         android:textSize="13sp"
                         android:textStyle="bold" />
 
@@ -125,7 +126,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
                     android:layout_marginTop="8dp"
-                    android:background="@color/white" />
+                    android:background="#000000" />
 
             </LinearLayout>
 
@@ -147,7 +148,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sent History"
-                    android:textColor="#80FFFFFF"
+                    android:textColor="#94A3B8"
                     android:textSize="13sp" />
 
                 <View
@@ -177,7 +178,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Create New"
-                    android:textColor="#80FFFFFF"
+                    android:textColor="#94A3B8"
                     android:textSize="13sp" />
 
                 <View
@@ -294,7 +295,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:textColor="#22C55E"
+                            android:textColor="#000000"
                             android:textSize="24sp"
                             android:textStyle="bold" />
                         <TextView
@@ -626,7 +627,7 @@
                         android:id="@+id/progressProductSearch"
                         android:layout_width="18dp"
                         android:layout_height="18dp"
-                        android:indeterminateTint="#014D4E"
+                        android:indeterminateTint="#000000"
                         android:visibility="gone" />
 
                     <View
@@ -650,7 +651,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_grid_view"
-                            app:tint="#014D4E" />
+                            app:tint="#000000" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -690,7 +691,7 @@
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="2dp"
-                    app:cardBackgroundColor="#F0FDF4"
+                    app:cardBackgroundColor="#F1F5F9"
                     android:layout_marginBottom="20dp"
                     android:visibility="gone">
 
@@ -720,7 +721,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Product Name"
-                                android:textColor="#15803D"
+                                android:textColor="#000000"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
 

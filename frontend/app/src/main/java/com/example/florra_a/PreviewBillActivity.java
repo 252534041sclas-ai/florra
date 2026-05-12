@@ -27,6 +27,17 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import com.example.florra_a.models.Bill;
+import com.example.florra_a.models.BillItem;
+import com.example.florra_a.network.RetrofitClient;
+import com.example.florra_a.network.ApiService;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import android.app.ProgressDialog;
+import android.widget.Toast;
+import android.util.Log;
 
 public class PreviewBillActivity extends AppCompatActivity {
 
@@ -37,11 +48,17 @@ public class PreviewBillActivity extends AppCompatActivity {
     private TextView tvPreviewTime;
 
     // Buttons
-    private Button btnShare, btnBackToEdit;
+    private Button btnShare, btnDownload;
     private LinearLayout btnBack;
 
     // Items Container
     private LinearLayout llItemsContainer;
+    private java.util.List<BillItem> billItems;
+
+    // Calculation storage
+    private double subtotalVal, gstAmountVal, discountVal, grandTotalVal;
+    private double gstPercentage, loading;
+    private boolean isSaved = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,8 +105,8 @@ public class PreviewBillActivity extends AppCompatActivity {
 
         // Buttons
         btnBack = findViewById(R.id.btnBack);
-        btnBackToEdit = findViewById(R.id.btnBackToEdit);
         btnShare = findViewById(R.id.btnShare);
+        btnDownload = findViewById(R.id.btnDownload);
 
         // Items Container
         llItemsContainer = findViewById(R.id.llItemsContainer);
@@ -103,19 +120,138 @@ public class PreviewBillActivity extends AppCompatActivity {
             }
         });
 
-        btnBackToEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareBill();
+                saveBillThenAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        shareBill();
+                    }
+                });
             }
         });
+
+        btnDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveBillThenAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        downloadBill();
+                    }
+                });
+            }
+        });
+    }
+
+    private void saveBillThenAction(final Runnable action) {
+        if (isSaved) {
+            action.run();
+            return;
+        }
+
+        String billNo = tvBillNo.getText().toString().replace("Bill ", "");
+        String customerName = tvCustomerName.getText().toString();
+        String customerPhone = tvCustomerPhone.getText().toString();
+        String customerAddress = tvCustomerAddress.getText().toString();
+
+        // Refresh values from UI just in case
+        subtotalVal = parseAmount(tvSubtotal.getText().toString());
+        gstAmountVal = parseAmount(tvTaxAmount.getText().toString());
+        discountVal = parseAmount(tvDiscountAmount.getText().toString());
+        grandTotalVal = parseAmount(tvGrandTotal.getText().toString());
+
+        Bill bill = new Bill(
+                billNo, customerName, customerPhone, customerAddress,
+                subtotalVal, gstPercentage, gstAmountVal, discountVal, loading, grandTotalVal, "Unpaid",
+                billItems
+        );
+
+        Log.d("PreviewBill", "Saving Bill: " + billNo + " for " + customerName);
+        Log.d("PreviewBill", "Items count: " + (billItems != null ? billItems.size() : 0));
+        Log.d("PreviewBill", "Total: " + grandTotalVal);
+
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Saving Bill...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        ApiService apiService = RetrofitClient.getApiService();
+        apiService.saveBill(bill).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful()) {
+                    isSaved = true;
+                    Toast.makeText(PreviewBillActivity.this, "Bill Saved Successfully", Toast.LENGTH_SHORT).show();
+                    action.run();
+                } else {
+                    String errorMsg = "Save Failed: " + response.code();
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMsg += " - " + response.errorBody().string();
+                        }
+                    } catch (Exception e) {}
+                    Toast.makeText(PreviewBillActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                    Log.e("PreviewBill", errorMsg);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(PreviewBillActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void downloadBill() {
+        View billContent = findViewById(R.id.billContainer);
+        if (billContent == null) return;
+
+        try {
+            PdfDocument document = createPdfFromView(billContent);
+            
+            String fileName = "Florra_Bill_" + System.currentTimeMillis() + ".pdf";
+            File downloadFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            File file = new File(downloadFolder, fileName);
+            
+            FileOutputStream stream = new FileOutputStream(file);
+            document.writeTo(stream);
+            document.close();
+            stream.close();
+
+            android.widget.Toast.makeText(this, "Bill saved to Downloads: " + fileName, android.widget.Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            android.widget.Toast.makeText(this, "Save Failed: " + e.getMessage(), android.widget.Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private PdfDocument createPdfFromView(View view) {
+        PdfDocument document = new PdfDocument();
+
+        // Measure full height
+        int measureWidth = View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY);
+        int measureHeight = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        view.measure(measureWidth, measureHeight);
+        int totalHeight = view.getMeasuredHeight();
+        int totalWidth = view.getMeasuredWidth();
+
+        // Layout
+        view.layout(0, 0, totalWidth, totalHeight);
+
+        // Create Page
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(totalWidth, totalHeight, 1).create();
+        PdfDocument.Page page = document.startPage(pageInfo);
+
+        // Draw
+        Canvas canvas = page.getCanvas();
+        canvas.drawColor(Color.WHITE);
+        view.draw(canvas);
+
+        document.finishPage(page);
+        return document;
     }
 
     private void shareBill() {
@@ -127,34 +263,7 @@ public class PreviewBillActivity extends AppCompatActivity {
 
         try {
             // 1. Create PDF Document
-            PdfDocument document = new PdfDocument();
-
-            // Measure full height
-            int measureWidth = View.MeasureSpec.makeMeasureSpec(billContent.getWidth(), View.MeasureSpec.EXACTLY);
-            int measureHeight = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-            billContent.measure(measureWidth, measureHeight);
-            int totalHeight = billContent.getMeasuredHeight();
-            int totalWidth = billContent.getMeasuredWidth();
-
-            // Layout
-            billContent.layout(0, 0, totalWidth, totalHeight);
-
-            // Create Page
-            PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(totalWidth, totalHeight, 1).create();
-            PdfDocument.Page page = document.startPage(pageInfo);
-
-            // Draw
-            Canvas canvas = page.getCanvas();
-            canvas.drawColor(Color.WHITE);
-            billContent.draw(canvas);
-            
-            // Add metadata
-            Paint paint = new Paint();
-            paint.setColor(Color.GRAY);
-            paint.setTextSize(20);
-            canvas.drawText("Generated by Florra Tiles App", 20, totalHeight - 20, paint);
-
-            document.finishPage(page);
+            PdfDocument document = createPdfFromView(billContent);
 
             // 2. Save to Cache
             File cachePath = new File(getCacheDir(), "documents");
@@ -201,12 +310,12 @@ public class PreviewBillActivity extends AppCompatActivity {
             if (customerAddress != null) tvCustomerAddress.setText(customerAddress);
 
             // Populate Items
-            java.util.List<com.example.florra_a.models.BillItem> items = (java.util.List<com.example.florra_a.models.BillItem>) intent.getSerializableExtra("items");
-            if (items != null && llItemsContainer != null) {
+            billItems = (java.util.List<BillItem>) intent.getSerializableExtra("items");
+            if (billItems != null && llItemsContainer != null) {
                 llItemsContainer.removeAllViews();
                 android.view.LayoutInflater inflater = android.view.LayoutInflater.from(this);
                 
-                for (com.example.florra_a.models.BillItem item : items) {
+                for (BillItem item : billItems) {
                     android.view.View itemView = inflater.inflate(R.layout.item_preview_row, llItemsContainer, false);
                     
                     ((TextView) itemView.findViewById(R.id.tvItemName)).setText(item.getItemName());
@@ -220,24 +329,48 @@ public class PreviewBillActivity extends AppCompatActivity {
                 }
             }
 
-            // Amounts
+            // Amounts and numeric values
+            gstPercentage = intent.getDoubleExtra("gstPercentage", 18.0);
+            loading = intent.getDoubleExtra("loading", 0.0);
+
             String subtotal = intent.getStringExtra("subtotal");
-            if (subtotal != null) tvSubtotal.setText(subtotal);
+            if (subtotal != null) {
+                tvSubtotal.setText(subtotal);
+                subtotalVal = parseAmount(subtotal);
+            }
 
             String gstAmount = intent.getStringExtra("gstAmount");
-            if (gstAmount != null) tvTaxAmount.setText(gstAmount);
+            if (gstAmount != null) {
+                tvTaxAmount.setText(gstAmount);
+                gstAmountVal = parseAmount(gstAmount);
+            }
 
             String discount = intent.getStringExtra("discount");
-            if (discount != null) tvDiscountAmount.setText(discount);
+            if (discount != null) {
+                tvDiscountAmount.setText(discount);
+                discountVal = parseAmount(discount);
+            }
 
             String grandTotal = intent.getStringExtra("grandTotal");
-            if (grandTotal != null) tvGrandTotal.setText(grandTotal);
+            if (grandTotal != null) {
+                tvGrandTotal.setText(grandTotal);
+                grandTotalVal = parseAmount(grandTotal);
+            }
 
             // Set current time for preview
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(
                     "'Preview generated on' MMM dd, yyyy 'at' hh:mm a", 
                     java.util.Locale.getDefault());
             tvPreviewTime.setText(sdf.format(new java.util.Date()));
+        }
+    }
+
+    private double parseAmount(String amount) {
+        if (amount == null) return 0.0;
+        try {
+            return Double.parseDouble(amount.replaceAll("[^0-9.]", ""));
+        } catch (Exception e) {
+            return 0.0;
         }
     }
 

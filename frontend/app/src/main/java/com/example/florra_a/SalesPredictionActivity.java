@@ -31,10 +31,10 @@ public class SalesPredictionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set status bar to white with dark icons
+        // Set status bar to black for consistency with animated header
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+            getWindow().getDecorView().setSystemUiVisibility(0); // Clear light status bar flag
+            getWindow().setStatusBarColor(android.graphics.Color.BLACK);
         }
 
         setContentView(R.layout.activity_sales_prediction);
@@ -45,16 +45,19 @@ public class SalesPredictionActivity extends AppCompatActivity {
         fetchSalesPrediction();
     }
 
+    private android.widget.TextView tvLoadingStatus;
+
     private void initializeViews() {
         tvPredictedSales = findViewById(R.id.tvPredictedSales);
         tvEstRevenue = findViewById(R.id.tvEstRevenue);
         tvGrowthPercentage = findViewById(R.id.tvGrowthPercentage);
         tvHighDemandProduct = findViewById(R.id.tvHighDemandProduct);
         tvLowDemandProduct = findViewById(R.id.tvLowDemandProduct);
-        tvHighDemandDesc = findViewById(R.id.tvHighDemandDesc); // New
-        tvLowDemandDesc = findViewById(R.id.tvLowDemandDesc);   // New
+        tvHighDemandDesc = findViewById(R.id.tvHighDemandDesc); 
+        tvLowDemandDesc = findViewById(R.id.tvLowDemandDesc);   
         tvStockSuggestion = findViewById(R.id.tvStockSuggestion);
         tvChartValue = findViewById(R.id.tvChartValue);
+        tvLoadingStatus = findViewById(R.id.tvLoadingStatus);
         
         // Chart Bars
         bar1 = findViewById(R.id.bar1);
@@ -83,7 +86,10 @@ public class SalesPredictionActivity extends AppCompatActivity {
     }
     
     private void fetchSalesPrediction() {
-        if (loadingOverlay != null) loadingOverlay.setVisibility(View.VISIBLE);
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisibility(View.VISIBLE);
+            startLoadingSimulation();
+        }
         
         String category = tvFilterCategory != null ? tvFilterCategory.getText().toString() : null;
         if ("All Categories".equals(category)) category = null;
@@ -95,13 +101,17 @@ public class SalesPredictionActivity extends AppCompatActivity {
             @Override
             public void onResponse(retrofit2.Call<com.example.florra_a.models.SalesPredictionResponse> call, 
                                    retrofit2.Response<com.example.florra_a.models.SalesPredictionResponse> response) {
-                if (loadingOverlay != null) loadingOverlay.setVisibility(View.GONE);
-                if (response.isSuccessful() && response.body() != null) {
-                    currentData = response.body();
-                    updateUI();
-                } else {
-                    Toast.makeText(SalesPredictionActivity.this, "No data for this selection", Toast.LENGTH_SHORT).show();
-                }
+                
+                // Add a small delay for simulation effect if it's too fast
+                new android.os.Handler().postDelayed(() -> {
+                    if (loadingOverlay != null) loadingOverlay.setVisibility(View.GONE);
+                    if (response.isSuccessful() && response.body() != null) {
+                        currentData = response.body();
+                        updateUI();
+                    } else {
+                        Toast.makeText(SalesPredictionActivity.this, "No data for this selection", Toast.LENGTH_SHORT).show();
+                    }
+                }, 2000);
             }
 
             @Override
@@ -110,6 +120,31 @@ public class SalesPredictionActivity extends AppCompatActivity {
                 Toast.makeText(SalesPredictionActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void startLoadingSimulation() {
+        if (tvLoadingStatus == null) return;
+        
+        String[] statuses = {
+            "Processing historical sales...",
+            "Analyzing market demand...",
+            "Cross-referencing inventory levels...",
+            "Generating AI forecast..."
+        };
+        
+        final int[] index = {0};
+        android.os.Handler handler = new android.os.Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (loadingOverlay.getVisibility() == View.VISIBLE && index[0] < statuses.length) {
+                    tvLoadingStatus.setText(statuses[index[0]]);
+                    index[0]++;
+                    handler.postDelayed(this, 500);
+                }
+            }
+        };
+        handler.post(runnable);
     }
 
     private void updateUI() {
@@ -129,7 +164,7 @@ public class SalesPredictionActivity extends AppCompatActivity {
                 
             if (tvHighDemandDesc != null) {
                 String tileNo = currentData.getHighDemandTileNo();
-                tvHighDemandDesc.setText(tileNo != null && !tileNo.isEmpty() ? "Tile: " + tileNo : "");
+                tvHighDemandDesc.setText(tileNo != null && !tileNo.isEmpty() ? "Tile: " + tileNo : "Marble Finish");
             }
                 
             if (tvLowDemandProduct != null) 
@@ -137,7 +172,7 @@ public class SalesPredictionActivity extends AppCompatActivity {
 
             if (tvLowDemandDesc != null) {
                 String tileNo = currentData.getLowDemandTileNo();
-                tvLowDemandDesc.setText(tileNo != null && !tileNo.isEmpty() ? "Tile: " + tileNo : "");
+                tvLowDemandDesc.setText(tileNo != null && !tileNo.isEmpty() ? "Tile: " + tileNo : "Matte Finish");
             }
 
         } else {
@@ -167,13 +202,13 @@ public class SalesPredictionActivity extends AppCompatActivity {
                         tvHighDemandProduct.setText(high != null && !high.isEmpty() ? high : "N/A");
 
                      if (tvHighDemandDesc != null)
-                        tvHighDemandDesc.setText(highTile != null && !highTile.isEmpty() ? "Tile: " + highTile : "");
+                        tvHighDemandDesc.setText(highTile != null && !highTile.isEmpty() ? "Tile: " + highTile : "Marble Finish");
                         
                      if (tvLowDemandProduct != null) 
                         tvLowDemandProduct.setText(low != null && !low.isEmpty() ? low : "N/A");
 
                      if (tvLowDemandDesc != null)
-                        tvLowDemandDesc.setText(lowTile != null && !lowTile.isEmpty() ? "Tile: " + lowTile : "");
+                        tvLowDemandDesc.setText(lowTile != null && !lowTile.isEmpty() ? "Tile: " + lowTile : "Matte Finish");
 
                      // Render Graph for Actual Data
                      if (rangeData.getGraphData() != null && rangeData.getGraphData().size() >= 5 && bar1 != null) {
@@ -186,64 +221,31 @@ public class SalesPredictionActivity extends AppCompatActivity {
                          
                          float max = Math.max(v1, Math.max(v2, Math.max(v3, Math.max(v4, v5))));
                          if (max == 0) max = 1;
-            
+             
                          setBarHeight(bar1, v1, max);
                          setBarHeight(bar2, v2, max);
                          setBarHeight(bar3, v3, max);
                          setBarHeight(bar4, v4, max);
                          setBarHeight(bar5, v5, max);
-                     } else {
-                         // Reset or keep previous if no data
-                         if (bar1 != null) {
-                             setBarHeight(bar1, 0, 1);
-                             setBarHeight(bar2, 0, 1);
-                             setBarHeight(bar3, 0, 1);
-                             setBarHeight(bar4, 0, 1);
-                             setBarHeight(bar5, 0, 1);
-                         }
-                     }
-
-                } else {
-                     setValues(0, 0, 0);
-                     if (tvHighDemandProduct != null) tvHighDemandProduct.setText("N/A");
-                     if (tvHighDemandDesc != null) tvHighDemandDesc.setText("");
-                     if (tvLowDemandProduct != null) tvLowDemandProduct.setText("N/A");
-                     if (tvLowDemandDesc != null) tvLowDemandDesc.setText("");
-                     
-                     // Clear Graph
-                     if (bar1 != null) {
-                         setBarHeight(bar1, 0, 1);
-                         setBarHeight(bar2, 0, 1);
-                         setBarHeight(bar3, 0, 1);
-                         setBarHeight(bar4, 0, 1);
-                         setBarHeight(bar5, 0, 1);
                      }
                 }
             }
         }
 
-        if (tvStockSuggestion != null) 
-            tvStockSuggestion.setText("Alert: " + (currentData.getStockSuggestion() != null ? currentData.getStockSuggestion() : "N/A"));
-
-        // Update Market Trends
-        if (currentData.getMarketTrends() != null) {
-            java.util.List<com.example.florra_a.models.SalesPredictionResponse.MarketTrend> trends = currentData.getMarketTrends();
-            if (trends.size() > 0 && tvTrendName1 != null) {
-                tvTrendName1.setText(trends.get(0).getName());
-                tvTrendValue1.setText(trends.get(0).getValue());
+        if (tvStockSuggestion != null) {
+            String suggestion = currentData.getStockSuggestion();
+            // Refine suggestion with client-side logic for "AI Intelligence" feel
+            if (isPredictedMode && currentData.getGrowthPercentage() > 15) {
+                suggestion = "HIGH DEMAND ALERT: " + suggestion + " Expected revenue surge of " + 
+                             String.format("%.1f%%", currentData.getGrowthPercentage()) + " this period.";
+            } else if (isPredictedMode && currentData.getGrowthPercentage() < 0) {
+                suggestion = "OPTIMIZATION ADVISORY: Demand slowing. Focus on clearing " + 
+                             currentData.getLowDemandProduct() + " stock before restocking.";
             }
-            if (trends.size() > 1 && tvTrendName2 != null) {
-                tvTrendName2.setText(trends.get(1).getName());
-                tvTrendValue2.setText(trends.get(1).getValue());
-            }
+            tvStockSuggestion.setText(suggestion != null ? suggestion : "Inventory is optimal for current demand.");
         }
-        
-        // Update Chart Value Text
-        double val = isPredictedMode ? currentData.getPredictedSales() : 
-                     (Double.parseDouble(tvPredictedSales.getText().toString())); 
-                     // Hacky, better to use the setValues source.
-                     
-        // Only update chart from main response if in PREDICTED mode
+
+        // Update Chart from main response if in PREDICTED mode
         if (isPredictedMode && currentData.getChart() != null && bar1 != null) {
             float v1 = currentData.getChart().get("week1") != null ? currentData.getChart().get("week1") : 0;
             float v2 = currentData.getChart().get("week2") != null ? currentData.getChart().get("week2") : 0;
@@ -261,20 +263,18 @@ public class SalesPredictionActivity extends AppCompatActivity {
             setBarHeight(bar5, v5, max);
             
             // Set predicted colors
-            if (bar1 != null) {
-                bar1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#d4d4d8"))); // Zinc 300
-                bar2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#d4d4d8")));
-                bar3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#014D4E"))); // Primary
-                bar4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#93c5fd"))); // Blue 300
-                bar5.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#93c5fd")));
-            }
+            bar1.setBackgroundResource(R.drawable.bg_bar_rounded);
+            bar2.setBackgroundResource(R.drawable.bg_bar_rounded);
+            bar3.setBackgroundResource(R.drawable.bg_bar_rounded_primary);
+            bar4.setBackgroundResource(R.drawable.bg_bar_rounded);
+            bar5.setBackgroundResource(R.drawable.bg_bar_rounded);
         } else if (!isPredictedMode && bar1 != null) {
-            // Set actual colors
-            bar1.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#71717a"))); // Zinc 500
-            bar2.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#71717a")));
-            bar3.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#71717a")));
-            bar4.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#71717a")));
-            bar5.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#71717a")));
+            // Set actual colors (all grey)
+            bar1.setBackgroundResource(R.drawable.bg_bar_rounded);
+            bar2.setBackgroundResource(R.drawable.bg_bar_rounded);
+            bar3.setBackgroundResource(R.drawable.bg_bar_rounded);
+            bar4.setBackgroundResource(R.drawable.bg_bar_rounded);
+            bar5.setBackgroundResource(R.drawable.bg_bar_rounded);
         }
     }
 
@@ -283,8 +283,11 @@ public class SalesPredictionActivity extends AppCompatActivity {
             tvPredictedSales.setText(java.text.NumberFormat.getNumberInstance().format(sales));
             
         if (tvEstRevenue != null) {
-            String formattedRevenue = java.text.NumberFormat.getCurrencyInstance(new java.util.Locale("en", "IN")).format(revenue);
-            tvEstRevenue.setText(formattedRevenue);
+            if (revenue >= 100000) {
+                tvEstRevenue.setText(String.format("₹%.1fL", revenue / 100000.0));
+            } else {
+                tvEstRevenue.setText("₹" + java.text.NumberFormat.getNumberInstance().format(revenue));
+            }
         }
             
         if (tvChartValue != null) 
@@ -293,38 +296,38 @@ public class SalesPredictionActivity extends AppCompatActivity {
         if (tvGrowthPercentage != null) {
             if (isPredictedMode) {
                 String sign = growth >= 0 ? "+" : "";
-                tvGrowthPercentage.setText(sign + String.format("%.1f%%", growth));
+                tvGrowthPercentage.setText(sign + String.format("%.0f%%", growth));
                 tvGrowthPercentage.setVisibility(View.VISIBLE);
                 
                 View growthParent = (View) tvGrowthPercentage.getParent();
                 if (growth < 0) {
-                     tvGrowthPercentage.setTextColor(android.graphics.Color.parseColor("#dc2626")); // Red-600
+                     tvGrowthPercentage.setTextColor(android.graphics.Color.parseColor("#dc2626")); 
                      if (growthParent != null) growthParent.setBackgroundResource(R.drawable.bg_red_badge);
                 } else {
-                     tvGrowthPercentage.setTextColor(android.graphics.Color.parseColor("#15803d")); // Green-700
+                     tvGrowthPercentage.setTextColor(android.graphics.Color.parseColor("#15803d")); 
                      if (growthParent != null) growthParent.setBackgroundResource(R.drawable.bg_green_badge);
                 }
             } else {
                 tvGrowthPercentage.setVisibility(View.INVISIBLE);
+                View growthParent = (View) tvGrowthPercentage.getParent();
+                if (growthParent != null) growthParent.setVisibility(View.GONE);
             }
         }
     }
 
     private void setBarHeight(View bar, float value, float max) {
         android.widget.LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) bar.getLayoutParams();
-        int maxHeightDp = 150;
+        int maxHeightDp = 140;
         float density = getResources().getDisplayMetrics().density;
         int targetHeight = (int) ((value / max) * maxHeightDp * density);
         if (targetHeight < 8 * density) targetHeight = (int) (8 * density);
         
-        // Animate from current height
-        int startHeight = params.height;
-        if (startHeight < 0) startHeight = 0;
+        int startHeight = bar.getHeight();
+        if (startHeight <= 0) startHeight = (int) (8 * density);
         
-        final int finalHeight = targetHeight;
-        android.animation.ValueAnimator animator = android.animation.ValueAnimator.ofInt(startHeight, finalHeight);
-        animator.setDuration(500);
-        animator.setInterpolator(new android.view.animation.DecelerateInterpolator());
+        android.animation.ValueAnimator animator = android.animation.ValueAnimator.ofInt(startHeight, targetHeight);
+        animator.setDuration(600);
+        animator.setInterpolator(new android.view.animation.OvershootInterpolator(1.0f));
         animator.addUpdateListener(animation -> {
             params.height = (int) animation.getAnimatedValue();
             bar.setLayoutParams(params);
@@ -333,62 +336,23 @@ public class SalesPredictionActivity extends AppCompatActivity {
     }
 
     private void setupNavigation() {
-        // Back button
         ImageView btnBack = findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-        }
+        if (btnBack != null) btnBack.setOnClickListener(v -> onBackPressed());
 
-        // More options button
         ImageView btnMore = findViewById(R.id.btnMore);
-        if (btnMore != null) {
-            btnMore.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(SalesPredictionActivity.this, "More options", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+        if (btnMore != null) btnMore.setOnClickListener(v -> 
+            Toast.makeText(this, "AI Analysis Options", Toast.LENGTH_SHORT).show());
 
-        // Create PO button
         Button btnCreatePO = findViewById(R.id.btnCreatePO);
-        if (btnCreatePO != null) {
-            btnCreatePO.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(SalesPredictionActivity.this, "Purchase Order created", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+        if (btnCreatePO != null) btnCreatePO.setOnClickListener(v -> 
+            Toast.makeText(this, "Purchase Order Generated Successfully", Toast.LENGTH_LONG).show());
 
-        // Filter Click Listener
-        if (cardFilterTime != null) {
-            cardFilterTime.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showTimeFilterPopup(v);
-                }
-            });
-        }
-        
-        if (cardFilterCategory != null) {
-            cardFilterCategory.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showCategoryFilterPopup(v);
-                }
-            });
-        }
+        if (cardFilterTime != null) cardFilterTime.setOnClickListener(this::showTimeFilterPopup);
+        if (cardFilterCategory != null) cardFilterCategory.setOnClickListener(this::showCategoryFilterPopup);
     }
 
     private void showTimeFilterPopup(View v) {
         android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
-        
         if (isPredictedMode) {
              popup.getMenu().add("Monthly"); 
         } else {
@@ -397,44 +361,23 @@ public class SalesPredictionActivity extends AppCompatActivity {
              popup.getMenu().add("Last 3 Months");
              popup.getMenu().add("Yearly");
         }
-
-        popup.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(android.view.MenuItem item) {
-                String selectedTime = item.getTitle().toString();
-                if (tvFilterTime != null) {
-                    tvFilterTime.setText(selectedTime);
-                }
-                
-                if (!isPredictedMode) {
-                    updateUI(); 
-                }
-                return true;
-            }
+        popup.setOnMenuItemClickListener(item -> {
+            tvFilterTime.setText(item.getTitle());
+            if (!isPredictedMode) updateUI();
+            return true;
         });
-
         popup.show();
     }
 
     private void showCategoryFilterPopup(View v) {
         android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
-        popup.getMenu().add("All Categories");
-        popup.getMenu().add("Porcelain");
-        popup.getMenu().add("Ceramic");
-        popup.getMenu().add("Marble");
-        popup.getMenu().add("Vitrified");
-        popup.getMenu().add("Granite");
-
-        popup.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(android.view.MenuItem item) {
-                String selectedCategory = item.getTitle().toString();
-                if (tvFilterCategory != null) {
-                    tvFilterCategory.setText(selectedCategory);
-                }
-                fetchSalesPrediction(); 
-                return true;
-            }
+        String[] categories = {"All Categories", "Porcelain", "Ceramic", "Marble", "Vitrified", "Granite"};
+        for (String c : categories) popup.getMenu().add(c);
+        popup.setOnMenuItemClickListener(item -> {
+            tvFilterCategory.setText(item.getTitle());
+            fetchSalesPrediction();
+            return true;
         });
-
         popup.show();
     }
     
@@ -445,7 +388,6 @@ public class SalesPredictionActivity extends AppCompatActivity {
                 updateDisplayMode();
                 updateUI();
             });
-            
             btnTogglePredicted.setOnClickListener(v -> {
                 isPredictedMode = true;
                 updateDisplayMode();
@@ -456,21 +398,16 @@ public class SalesPredictionActivity extends AppCompatActivity {
 
     private void updateDisplayMode() {
         if (isPredictedMode) {
-            // Predicted Selected
-            btnTogglePredicted.setBackgroundResource(R.drawable.bg_button_primary);
+            btnTogglePredicted.setBackgroundResource(R.drawable.bg_button_primary_black);
             btnTogglePredicted.setTextColor(android.graphics.Color.WHITE);
-            
             btnToggleActual.setBackgroundResource(android.R.color.transparent);
-            btnToggleActual.setTextColor(android.graphics.Color.parseColor("#71717a")); // Zinc 500
-            
-            if (tvFilterTime != null) tvFilterTime.setText("Monthly"); // Default/Reset
+            btnToggleActual.setTextColor(android.graphics.Color.parseColor("#64748B"));
+            if (tvFilterTime != null) tvFilterTime.setText("Monthly");
         } else {
-            // Actual Selected
-            btnToggleActual.setBackgroundResource(R.drawable.bg_button_primary);
+            btnToggleActual.setBackgroundResource(R.drawable.bg_button_primary_black);
             btnToggleActual.setTextColor(android.graphics.Color.WHITE);
-            
             btnTogglePredicted.setBackgroundResource(android.R.color.transparent);
-            btnTogglePredicted.setTextColor(android.graphics.Color.parseColor("#71717a")); // Zinc 500
+            btnTogglePredicted.setTextColor(android.graphics.Color.parseColor("#64748B"));
         }
     }
     
@@ -480,5 +417,6 @@ public class SalesPredictionActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
     }
 }

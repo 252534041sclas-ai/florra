@@ -133,8 +133,8 @@ public class EnquiriesActivity extends AppCompatActivity {
         View btnQuoted = findViewById(R.id.btnQuoted);
         if (btnQuoted != null) btnQuoted.setOnClickListener(v -> updateFilterSelection("quoted"));
 
-        View btnFollowUp = findViewById(R.id.btnFollowUp);
-        if (btnFollowUp != null) btnFollowUp.setOnClickListener(v -> updateFilterSelection("follow_up"));
+        View btnRejected = findViewById(R.id.btnRejected);
+        if (btnRejected != null) btnRejected.setOnClickListener(v -> updateFilterSelection("rejected"));
 
         View btnResolved = findViewById(R.id.btnResolved);
         if (btnResolved != null) btnResolved.setOnClickListener(v -> updateFilterSelection("resolved"));
@@ -161,7 +161,7 @@ public class EnquiriesActivity extends AppCompatActivity {
         this.currentFilter = selectedFilter;
         
         // Reset all tabs UI
-        int[] tabIds = {R.id.btnAll, R.id.btnNew, R.id.btnQuoted, R.id.btnFollowUp, R.id.btnResolved};
+        int[] tabIds = {R.id.btnAll, R.id.btnNew, R.id.btnQuoted, R.id.btnRejected, R.id.btnResolved};
         for (int id : tabIds) {
             View tab = findViewById(id);
             if (tab != null) {
@@ -184,8 +184,7 @@ public class EnquiriesActivity extends AppCompatActivity {
             case "all": selectedTab = findViewById(R.id.btnAll); break;
             case "new": selectedTab = findViewById(R.id.btnNew); break;
             case "quoted": selectedTab = findViewById(R.id.btnQuoted); break;
-            case "follow_up": 
-            case "follow-up": selectedTab = findViewById(R.id.btnFollowUp); break;
+            case "rejected": selectedTab = findViewById(R.id.btnRejected); break;
             case "resolved": selectedTab = findViewById(R.id.btnResolved); break;
         }
 

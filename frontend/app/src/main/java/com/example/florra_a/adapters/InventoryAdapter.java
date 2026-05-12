@@ -73,75 +73,56 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Prod
         public void bind(final Product product, final OnItemClickListener listener) {
             tvProductName.setText(product.getTileName());
             tvProductDetails.setText(product.getSize() + " • " + product.getCategory());
-            tvSku.setText("SKU: " + product.getId()); // Using ID as SKU for now
+            
+            // Consistent "No:" label
+            String tileNo = product.getTileNo();
+            tvSku.setText("No: " + (tileNo != null ? tileNo : product.getId()));
+            
             tvStockCount.setText(String.valueOf(product.getStock()));
 
             // Load Image
             String imageUrl = product.getImage();
+            ivProductImage.setImageTintList(null); // Clear any existing tint for actual image
+            
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 if (!imageUrl.startsWith("http")) {
                     imageUrl = com.example.florra_a.network.RetrofitClient.BASE_URL + imageUrl;
                 }
                 com.bumptech.glide.Glide.with(itemView.getContext())
                     .load(imageUrl)
-                    .placeholder(R.drawable.bg_bar_default) // Using a default drawable as placeholder
-                    .error(R.drawable.bg_bar_default)
+                    .placeholder(R.drawable.ic_tile_placeholder)
+                    .error(R.drawable.ic_tile_placeholder)
                     .into(ivProductImage);
             } else {
-                ivProductImage.setImageResource(R.drawable.bg_bar_default);
+                ivProductImage.setImageResource(R.drawable.ic_tile_placeholder);
+                ivProductImage.setImageTintList(android.content.res.ColorStateList.valueOf(
+                    android.graphics.Color.parseColor("#D4D4D8"))); // zinc_300 for placeholder
             }
             
             String status = product.getStockStatus();
             if (status == null) status = "In Stock";
-            tvStockStatus.setText(status);
+            tvStockStatus.setText(status.toUpperCase());
 
             // Button Text Logic
-            String btnText = "Update";
-            if ("Low Stock".equals(status)) btnText = "Order";
-            if ("Empty".equals(status)) btnText = "Restock";
+            String btnText = "UPDATE";
+            if ("Low Stock".equals(status)) btnText = "ORDER";
+            if ("Empty".equalsIgnoreCase(status) || "Out of Stock".equalsIgnoreCase(status)) btnText = "RESTOCK";
             btnAction.setText(btnText);
 
             // Visual Styling
             int green700 = android.graphics.Color.parseColor("#047857");
-            int amber700 = android.graphics.Color.parseColor("#b45309");
-            int amber600 = android.graphics.Color.parseColor("#d97706");
+            int orange500 = android.graphics.Color.parseColor("#F97316");
             int red700 = android.graphics.Color.parseColor("#b91c1c");
-            int red600 = android.graphics.Color.parseColor("#dc2626");
-            int primary = android.graphics.Color.parseColor("#4f46e5"); // Approximate primary
-            int white = android.graphics.Color.WHITE;
 
-            switch (status) {
-                case "In Stock":
-                    tvStockStatus.setBackgroundResource(R.drawable.bg_green_badge);
-                    tvStockStatus.setTextColor(green700);
-                    tvStockCount.setTextColor(primary);
-                    
-                    btnAction.setBackgroundResource(R.drawable.bg_outline_button);
-                    btnAction.setTextColor(primary);
-                    break;
-                case "Low Stock":
-                    tvStockStatus.setBackgroundResource(R.drawable.bg_amber_badge);
-                    tvStockStatus.setTextColor(amber700);
-                    tvStockCount.setTextColor(amber600);
-                    
-                    btnAction.setBackgroundResource(R.drawable.bg_primary_button);
-                    btnAction.setTextColor(white);
-                    break;
-                case "Empty":
-                    tvStockStatus.setBackgroundResource(R.drawable.bg_red_badge);
-                    tvStockStatus.setTextColor(red700);
-                    tvStockCount.setTextColor(red600);
-                    
-                    btnAction.setBackgroundResource(R.drawable.bg_primary_button);
-                    btnAction.setTextColor(white);
-                    itemView.setAlpha(0.8f);
-                    break;
-                default: 
-                     // Fallback
-                    tvStockStatus.setBackgroundResource(R.drawable.bg_green_badge);
-                    tvStockStatus.setTextColor(green700);
-                    tvStockCount.setTextColor(primary);
-                    itemView.setAlpha(1.0f);
+            if ("In Stock".equalsIgnoreCase(status)) {
+                tvStockStatus.setBackgroundResource(R.drawable.bg_green_badge);
+                tvStockStatus.setTextColor(green700);
+            } else if ("Low Stock".equalsIgnoreCase(status)) {
+                tvStockStatus.setBackgroundResource(R.drawable.bg_amber_badge);
+                tvStockStatus.setTextColor(orange500);
+            } else {
+                tvStockStatus.setBackgroundResource(R.drawable.bg_red_badge);
+                tvStockStatus.setTextColor(red700);
             }
 
             cardProduct.setOnClickListener(v -> listener.onItemClick(product));

@@ -38,7 +38,7 @@ public class AdminNotificationsActivity extends AppCompatActivity {
     // ─── Tab views ────────────────────────────────────────────────────────────
     private View tabRequests, tabHistoryWrap, tabCreateWrap;
     private View tabRequestsIndicator, tabHistoryIndicator, tabCreateIndicator;
-    private TextView tabHistory, tabCreate, tvRequestBadge;
+    private TextView tabHistory, tabCreate, tvRequests, tvRequestBadge;
 
     // ─── Panels ───────────────────────────────────────────────────────────────
     private View panelRequests, panelHistory, panelCreate;
@@ -86,8 +86,8 @@ public class AdminNotificationsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(0);
-            getWindow().setStatusBarColor(android.graphics.Color.parseColor("#014D4E"));
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            getWindow().setStatusBarColor(Color.WHITE);
         }
         setContentView(R.layout.activity_admin_notifications);
 
@@ -121,6 +121,7 @@ public class AdminNotificationsActivity extends AppCompatActivity {
         // Tab text views
         tabHistory    = findViewById(R.id.tabHistory);
         tabCreate     = findViewById(R.id.tabCreate);
+        tvRequests    = findViewById(R.id.tvRequests);
         tvRequestBadge = findViewById(R.id.tvRequestBadge);
 
         // Panels
@@ -201,25 +202,34 @@ public class AdminNotificationsActivity extends AppCompatActivity {
         tabRequestsIndicator.setBackgroundColor(Color.TRANSPARENT);
         tabHistoryIndicator.setBackgroundColor(Color.TRANSPARENT);
         tabCreateIndicator.setBackgroundColor(Color.TRANSPARENT);
-        tabHistory.setTextColor(Color.argb(128, 255, 255, 255));
-        tabCreate.setTextColor(Color.argb(128, 255, 255, 255));
+        
+        // Use Slate-400 for inactive
+        int inactiveColor = Color.parseColor("#94A3B8");
+        tabHistory.setTextColor(inactiveColor);
+        tabCreate.setTextColor(inactiveColor);
+        tvRequests.setTextColor(inactiveColor);
+        tabHistory.setTypeface(null, android.graphics.Typeface.NORMAL);
+        tabCreate.setTypeface(null, android.graphics.Typeface.NORMAL);
+        tvRequests.setTypeface(null, android.graphics.Typeface.NORMAL);
 
         // Activate selected
         switch (tab) {
             case REQUESTS:
                 panelRequests.setVisibility(View.VISIBLE);
-                tabRequestsIndicator.setBackgroundColor(Color.WHITE);
+                tabRequestsIndicator.setBackgroundColor(Color.BLACK);
+                tvRequests.setTextColor(Color.BLACK);
+                tvRequests.setTypeface(null, android.graphics.Typeface.BOLD);
                 break;
             case HISTORY:
                 panelHistory.setVisibility(View.VISIBLE);
-                tabHistoryIndicator.setBackgroundColor(Color.WHITE);
-                tabHistory.setTextColor(Color.WHITE);
+                tabHistoryIndicator.setBackgroundColor(Color.BLACK);
+                tabHistory.setTextColor(Color.BLACK);
                 tabHistory.setTypeface(null, android.graphics.Typeface.BOLD);
                 break;
             case CREATE:
                 panelCreate.setVisibility(View.VISIBLE);
-                tabCreateIndicator.setBackgroundColor(Color.WHITE);
-                tabCreate.setTextColor(Color.WHITE);
+                tabCreateIndicator.setBackgroundColor(Color.BLACK);
+                tabCreate.setTextColor(Color.BLACK);
                 tabCreate.setTypeface(null, android.graphics.Typeface.BOLD);
                 break;
         }
@@ -475,8 +485,8 @@ public class AdminNotificationsActivity extends AppCompatActivity {
         for (com.example.florra_a.models.Product p : searchResults) {
             // Build chip TextView
             android.widget.TextView chip = new android.widget.TextView(ctx);
-            chip.setText("🟩 " + p.getTileName());
-            chip.setTextColor(android.graphics.Color.parseColor("#014D4E"));
+            chip.setText("📦 " + p.getTileName());
+            chip.setTextColor(Color.BLACK);
             chip.setTextSize(13f);
             chip.setBackground(getResources().getDrawable(R.drawable.bg_filter_inactive, null));
 
@@ -588,8 +598,14 @@ public class AdminNotificationsActivity extends AppCompatActivity {
                     switchTab(Tab.HISTORY);
                     loadNotificationHistory();
                 } else {
+                    String error = "Failed. Try again.";
+                    try {
+                        if (response.errorBody() != null) {
+                            error = response.errorBody().string();
+                        }
+                    } catch (Exception e) { e.printStackTrace(); }
                     Toast.makeText(AdminNotificationsActivity.this,
-                            "Failed. Try again.", Toast.LENGTH_SHORT).show();
+                            error, Toast.LENGTH_LONG).show();
                 }
             }
 

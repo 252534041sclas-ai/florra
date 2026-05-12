@@ -110,4 +110,23 @@ public interface ApiService {
 
     @retrofit2.http.POST("api/admin/notifications/create/")
     Call<okhttp3.ResponseBody> createAdminNotification(@Body java.util.Map<String, String> body);
+
+    // === REPORTS ENDPOINTS ===
+    @retrofit2.http.GET("api/admin/reports/summary/")
+    Call<com.example.florra_a.models.ReportSummaryResponse> getReportSummary(
+        @retrofit2.http.Query("month") int month,
+        @retrofit2.http.Query("year") int year
+    );
+
+    @retrofit2.http.GET("api/admin/reports/analytics/")
+    Call<com.example.florra_a.models.ReportAnalyticsResponse> getReportAnalytics(
+        @retrofit2.http.Query("month") int month,
+        @retrofit2.http.Query("year") int year
+    );
+
+    @retrofit2.http.GET("api/admin/reports/customers/")
+    Call<com.example.florra_a.models.ReportCustomerResponse> getReportCustomers(
+        @retrofit2.http.Query("month") int month,
+        @retrofit2.http.Query("year") int year
+    );
 }

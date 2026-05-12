@@ -139,6 +139,9 @@ class Notification(models.Model):
     TYPE_CHOICES = (
         ("quotation", "Quotation"),
         ("system", "System"),
+        ("promotion", "Promotion"),
+        ("alert", "Alert"),
+        ("announcement", "Announcement"),
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)

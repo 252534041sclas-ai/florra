@@ -108,8 +108,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="120dp"
                         android:layout_alignParentBottom="true"
-                        android:background="@drawable/gradient_bottom_dark"
-                        android:alpha="0.4" />
+                        android:layout_marginBottom="0dp"
+                        android:alpha="0.4"
+                        android:background="@drawable/gradient_bottom_dark" />
 
                 </RelativeLayout>
 

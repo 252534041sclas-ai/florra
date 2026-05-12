@@ -93,6 +93,7 @@
 
                             <!-- Edit Button -->
                             <Button
+                                android:id="@+id/btnEditProfileImage"
                                 android:layout_width="32dp"
                                 android:layout_height="32dp"
                                 android:layout_alignBottom="@id/ivProfile"

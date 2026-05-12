@@ -118,7 +118,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         // Ensure "Model:" prefix is present
         if (model != null) {
              currentProduct.setTileNo(model.replace("Model: ", "")); // Store raw
-             productModel.setText(model.startsWith("Model:") ? model : "Model: " + model);
+             productModel.setText(model.startsWith("No:") ? model : "No: " + model);
         } else {
              productModel.setText("");
         }

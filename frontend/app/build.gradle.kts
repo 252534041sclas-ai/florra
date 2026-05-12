@@ -50,4 +50,5 @@ dependencies {
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.razorpay:checkout:1.6.38")
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

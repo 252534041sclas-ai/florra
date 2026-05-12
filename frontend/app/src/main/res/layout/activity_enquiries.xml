@@ -141,7 +141,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="New"
-                            android:textColor="@color/zinc_600"
+                            android:textColor="#64748B"
                             android:textSize="14sp"
                             android:textStyle="normal" />
 
@@ -178,15 +178,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Quoted"
-                            android:textColor="@color/zinc_600"
+                            android:textColor="#64748B"
                             android:textSize="14sp"
                             android:textStyle="normal" />
 
                     </LinearLayout>
 
-                    <!-- Follow-up Tab -->
+                    <!-- Rejected Tab -->
                     <LinearLayout
-                        android:id="@+id/btnFollowUp"
+                        android:id="@+id/btnRejected"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -201,8 +201,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Follow-up"
-                            android:textColor="@color/zinc_600"
+                            android:text="Rejected"
+                            android:textColor="#64748B"
                             android:textSize="14sp"
                             android:textStyle="normal" />
 
@@ -226,7 +226,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Resolved"
-                            android:textColor="@color/zinc_600"
+                            android:textColor="#64748B"
                             android:textSize="14sp"
                             android:textStyle="normal" />
 

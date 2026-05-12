@@ -61,4 +61,16 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="FilterButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:paddingHorizontal">16dp</item>
+        <item name="android:background">@drawable/bg_outline_button</item>
+        <item name="android:textColor">@color/zinc_600</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
 </resources>

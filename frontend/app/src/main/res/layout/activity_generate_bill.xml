@@ -289,7 +289,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Items (2)"
+                        android:text="Items"
                         android:textColor="@color/primary_color"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -629,7 +629,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:background="@color/white"
         android:elevation="8dp"
         android:paddingHorizontal="16dp"
@@ -638,9 +638,32 @@
         android:layout_alignParentBottom="true">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnGenerateBill"
-            android:layout_width="match_parent"
+            android:id="@+id/btnPreviewBill"
+            android:layout_width="0dp"
             android:layout_height="56dp"
+            android:layout_weight="0.3"
+            android:layout_marginEnd="6dp"
+            android:padding="0dp"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="12dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/black"
+            app:icon="@drawable/ic_visibility"
+            app:iconGravity="textStart"
+            app:iconPadding="4dp"
+            app:iconTint="@color/black"
+            android:textAllCaps="false"
+            app:elevation="0dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGenerateBill"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="0.7"
+            android:layout_marginStart="6dp"
             android:text="Generate Bill"
             android:textColor="@color/white"
             android:textSize="16sp"
