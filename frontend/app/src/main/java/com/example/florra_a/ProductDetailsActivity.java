@@ -72,7 +72,34 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productImage = findViewById(R.id.productImage);
         tagPorcelain = findViewById(R.id.tagPorcelain);
         btnFavorite = findViewById(R.id.btnFavorite);
-        btnCompare = findViewById(R.id.btnCompare); // Initialize this
+        btnCompare = findViewById(R.id.btnCompare);
+        
+        // Picker Mode Views
+        View cardSelectionPicker = findViewById(R.id.cardSelectionPicker);
+        LinearLayout btnSelectThisTile = findViewById(R.id.btnSelectThisTile);
+        
+        if (getIntent().getBooleanExtra("IS_PICKER", false)) {
+            if (cardSelectionPicker != null) cardSelectionPicker.setVisibility(View.VISIBLE);
+            if (btnSelectThisTile != null) {
+                btnSelectThisTile.setOnClickListener(v -> {
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("productName", currentProduct.getTileName());
+                    resultIntent.putExtra("productPrice", String.valueOf(currentProduct.getPrice()));
+                    resultIntent.putExtra("productCategory", currentProduct.getCategory());
+                    resultIntent.putExtra("productSize", currentProduct.getSize());
+                    resultIntent.putExtra("productFinish", currentProduct.getFinish());
+                    resultIntent.putExtra("productImage", currentProduct.getImage());
+                    resultIntent.putExtra("productTileNo", currentProduct.getTileNo());
+                    resultIntent.putExtra("productThickness", currentProduct.getThickness());
+                    resultIntent.putExtra("productCoverage", currentProduct.getCoverage());
+                    resultIntent.putExtra("productPacking", "2 Pcs / Box");
+                    resultIntent.putExtra("productDescription", currentProduct.getDescription());
+                    
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                });
+            }
+        }
     }
 
     private void loadProductData(Intent intent) {
@@ -102,23 +129,29 @@ public class ProductDetailsActivity extends AppCompatActivity {
             productPrice.setText("₹0.00");
         }
 
-        // 3. Model
+        // 3. Model / Product No
         String model = intent.getStringExtra("productModel");
         String tileNo = intent.getStringExtra("productTileNo");
-        
-
+        if (tileNo == null) tileNo = intent.getStringExtra("tileNo");
+        if (tileNo == null) tileNo = intent.getStringExtra("tile_no");
+        if (tileNo == null) tileNo = intent.getStringExtra("product_no");
+        if (tileNo == null) tileNo = intent.getStringExtra("tile_code");
         
         if (tileNo != null && !tileNo.isEmpty()) {
             model = tileNo;
-        } else if (model == null && name != null) {
-            model = "FL-" + name.substring(0, Math.min(2, name.length())).toUpperCase() +
-                    "-" + String.format("%03d", (int)(Math.random() * 1000));
-        }
+        } 
         
-        // Ensure "Model:" prefix is present
-        if (model != null) {
-             currentProduct.setTileNo(model.replace("Model: ", "")); // Store raw
-             productModel.setText(model.startsWith("No:") ? model : "No: " + model);
+        if (model != null && !model.isEmpty()) {
+             currentProduct.setTileNo(model);
+             // Standardize to "Product No: "
+             String displayModel = model.startsWith("Product No:") ? model : "Product No: " + model;
+             productModel.setText(displayModel);
+        } else if (name != null) {
+            // Fallback generated ID if still null
+            String fallbackModel = "FL-" + name.substring(0, Math.min(2, name.length())).toUpperCase() +
+                    "-" + String.format("%03d", (int)(Math.abs(name.hashCode()) % 1000));
+            currentProduct.setTileNo(fallbackModel);
+            productModel.setText("Product No: " + fallbackModel);
         } else {
              productModel.setText("");
         }
@@ -420,6 +453,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                             public void onItemClick(Product product) {
                                 Intent intent = new Intent(ProductDetailsActivity.this, ProductDetailsActivity.class);
                                 // Pass known data
+                                intent.putExtra("productId", product.getId());
                                 intent.putExtra("tileName", product.getTileName());
                                 intent.putExtra("tilePrice", String.valueOf(product.getPrice()));
                                 intent.putExtra("productName", product.getTileName());

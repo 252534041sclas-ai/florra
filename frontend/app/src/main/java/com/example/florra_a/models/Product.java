@@ -38,7 +38,7 @@ public class Product implements Serializable {
     private String description;
 
     @SerializedName("is_active")
-    private boolean isActive;
+    private boolean isActive = true;
 
     @SerializedName("image")
     private String image;
@@ -85,7 +85,6 @@ public class Product implements Serializable {
 
     public void setTileName(String tileName) { this.tileName = tileName; }
 
-    public String getTileNo() { return tileNo; }
     public void setTileNo(String tileNo) { this.tileNo = tileNo; }
 
     public String getBrandName() { return brandName; }
@@ -148,7 +147,20 @@ public class Product implements Serializable {
     @SerializedName("product_name")
     private String productName;
 
+    @SerializedName("product_no")
+    private String productNo;
+
+    @SerializedName("tile_code")
+    private String tileCode;
+
     // Updated Getters with Fallbacks
+    public String getTileNo() {
+        if (tileNo != null && !tileNo.isEmpty()) return tileNo;
+        if (productNo != null && !productNo.isEmpty()) return productNo;
+        if (tileCode != null && !tileCode.isEmpty()) return tileCode;
+        return null;
+    }
+
     public String getTileName() {
         if (tileName != null) return tileName;
         if (name != null) return name;

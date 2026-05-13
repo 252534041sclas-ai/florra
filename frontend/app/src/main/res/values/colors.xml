@@ -526,13 +526,13 @@
     <!-- Subscription Screen Colors -->
     <color name="sub_background_light">#f6f6f8</color>
     <color name="sub_background_dark">#101622</color>
-    <color name="sub_text_primary">#111318</color>
-    <color name="sub_text_secondary">#616f89</color>
+    <color name="sub_text_primary">#000000</color>
+    <color name="sub_text_secondary">#475569</color>
     <color name="sub_card_bg_light">#FFFFFF</color>
     <color name="sub_card_bg_dark">#1c2433</color>
-    <color name="sub_card_border_light">#f3f4f6</color> <!-- gray-100 -->
+    <color name="sub_card_border_light">#e2e8f0</color> <!-- gray-100 -->
     <color name="sub_card_border_dark">#1f2937</color> <!-- gray-800 -->
-    <color name="sub_button_bg_light">#111318</color>
+    <color name="sub_button_bg_light">#000000</color>
     <color name="sub_button_text_light">#FFFFFF</color>
     <color name="sub_button_bg_dark">#FFFFFF</color>
     <color name="sub_button_text_dark">#000000</color>

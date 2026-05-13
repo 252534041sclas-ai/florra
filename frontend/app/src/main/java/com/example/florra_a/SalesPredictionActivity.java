@@ -430,8 +430,10 @@ public class SalesPredictionActivity extends AppCompatActivity {
 
     private void showCategoryFilterPopup(View v) {
         android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
-        String[] categories = {"All Categories", "Floor", "Wall", "Living", "Bathroom", "Kitchen", "Bedroom"};
-        for (String c : categories) popup.getMenu().add(c);
+        popup.getMenu().add("All Categories");
+        for (String c : com.example.florra_a.utils.Constants.CATEGORIES) {
+            popup.getMenu().add(c);
+        }
         popup.setOnMenuItemClickListener(item -> {
             tvFilterCategory.setText(item.getTitle());
             fetchSalesPrediction();

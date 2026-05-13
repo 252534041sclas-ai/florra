@@ -221,7 +221,8 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
             intent.putExtra("productMaterial", product.getCategory()); // mapped to category
             intent.putExtra("productDescription", product.getDescription());
             intent.putExtra("productImage", product.getImage()); 
-            intent.putExtra("stockStatus", product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK"); // Add stock status support
+            intent.putExtra("stockStatus", product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK");
+            intent.putExtra("productTileNo", product.getTileNo());
             
             context.startActivity(intent);
         });

@@ -62,13 +62,26 @@ public class AIRecommendationActivity extends AppCompatActivity {
         // Get data from intent
         if (getIntent().hasExtra("recommendations")) {
             originalProducts = (List<Product>) getIntent().getSerializableExtra("recommendations");
+            if (originalProducts != null) {
+                Toast.makeText(this, "Received " + originalProducts.size() + " matches", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No matches in intent", Toast.LENGTH_SHORT).show();
+            }
         }
 
         if (originalProducts == null) {
             originalProducts = new ArrayList<>();
         }
 
-        filteredProducts = new ArrayList<>(originalProducts);
+        // Filter inactive products from recommendations
+        filteredProducts = new ArrayList<>();
+        if (originalProducts != null) {
+            for (Product p : originalProducts) {
+                if (p.isActive()) {
+                    filteredProducts.add(p);
+                }
+            }
+        }
 
         tvMatchCount.setText("Found " + filteredProducts.size() + " similar matches");
 
@@ -86,6 +99,7 @@ public class AIRecommendationActivity extends AppCompatActivity {
                 intent.putExtra("productDescription", product.getDescription());
                 intent.putExtra("productImage", product.getImage());
                 intent.putExtra("stockStatus", product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK");
+                intent.putExtra("productTileNo", product.getTileNo());
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
@@ -207,11 +221,9 @@ public class AIRecommendationActivity extends AppCompatActivity {
         try {
             android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
             popup.getMenu().add("All");
-            popup.getMenu().add("Floor");
-            popup.getMenu().add("Wall");
-            popup.getMenu().add("Bathroom");
-            popup.getMenu().add("Living");
-            popup.getMenu().add("Bedroom");
+            for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
+                popup.getMenu().add(category);
+            }
 
             popup.setOnMenuItemClickListener(item -> {
                 try {
@@ -241,6 +253,27 @@ public class AIRecommendationActivity extends AppCompatActivity {
             bottomSheetDialog.setContentView(bottomSheetView);
 
             ChipGroup cgCategories = bottomSheetView.findViewById(R.id.cgCategories);
+            cgCategories.removeAllViews();
+            
+            // Add All chip
+            Chip chipAll = new Chip(new android.view.ContextThemeWrapper(this, R.style.ChoiceChipStyle), null, 0);
+            chipAll.setId(View.generateViewId());
+            chipAll.setText("All");
+            chipAll.setCheckable(true);
+            chipAll.setChecked(currentCategory.equals("All"));
+            cgCategories.addView(chipAll);
+
+            // Add dynamic chips
+            int idCounter = 1000;
+            for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
+                Chip chip = new Chip(new android.view.ContextThemeWrapper(this, R.style.ChoiceChipStyle), null, 0);
+                chip.setId(idCounter++);
+                chip.setText(category);
+                chip.setCheckable(true);
+                chip.setChecked(currentCategory.equalsIgnoreCase(category));
+                cgCategories.addView(chip);
+            }
+
             android.widget.Button btnApply = bottomSheetView.findViewById(R.id.btnApplyFilters);
 
                 btnApply.setOnClickListener(v -> {

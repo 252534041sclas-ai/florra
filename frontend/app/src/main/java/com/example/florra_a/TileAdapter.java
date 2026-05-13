@@ -32,6 +32,12 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
     }
 
     private OnItemClickListener onItemClickListener;
+    private boolean isPickerMode = false;
+
+    public void setPickerMode(boolean isPickerMode) {
+        this.isPickerMode = isPickerMode;
+        notifyDataSetChanged();
+    }
 
     public TileAdapter(Context context, List<Product> productList) {
         this.context = context;
@@ -57,23 +63,42 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    // Filter by category
-    public void filterByCategory(String category) {
+    // Filter by query and category across multiple fields
+    public void filterByQuery(String query, String category) {
         List<Product> filteredList = new ArrayList<>();
+        String lowerQuery = query.toLowerCase().trim();
 
-        if (category.equals("all") || category.equals("all_tiles")) {
-            filteredList.addAll(productListFull);
-        } else {
-            for (Product product : productListFull) {
-                // Check if product has category field and it matches
-                // Assuming getCategory() exists in Product, otherwise match by logic
-                if (product.getCategory() != null && product.getCategory().equalsIgnoreCase(category)) {
-                    filteredList.add(product);
-                }
+        for (Product product : productListFull) {
+            // 1. Category Filter
+            boolean matchesCategory = category.equalsIgnoreCase("all") || category.equalsIgnoreCase("all_tiles") ||
+                                     (product.getCategory() != null && product.getCategory().equalsIgnoreCase(category));
+            
+            if (!matchesCategory) continue;
+
+            // 2. Query Filter (Name, No, Category, Finish, Color)
+            if (lowerQuery.isEmpty()) {
+                filteredList.add(product);
+                continue;
+            }
+
+            boolean matchesQuery = false;
+            if (product.getTileName() != null && product.getTileName().toLowerCase().contains(lowerQuery)) matchesQuery = true;
+            if (product.getTileNo() != null && product.getTileNo().toLowerCase().contains(lowerQuery)) matchesQuery = true;
+            if (product.getCategory() != null && product.getCategory().toLowerCase().contains(lowerQuery)) matchesQuery = true;
+            if (product.getFinish() != null && product.getFinish().toLowerCase().contains(lowerQuery)) matchesQuery = true;
+            if (product.getColor() != null && product.getColor().toLowerCase().contains(lowerQuery)) matchesQuery = true;
+
+            if (matchesQuery) {
+                filteredList.add(product);
             }
         }
         productList = filteredList;
         notifyDataSetChanged();
+    }
+
+    // Filter by category
+    public void filterByCategory(String category) {
+        filterByQuery("", category);
     }
 
     @NonNull
@@ -219,6 +244,19 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
                 }
             });
         }
+        
+        // Handle select button click
+        if (holder.btnSelectProduct != null) {
+            holder.btnSelectProduct.setVisibility(isPickerMode ? View.VISIBLE : View.GONE);
+            holder.btnSelectProduct.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemLongClick(product); // Reuse the select logic
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -254,6 +292,7 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         LinearLayout stockBadge;
         LinearLayout btnAddToCart;
         LinearLayout btnBookmark;
+        TextView btnSelectProduct;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -268,6 +307,7 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
             stockBadge = itemView.findViewById(R.id.stockBadge);
             //btnAddToCart = itemView.findViewById(R.id.btnAddToCart);
             btnBookmark = itemView.findViewById(R.id.btnFavorite);
+            btnSelectProduct = itemView.findViewById(R.id.btnSelectProduct);
         }
     }
 }

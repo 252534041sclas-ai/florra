@@ -109,12 +109,17 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Prod
             if ("Empty".equalsIgnoreCase(status) || "Out of Stock".equalsIgnoreCase(status)) btnText = "RESTOCK";
             btnAction.setText(btnText);
 
-            // Visual Styling
+            // Visual Styling and Frozen Status
             int green700 = android.graphics.Color.parseColor("#047857");
             int orange500 = android.graphics.Color.parseColor("#F97316");
             int red700 = android.graphics.Color.parseColor("#b91c1c");
+            int zinc600 = android.graphics.Color.parseColor("#52525b");
 
-            if ("In Stock".equalsIgnoreCase(status)) {
+            if (!product.isActive()) {
+                tvStockStatus.setText("FROZEN");
+                tvStockStatus.setBackgroundResource(R.drawable.bg_zinc_badge); // Assuming this exists or using a generic one
+                tvStockStatus.setTextColor(zinc600);
+            } else if ("In Stock".equalsIgnoreCase(status)) {
                 tvStockStatus.setBackgroundResource(R.drawable.bg_green_badge);
                 tvStockStatus.setTextColor(green700);
             } else if ("Low Stock".equalsIgnoreCase(status)) {

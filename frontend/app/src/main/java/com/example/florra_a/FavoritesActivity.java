@@ -73,7 +73,11 @@ public class FavoritesActivity extends AppCompatActivity implements FavoritesAda
             @Override
             public void onResponse(retrofit2.Call<List<Product>> call, retrofit2.Response<List<Product>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    favoritesList = response.body();
+                    List<Product> fetched = response.body();
+                    favoritesList = new java.util.ArrayList<>();
+                    for (Product p : fetched) {
+                        if (p.isActive()) favoritesList.add(p);
+                    }
                     updateUI(favoritesList);
                 } else {
                     // Handle empty or error

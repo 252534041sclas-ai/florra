@@ -314,6 +314,7 @@
             android:paddingHorizontal="20dp">
 
             <LinearLayout
+                android:id="@+id/categoryContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -344,6 +345,21 @@
                     android:id="@+id/btnBathroom"
                     style="@style/FilterButtonStyle"
                     android:text="Bathroom" />
+
+                <Button
+                    android:id="@+id/btnParking"
+                    style="@style/FilterButtonStyle"
+                    android:text="Parking" />
+
+                <Button
+                    android:id="@+id/btnSteps"
+                    style="@style/FilterButtonStyle"
+                    android:text="Steps" />
+
+                <Button
+                    android:id="@+id/btnRoof"
+                    style="@style/FilterButtonStyle"
+                    android:text="Roof" />
 
             </LinearLayout>
         </HorizontalScrollView>

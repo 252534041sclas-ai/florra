@@ -106,6 +106,7 @@
         android:scrollbars="none">
 
         <LinearLayout
+            android:id="@+id/categoryContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -251,6 +252,7 @@
                 android:background="@drawable/bg_filter_inactive"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
+                android:layout_marginEnd="8dp"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -258,6 +260,71 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Bedroom"
+                    android:textColor="@color/slate_600"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Parking -->
+            <LinearLayout
+                android:id="@+id/btnParking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_filter_inactive"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Parking"
+                    android:textColor="@color/slate_600"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Steps -->
+            <LinearLayout
+                android:id="@+id/btnSteps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_filter_inactive"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Steps"
+                    android:textColor="@color/slate_600"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Roof -->
+            <LinearLayout
+                android:id="@+id/btnRoof"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_filter_inactive"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Roof"
                     android:textColor="@color/slate_600"
                     android:textSize="14sp"
                     android:textStyle="bold" />

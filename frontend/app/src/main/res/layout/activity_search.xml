@@ -44,6 +44,11 @@
                     android:tint="@color/slate_900" />
             </LinearLayout>
 
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
             <!-- Title -->
             <TextView
                 android:layout_width="wrap_content"
@@ -52,13 +57,17 @@
                 android:textColor="@color/slate_900"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:letterSpacing="-0.02"
-                android:layout_marginStart="8dp" />
+                android:letterSpacing="-0.02" />
 
             <Space
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_weight="1" />
+
+            <!-- Empty View for balance -->
+            <View
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
 
         </LinearLayout>
 
@@ -99,7 +108,6 @@
                     android:layout_toStartOf="@id/btnClearSearch"
                     android:background="@android:color/transparent"
                     android:hint="Search tiles by name, size..."
-                    android:text="Marble"
                     android:textColor="@color/slate_900"
                     android:textSize="14sp"
                     android:paddingStart="12dp"
@@ -161,6 +169,7 @@
             android:paddingBottom="12dp">
 
             <LinearLayout
+                android:id="@+id/categoryContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -284,6 +293,7 @@
                     android:gravity="center"
                     android:background="@drawable/bg_category_inactive"
                     android:paddingHorizontal="16dp"
+                    android:layout_marginEnd="8dp"
                     android:clickable="true"
                     android:focusable="true">
 
@@ -291,6 +301,71 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Outdoor"
+                        android:textColor="@color/slate_600"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Parking -->
+                <LinearLayout
+                    android:id="@+id/btnParking"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/bg_category_inactive"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Parking"
+                        android:textColor="@color/slate_600"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Steps -->
+                <LinearLayout
+                    android:id="@+id/btnSteps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/bg_category_inactive"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Steps"
+                        android:textColor="@color/slate_600"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Roof -->
+                <LinearLayout
+                    android:id="@+id/btnRoof"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@drawable/bg_category_inactive"
+                    android:paddingHorizontal="16dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Roof"
                         android:textColor="@color/slate_600"
                         android:textSize="14sp"
                         android:textStyle="bold" />

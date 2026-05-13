@@ -31,10 +31,10 @@
                 android:layout_height="wrap_content"
                 android:text="Account"
                 android:textColor="@color/slate_900"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:letterSpacing="-0.01" />
+                android:letterSpacing="-0.02" />
         </LinearLayout>
     </LinearLayout>
 

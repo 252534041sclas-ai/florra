@@ -127,7 +127,7 @@ public class AddProductActivity extends AppCompatActivity {
 
     private void setupSpinners() {
         // Category spinner
-        String[] categories = {"Select", "Living", "Bathroom", "Wall", "Bedroom", "Kitchen", "Floor"};
+        String[] categories = com.example.florra_a.utils.Constants.getCategoriesForSpinner();
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,

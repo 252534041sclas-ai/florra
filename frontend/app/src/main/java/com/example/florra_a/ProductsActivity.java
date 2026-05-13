@@ -136,12 +136,9 @@ public class ProductsActivity extends AppCompatActivity {
     private void showCategoryMenu(View v) {
         android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
         popup.getMenu().add("All");
-        popup.getMenu().add("Wall");
-        popup.getMenu().add("Floor");
-        popup.getMenu().add("Kitchen");
-        popup.getMenu().add("Bathroom");
-        popup.getMenu().add("Living");
-        popup.getMenu().add("Bedroom");
+        for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
+            popup.getMenu().add(category);
+        }
 
         popup.setOnMenuItemClickListener(item -> {
             String category = item.getTitle().toString();

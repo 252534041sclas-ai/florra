@@ -56,6 +56,9 @@ class Product(models.Model):
         ('Kitchen', 'Kitchen'),
         ('Wall', 'Wall'),
         ('Floor', 'Floor'),
+        ('Parking', 'Parking'),
+        ('Steps', 'Steps'),
+        ('Roof', 'Roof'),
         # Keeping original materials as they might be useful or legacy
         ('Ceramic', 'Ceramic'),
         ('Porcelain', 'Porcelain'),

@@ -120,6 +120,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
             intent.putExtra("productDescription", product.getDescription());
             intent.putExtra("productImage",       product.getImage());
             intent.putExtra("stockStatus",        product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK");
+            intent.putExtra("productTileNo",      product.getTileNo());
             context.startActivity(intent);
         });
     }

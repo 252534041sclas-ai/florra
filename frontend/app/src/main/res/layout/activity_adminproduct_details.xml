@@ -169,8 +169,9 @@
                         android:paddingHorizontal="12dp"
                         android:paddingVertical="6dp">
 
-                        <!-- Green Dot -->
+                        <!-- Status Dot -->
                         <View
+                            android:id="@+id/viewStockDot"
                             android:layout_width="8dp"
                             android:layout_height="8dp"
                             android:layout_marginEnd="6dp"

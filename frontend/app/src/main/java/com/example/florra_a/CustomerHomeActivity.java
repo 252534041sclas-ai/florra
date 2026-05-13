@@ -35,7 +35,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
 
     private RecyclerView rvNewArrivals;
     private HomeProductAdapter homeProductAdapter;
-    private TextView tvActiveEnquiriesCount;
+    private TextView tvActiveEnquiriesCount, tvCategoryCount;
     private View viewChatbotRainbow, viewScanRainbow;
 
     @Override
@@ -59,6 +59,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
 
     private void setupViews() {
         tvActiveEnquiriesCount = findViewById(R.id.tvActiveEnquiriesCount);
+        tvCategoryCount = findViewById(R.id.tvCategoryCount);
         rvNewArrivals = findViewById(R.id.rvNewArrivals);
         
         // Setup Welcome Message
@@ -82,7 +83,8 @@ public class CustomerHomeActivity extends AppCompatActivity {
     private void startRainbowAnimations() {
         if (viewChatbotRainbow == null || viewScanRainbow == null) return;
 
-        Animation rotateAnim = AnimationUtils.loadAnimation(this, R.anim.rotate_infinite);
+        // Load the new 5-second premium rotation animation
+        Animation rotateAnim = AnimationUtils.loadAnimation(this, R.anim.rotate_5s);
 
         // Show and start animation
         viewChatbotRainbow.setVisibility(View.VISIBLE);
@@ -91,7 +93,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
         viewChatbotRainbow.startAnimation(rotateAnim);
         viewScanRainbow.startAnimation(rotateAnim);
 
-        // Stop after 3 seconds
+        // Stop after 5 seconds as requested
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -100,7 +102,7 @@ public class CustomerHomeActivity extends AppCompatActivity {
                 viewChatbotRainbow.setVisibility(View.GONE);
                 viewScanRainbow.setVisibility(View.GONE);
             }
-        }, 3000);
+        }, 5000);
     }
 
     private void fetchDashboardData() {
@@ -130,26 +132,94 @@ public class CustomerHomeActivity extends AppCompatActivity {
             }
         });
 
-        // 2. Fetch New Arrivals (Products)
-        apiService.getProducts().enqueue(new Callback<List<Product>>() {
+        // 2. Fetch Favorites first to sync UI
+        apiService.getFavorites().enqueue(new Callback<List<Product>>() {
             @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Product> allProducts = response.body();
-                    // Take top 5 for "New Arrivals" (assuming list is sorted by date or just take first 5)
-                    List<Product> newArrivals = new ArrayList<>();
-                    for (int i = 0; i < Math.min(allProducts.size(), 5); i++) {
-                        newArrivals.add(allProducts.get(i));
-                    }
-                    if (homeProductAdapter != null) {
-                        homeProductAdapter.updateData(newArrivals);
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> favResponse) {
+                final java.util.Set<Integer> favoriteIds = new java.util.HashSet<>();
+                if (favResponse.isSuccessful() && favResponse.body() != null) {
+                    for (Product p : favResponse.body()) {
+                        favoriteIds.add(p.getId());
                     }
                 }
+
+                // 3. Fetch New Arrivals (Products)
+                apiService.getProducts().enqueue(new Callback<List<Product>>() {
+                    @Override
+                    public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Product> allProducts = response.body();
+                            
+                            // Sync Favorite Status
+                            for (Product product : allProducts) {
+                                product.setFavorite(favoriteIds.contains(product.getId()));
+                            }
+
+                            // Take top 5 for "New Arrivals" (Filtered by Active)
+                            List<Product> newArrivals = new ArrayList<>();
+                            java.util.Set<String> categories = new java.util.HashSet<>();
+                            int count = 0;
+                            for (Product p : allProducts) {
+                                if (p.getCategory() != null) {
+                                    categories.add(p.getCategory());
+                                }
+                                if (p.isActive()) {
+                                    if (count < 5) {
+                                        newArrivals.add(p);
+                                        count++;
+                                    }
+                                }
+                            }
+                            
+                            if (tvCategoryCount != null) {
+                                tvCategoryCount.setText(com.example.florra_a.utils.Constants.CATEGORIES.size() + " CATEGORIES");
+                            }
+                            if (homeProductAdapter != null) {
+                                homeProductAdapter.updateData(newArrivals);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Product>> call, Throwable t) {
+                        // Ignore silent failure
+                    }
+                });
             }
 
             @Override
             public void onFailure(Call<List<Product>> call, Throwable t) {
-                // Ignore silent failure
+                // If favorites fail, still fetch products but without heart status
+                apiService.getProducts().enqueue(new Callback<List<Product>>() {
+                    @Override
+                    public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                         if (response.isSuccessful() && response.body() != null) {
+                            List<Product> allProducts = response.body();
+                            List<Product> newArrivals = new ArrayList<>();
+                            java.util.Set<String> categories = new java.util.HashSet<>();
+                            int count = 0;
+                            for (Product p : allProducts) {
+                                if (p.getCategory() != null) {
+                                    categories.add(p.getCategory());
+                                }
+                                if (p.isActive()) {
+                                    if (count < 5) {
+                                        newArrivals.add(p);
+                                        count++;
+                                    }
+                                }
+                            }
+                            
+                            if (tvCategoryCount != null) {
+                                tvCategoryCount.setText(com.example.florra_a.utils.Constants.CATEGORIES.size() + " CATEGORIES");
+                            }
+                            
+                            if (homeProductAdapter != null) homeProductAdapter.updateData(newArrivals);
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<List<Product>> call, Throwable t) {}
+                });
             }
         });
     }

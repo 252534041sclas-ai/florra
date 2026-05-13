@@ -38,6 +38,9 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 public class ScanImageActivity extends AppCompatActivity {
 
@@ -63,6 +66,13 @@ public class ScanImageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scan_image);
 
         setupClickListeners();
+        loadRecentScans();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadRecentScans();
     }
 
     private void setupClickListeners() {
@@ -91,10 +101,140 @@ public class ScanImageActivity extends AppCompatActivity {
                 Toast.makeText(ScanImageActivity.this, "View All Recent Scans", Toast.LENGTH_SHORT).show());
         }
 
-        // Recent Scans (Mock logic kept)
-        findViewById(R.id.scan1).setOnClickListener(v -> openScanDetails("Marble Hexagon"));
-        findViewById(R.id.scan2).setOnClickListener(v -> openScanDetails("Beige Ceramic"));
-        findViewById(R.id.scan3).setOnClickListener(v -> openScanDetails("Slate Grey"));
+        // Recent Scans (Mock logic removed)
+    }
+
+    private void loadRecentScans() {
+        android.content.SharedPreferences prefs = getSharedPreferences("recent_scans", MODE_PRIVATE);
+        Gson gson = new Gson();
+        
+        ImageView[] imgViews = {findViewById(R.id.imgScan1), findViewById(R.id.imgScan2), findViewById(R.id.imgScan3)};
+        android.widget.TextView[] tvViews = {findViewById(R.id.tvScan1), findViewById(R.id.tvScan2), findViewById(R.id.tvScan3)};
+        View[] containers = {findViewById(R.id.scan1), findViewById(R.id.scan2), findViewById(R.id.scan3)};
+        
+        for (int i = 0; i < 3; i++) {
+            String path = prefs.getString("scan_path_" + (i + 1), null);
+            String name = prefs.getString("scan_name_" + (i + 1), null);
+            String resultsJson = prefs.getString("scan_results_" + (i + 1), null);
+            
+            if (path != null && new File(path).exists()) {
+                com.bumptech.glide.Glide.with(this)
+                    .load(new File(path))
+                    .into(imgViews[i]);
+                if (name != null) tvViews[i].setText(name);
+                
+                // Set click listener to re-open results
+                if (resultsJson != null) {
+                    final int index = i;
+                    final String finalPath = path;
+                    View.OnClickListener listener = v -> {
+                        Toast.makeText(ScanImageActivity.this, "Loading saved results...", Toast.LENGTH_SHORT).show();
+                        android.util.Log.d("ScanImage", "Clicking recent scan: " + finalPath);
+                        Type listType = new TypeToken<List<Product>>(){}.getType();
+                        List<Product> recommendations = gson.fromJson(resultsJson, listType);
+                        if (recommendations != null && !recommendations.isEmpty()) {
+                            android.util.Log.d("ScanImage", "Recommendations found: " + recommendations.size());
+                            Intent intent = new Intent(ScanImageActivity.this, AIRecommendationActivity.class);
+                            intent.putExtra("recommendations", (Serializable) recommendations);
+                            startActivity(intent);
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        } else {
+                             android.util.Log.w("ScanImage", "No recommendations found for this scan");
+                             Toast.makeText(ScanImageActivity.this, "No saved results for this scan", Toast.LENGTH_SHORT).show();
+                        }
+                    };
+                    containers[i].setOnClickListener(listener);
+                    imgViews[i].setOnClickListener(listener);
+
+                    // Add long press to delete
+                    final int deleteIndex = i + 1;
+                    View.OnLongClickListener longListener = v -> {
+                        showDeleteConfirmation(deleteIndex);
+                        return true;
+                    };
+                    containers[i].setOnLongClickListener(longListener);
+                    imgViews[i].setOnLongClickListener(longListener);
+                }
+            } else {
+                imgViews[i].setImageResource(R.drawable.tile_placeholder);
+                tvViews[i].setText("Empty Scan");
+                containers[i].setOnClickListener(null);
+            }
+        }
+    }
+
+    private void showDeleteConfirmation(int index) {
+        new AlertDialog.Builder(this)
+            .setTitle("Delete Scan")
+            .setMessage("Are you sure you want to delete this scan from history?")
+            .setPositiveButton("Delete", (dialog, which) -> deleteRecentScan(index))
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    private void deleteRecentScan(int index) {
+        android.content.SharedPreferences prefs = getSharedPreferences("recent_scans", MODE_PRIVATE);
+        android.content.SharedPreferences.Editor editor = prefs.edit();
+        
+        // Remove the selected scan
+        editor.remove("scan_path_" + index);
+        editor.remove("scan_name_" + index);
+        editor.remove("scan_results_" + index);
+        
+        // Shift remaining scans up
+        for (int i = index; i < 3; i++) {
+            String nextPath = prefs.getString("scan_path_" + (i + 1), null);
+            String nextName = prefs.getString("scan_name_" + (i + 1), null);
+            String nextResults = prefs.getString("scan_results_" + (i + 1), null);
+            
+            if (nextPath != null) {
+                editor.putString("scan_path_" + i, nextPath);
+                editor.putString("scan_name_" + i, nextName);
+                editor.putString("scan_results_" + i, nextResults);
+                
+                // Clear the next one
+                editor.remove("scan_path_" + (i + 1));
+                editor.remove("scan_name_" + (i + 1));
+                editor.remove("scan_results_" + (i + 1));
+            } else {
+                editor.remove("scan_path_" + i);
+                editor.remove("scan_name_" + i);
+                editor.remove("scan_results_" + i);
+            }
+        }
+        
+        editor.apply();
+        Toast.makeText(this, "Scan deleted", Toast.LENGTH_SHORT).show();
+        loadRecentScans();
+    }
+
+    private void saveRecentScan(String path, List<Product> results) {
+        android.content.SharedPreferences prefs = getSharedPreferences("recent_scans", MODE_PRIVATE);
+        android.content.SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String resultsJson = gson.toJson(results);
+        
+        // Shift existing scans
+        for (int i = 2; i >= 1; i--) {
+            String prevPath = prefs.getString("scan_path_" + i, null);
+            String prevName = prefs.getString("scan_name_" + i, null);
+            String prevResults = prefs.getString("scan_results_" + i, null);
+            
+            if (prevPath != null) {
+                editor.putString("scan_path_" + (i + 1), prevPath);
+                editor.putString("scan_name_" + (i + 1), prevName);
+                editor.putString("scan_results_" + (i + 1), prevResults);
+            }
+        }
+        
+        String timeStamp = new SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault()).format(new Date());
+        editor.putString("scan_path_1", path);
+        editor.putString("scan_name_1", "Scan " + timeStamp);
+        editor.putString("scan_results_1", resultsJson);
+        
+        editor.apply();
+        Toast.makeText(this, "Scan history updated", Toast.LENGTH_SHORT).show();
+        loadRecentScans();
     }
 
     private void showImageSourceDialog() {
@@ -239,6 +379,9 @@ public class ScanImageActivity extends AppCompatActivity {
                         android.util.Log.d("ScanImage", "First Product: " + first.getTileName() + ", ID: " + first.getId());
                         android.util.Log.d("ScanImage", "Image URL: " + first.getImage());
                         
+                        // Save to recent scans with results
+                        saveRecentScan(file.getAbsolutePath(), recommendations);
+
                         // Navigate to AIRecommendationActivity with results
                         Intent intent = new Intent(ScanImageActivity.this, AIRecommendationActivity.class);
                         // Pass as Serializable (Product implements Serializable)
@@ -272,7 +415,6 @@ public class ScanImageActivity extends AppCompatActivity {
     }
 
     private void openScanDetails(String scanName) {
-        Toast.makeText(this, "Opening: " + scanName, Toast.LENGTH_SHORT).show();
     }
 
     @Override

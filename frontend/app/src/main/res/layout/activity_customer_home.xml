@@ -89,13 +89,13 @@
                     android:clickable="true"
                     android:focusable="true">
 
-                    <!-- Rainbow Border View -->
+                    <!-- Premium Rainbow Border View -->
                     <View
                         android:id="@+id/viewChatbotRainbow"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/bg_rainbow_sweep"
+                        android:background="@drawable/bg_premium_rainbow_sweep"
                         android:visibility="gone" />
 
                     <ImageView
@@ -252,13 +252,13 @@
                             android:background="@drawable/bg_grey_circle"
                             android:layout_marginBottom="12dp">
 
-                            <!-- Rainbow Border View -->
+                            <!-- Premium Rainbow Border View -->
                             <View
                                 android:id="@+id/viewScanRainbow"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
                                 android:layout_centerInParent="true"
-                                android:background="@drawable/bg_rainbow_sweep"
+                                android:background="@drawable/bg_premium_rainbow_sweep"
                                 android:visibility="gone" />
 
                             <ImageView
@@ -387,9 +387,10 @@
                         android:layout_marginStart="8dp">
 
                         <TextView
+                            android:id="@+id/tvCategoryCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="4 CATEGORIES"
+                            android:text="LOADING..."
                             android:textColor="@color/slate_600"
                             android:textSize="10sp"
                             android:textStyle="bold"

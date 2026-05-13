@@ -315,18 +315,35 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
     private void updateStockStatusUI() {
         if (currentStockStatus == null) return;
 
+        if (!currentIsActive) {
+            tvStockStatus.setText("FROZEN");
+            tvStockStatus.setBackgroundResource(R.drawable.bg_zinc_badge);
+            tvStockStatus.setTextColor(getResources().getColor(R.color.zinc_600));
+            // Hide the green dot or change it
+            View greenDot = ((View)tvStockStatus.getParent()).findViewById(R.id.viewStockDot);
+            if (greenDot != null) greenDot.setVisibility(View.GONE);
+            return;
+        }
+
+        // Restore dot if it was hidden
+        View greenDot = ((View)tvStockStatus.getParent()).findViewById(R.id.viewStockDot);
+        if (greenDot != null) greenDot.setVisibility(View.VISIBLE);
+
         switch (currentStockStatus) {
             case "In Stock":
                 tvStockStatus.setBackgroundResource(R.drawable.bg_stock_in);
                 tvStockStatus.setTextColor(getResources().getColor(R.color.emerald_700));
+                if (greenDot != null) greenDot.setBackgroundResource(R.drawable.bg_green_dot);
                 break;
             case "Low Stock":
                 tvStockStatus.setBackgroundResource(R.drawable.bg_stock_low);
                 tvStockStatus.setTextColor(getResources().getColor(R.color.amber_700));
+                if (greenDot != null) greenDot.setBackgroundResource(R.drawable.bg_amber_dot);
                 break;
             case "Out of Stock":
                 tvStockStatus.setBackgroundResource(R.drawable.bg_stock_out);
                 tvStockStatus.setTextColor(getResources().getColor(R.color.zinc_500));
+                if (greenDot != null) greenDot.setBackgroundResource(R.drawable.bg_gray_dot);
                 break;
             default:
                 tvStockStatus.setBackgroundResource(R.drawable.bg_stock_in);
@@ -355,7 +372,8 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
 
     private void showMoreOptionsMenu() {
         // Create options menu
-        String[] options = {"Share Product", "Duplicate Product", "Print Barcode", "Delete Product", "View Analytics"};
+        String freezeTitle = currentIsActive ? "Freeze Product" : "Unfreeze Product";
+        String[] options = {"Share Product", "Duplicate Product", "Print Barcode", "Delete Product", "View Analytics", freezeTitle};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Product Options")
@@ -376,6 +394,9 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
                         case 4:
                             viewAnalytics();
                             break;
+                        case 5:
+                            toggleProductFreeze();
+                            break;
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -383,8 +404,7 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
     }
 
     private void showPriceHistory() {
-        Toast.makeText(this, "Opening Price History for " + currentProductName, Toast.LENGTH_SHORT).show();
-        // Here you would open a price history screen or dialog
+        // Method placeholder
     }
 
     private void editProductDetails() {
@@ -454,6 +474,47 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
     private void viewAnalytics() {
         Toast.makeText(this, "Viewing analytics for " + currentProductName, Toast.LENGTH_SHORT).show();
         // Implementation for viewing analytics
+    }
+
+    private void toggleProductFreeze() {
+        boolean newStatus = !currentIsActive;
+        String action = newStatus ? "Unfreeze" : "Freeze";
+        
+        new AlertDialog.Builder(this)
+            .setTitle(action + " Product")
+            .setMessage("Are you sure you want to " + action.toLowerCase() + " this product? " + 
+                     (newStatus ? "It will become visible to customers." : "It will be hidden from customers."))
+            .setPositiveButton(action, (dialog, which) -> performFreezeToggle(newStatus))
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    private void performFreezeToggle(boolean newStatus) {
+        com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();
+        
+        java.util.Map<String, okhttp3.RequestBody> fields = new java.util.HashMap<>();
+        fields.put("is_active", okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), String.valueOf(newStatus)));
+        
+        apiService.updateProduct(currentProductId, fields, null).enqueue(new retrofit2.Callback<com.example.florra_a.models.Product>() {
+            @Override
+            public void onResponse(retrofit2.Call<com.example.florra_a.models.Product> call, retrofit2.Response<com.example.florra_a.models.Product> response) {
+                if (response.isSuccessful()) {
+                    currentIsActive = newStatus;
+                    String message = newStatus ? "Product unfrozen successfully" : "Product frozen successfully";
+                    Toast.makeText(AdminProductDetailsActivity.this, message, Toast.LENGTH_SHORT).show();
+                    
+                    // Update UI if needed (e.g., status badge)
+                    updateUIWithProductData();
+                } else {
+                    Toast.makeText(AdminProductDetailsActivity.this, "Failed to update product status", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<com.example.florra_a.models.Product> call, Throwable t) {
+                Toast.makeText(AdminProductDetailsActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

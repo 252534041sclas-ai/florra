@@ -36,7 +36,7 @@ public class SearchActivity extends AppCompatActivity {
     private TextView tvResultsCount, tvNoResults;
     private TileAdapter tileAdapter;
     private List<Product> productList;
-    private LinearLayout btnAll, btnFloorTiles, btnWallTiles, btnBathroom, btnKitchen, btnOutdoor;
+    private LinearLayout btnAll, categoryContainer;
     
     private String currentCategory = "all";
     private String currentQuery = "";
@@ -111,11 +111,8 @@ public class SearchActivity extends AppCompatActivity {
 
         // Category buttons
         btnAll = findViewById(R.id.btnAll);
-        btnFloorTiles = findViewById(R.id.btnFloorTiles);
-        btnWallTiles = findViewById(R.id.btnWallTiles);
-        btnBathroom = findViewById(R.id.btnBathroom);
-        btnKitchen = findViewById(R.id.btnKitchen);
-        btnOutdoor = findViewById(R.id.btnOutdoor);
+        categoryContainer = findViewById(R.id.categoryContainer);
+        setupDynamicCategories();
 
         // RecyclerView
         recyclerView = findViewById(R.id.recyclerViewSearch);
@@ -167,19 +164,51 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         // Category buttons
-        setupCategoryButtons();
+        setupDynamicCategories();
 
         // Bottom Navigation
         setupBottomNavigation();
     }
 
-    private void setupCategoryButtons() {
+    private void setupDynamicCategories() {
         btnAll.setOnClickListener(v -> updateCategory("all", btnAll));
-        btnFloorTiles.setOnClickListener(v -> updateCategory("floor", btnFloorTiles));
-        btnWallTiles.setOnClickListener(v -> updateCategory("wall", btnWallTiles));
-        btnBathroom.setOnClickListener(v -> updateCategory("bathroom", btnBathroom));
-        btnKitchen.setOnClickListener(v -> updateCategory("kitchen", btnKitchen));
-        btnOutdoor.setOnClickListener(v -> updateCategory("outdoor", btnOutdoor));
+
+        categoryContainer.removeAllViews();
+        categoryContainer.addView(btnAll); // Re-add All button
+        for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
+            LinearLayout btn = createCategoryButton(category);
+            btn.setOnClickListener(v -> updateCategory(category.toLowerCase(), btn));
+            categoryContainer.addView(btn);
+        }
+    }
+
+    private LinearLayout createCategoryButton(String text) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setGravity(android.view.Gravity.CENTER);
+        layout.setBackgroundResource(R.drawable.bg_category_inactive);
+        layout.setClickable(true);
+        layout.setFocusable(true);
+        
+        int height = (int)(36 * getResources().getDisplayMetrics().density);
+        int paddingH = (int)(16 * getResources().getDisplayMetrics().density);
+        int marginR = (int)(8 * getResources().getDisplayMetrics().density);
+        
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT, height
+        );
+        params.setMargins(0, 0, marginR, 0);
+        layout.setLayoutParams(params);
+        layout.setPadding(paddingH, 0, paddingH, 0);
+
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        tv.setTextColor(getResources().getColor(R.color.slate_600));
+        tv.setTextSize(14);
+        tv.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        
+        layout.addView(tv);
+        return layout;
     }
 
     private void updateCategory(String category, LinearLayout activeButton) {
@@ -194,41 +223,99 @@ public class SearchActivity extends AppCompatActivity {
         recyclerView.setVisibility(View.VISIBLE);
 
         ApiService apiService = RetrofitClient.getApiService();
-        // If category is "all", we skip passing it to API so it returns everything, 
-        // OR pass "all" if backend handles it. Based on previous work, "all" seems to work or null.
         String catParam = (category.equals("all")) ? null : category;
         
-        apiService.getInventory(query, catParam, null).enqueue(new Callback<InventoryResponse>() {
+        // 1. Fetch Favorites first
+        apiService.getFavorites().enqueue(new Callback<List<Product>>() {
             @Override
-            public void onResponse(Call<InventoryResponse> call, Response<InventoryResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Product> fetchedProducts = response.body().getProducts();
-                    
-                    if (fetchedProducts != null) {
-                        productList.clear();
-                        productList.addAll(fetchedProducts);
-                        tileAdapter.updateData(fetchedProducts);
-                        
-                        tvResultsCount.setText(fetchedProducts.size() + " Results found");
-                        
-                        if (fetchedProducts.isEmpty()) {
-                            tvNoResults.setVisibility(View.VISIBLE);
-                            recyclerView.setVisibility(View.GONE);
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> favResponse) {
+                final java.util.Set<Integer> favoriteIds = new java.util.HashSet<>();
+                if (favResponse.isSuccessful() && favResponse.body() != null) {
+                    for (Product p : favResponse.body()) {
+                        favoriteIds.add(p.getId());
+                    }
+                }
+
+                // 2. Fetch All Products for the category (local filtering will handle the search)
+                apiService.getInventory(null, catParam, null).enqueue(new Callback<InventoryResponse>() {
+                    @Override
+                    public void onResponse(Call<InventoryResponse> call, Response<InventoryResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Product> fetchedProducts = response.body().getProducts();
+                            
+                            if (fetchedProducts != null) {
+                                // 3. Sync Favorite Status, Filter Inactive, and Apply Multi-field Filter
+                                java.util.List<Product> processedProducts = new java.util.ArrayList<>();
+                                for (Product product : fetchedProducts) {
+                                    product.setFavorite(favoriteIds.contains(product.getId()));
+                                    if (product.isActive()) {
+                                        processedProducts.add(product);
+                                    }
+                                }
+                                
+                                productList.clear();
+                                productList.addAll(processedProducts);
+                                
+                                // Apply the multi-field filter locally to ensure Name, No, Finish, Color etc. are covered
+                                tileAdapter.updateData(processedProducts);
+                                if (query != null && !query.isEmpty()) {
+                                    tileAdapter.filterByQuery(query, "all"); // Category already handled by API catParam
+                                }
+                                
+                                int finalCount = tileAdapter.getItemCount();
+                                tvResultsCount.setText(finalCount + " Results found");
+                                
+                                if (finalCount == 0) {
+                                    tvNoResults.setVisibility(View.VISIBLE);
+                                    recyclerView.setVisibility(View.GONE);
+                                } else {
+                                    tvNoResults.setVisibility(View.GONE);
+                                    recyclerView.setVisibility(View.VISIBLE);
+                                }
+                            }
                         } else {
-                            tvNoResults.setVisibility(View.GONE);
-                            recyclerView.setVisibility(View.VISIBLE);
+                            tvResultsCount.setText("Error fetching results");
+                            Toast.makeText(SearchActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
                         }
                     }
-                } else {
-                    tvResultsCount.setText("Error fetching results");
-                    Toast.makeText(SearchActivity.this, "Server Error: " + response.message(), Toast.LENGTH_SHORT).show();
-                }
+
+                    @Override
+                    public void onFailure(Call<InventoryResponse> call, Throwable t) {
+                        tvResultsCount.setText("Network Error");
+                        Toast.makeText(SearchActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onFailure(Call<InventoryResponse> call, Throwable t) {
-                tvResultsCount.setText("Network Error");
-                Toast.makeText(SearchActivity.this, "Network Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                // If favorites fail, still perform search but without heart icons
+                apiService.getInventory(null, catParam, null).enqueue(new Callback<InventoryResponse>() {
+                    @Override
+                    public void onResponse(Call<InventoryResponse> call, Response<InventoryResponse> response) {
+                         if (response.isSuccessful() && response.body() != null) {
+                            List<Product> fetchedProducts = response.body().getProducts();
+                            if (fetchedProducts != null) {
+                                List<Product> processedProducts = new ArrayList<>();
+                                for (Product p : fetchedProducts) {
+                                    if (p.isActive()) processedProducts.add(p);
+                                }
+                                productList.clear();
+                                productList.addAll(processedProducts);
+                                tileAdapter.updateData(processedProducts);
+                                if (query != null && !query.isEmpty()) {
+                                    tileAdapter.filterByQuery(query, "all");
+                                }
+                                int finalCount = tileAdapter.getItemCount();
+                                tvResultsCount.setText(finalCount + " Results found");
+                            }
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<InventoryResponse> call, Throwable t) {
+                        tvResultsCount.setText("Network Error");
+                    }
+                });
             }
         });
     }
@@ -246,15 +333,16 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void resetCategoryButtons() {
-        LinearLayout[] buttons = {btnAll, btnFloorTiles, btnWallTiles, btnBathroom, btnKitchen, btnOutdoor};
-        String[] buttonTexts = {"All", "Floor Tiles", "Wall Tiles", "Bathroom", "Kitchen", "Outdoor"};
+        btnAll.setBackgroundResource(R.drawable.bg_category_inactive);
+        TextView tvAll = (TextView) btnAll.getChildAt(0);
+        if (tvAll != null) tvAll.setTextColor(getResources().getColor(R.color.slate_600));
 
-        for (int i = 0; i < buttons.length; i++) {
-            buttons[i].setBackgroundResource(R.drawable.bg_category_inactive);
-            TextView textView = (TextView) buttons[i].getChildAt(0);
-            if (textView != null) {
-                textView.setText(buttonTexts[i]);
-                textView.setTextColor(getResources().getColor(R.color.slate_600));
+        for (int i = 0; i < categoryContainer.getChildCount(); i++) {
+            View v = categoryContainer.getChildAt(i);
+            if (v instanceof LinearLayout) {
+                v.setBackgroundResource(R.drawable.bg_category_inactive);
+                TextView tv = (TextView) ((LinearLayout)v).getChildAt(0);
+                if (tv != null) tv.setTextColor(getResources().getColor(R.color.slate_600));
             }
         }
     }
@@ -295,8 +383,9 @@ public class SearchActivity extends AppCompatActivity {
             intent.putExtra("productSize", product.getSize());
             intent.putExtra("productFinish", product.getFinish());
             intent.putExtra("productImage", product.getImage());
-            intent.putExtra("productDescription", product.getDescription()); // Assuming getter exists
-
+            intent.putExtra("productDescription", product.getDescription());
+            intent.putExtra("productTileNo", product.getTileNo());
+            
             startActivity(intent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } catch (Exception e) {

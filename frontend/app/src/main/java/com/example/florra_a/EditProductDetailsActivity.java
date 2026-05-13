@@ -103,7 +103,7 @@ public class EditProductDetailsActivity extends AppCompatActivity {
     }
 
     private void setupSpinners() {
-        String[] categories = {"Select", "Living", "Bathroom", "Wall", "Bedroom", "Kitchen", "Floor"};
+        String[] categories = com.example.florra_a.utils.Constants.getCategoriesForSpinner();
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, categories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

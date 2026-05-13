@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +34,8 @@ public class InventoryActivity extends AppCompatActivity {
     private ImageButton btnBack;
     private TextView tvTotal, tvInStock, tvLowStock, tvEmpty;
     private EditText etSearch;
-    private Button btnAll, btnFloor, btnWall, btnKitchen, btnBathroom;
+    private Button btnAll;
+    private android.widget.LinearLayout categoryContainer;
     
     private RecyclerView recyclerView;
     private InventoryAdapter adapter;
@@ -79,10 +81,8 @@ public class InventoryActivity extends AppCompatActivity {
         etSearch = findViewById(R.id.etSearch);
         
         btnAll = findViewById(R.id.btnAll);
-        btnFloor = findViewById(R.id.btnFloor);
-        btnWall = findViewById(R.id.btnWall);
-        btnKitchen = findViewById(R.id.btnKitchen);
-        btnBathroom = findViewById(R.id.btnBathroom);
+        categoryContainer = findViewById(R.id.categoryContainer);
+        setupDynamicCategories();
         
         recyclerView = findViewById(R.id.recyclerView);
     }
@@ -108,34 +108,6 @@ public class InventoryActivity extends AppCompatActivity {
     private void setupListeners() {
         btnBack.setOnClickListener(v -> finish());
 
-        // Category Filter Listeners
-        View.OnClickListener categoryListener = v -> {
-            Button btn = (Button) v;
-            String text = btn.getText().toString();
-            
-            // Reset button styles
-            resetFilterButtons();
-            
-            // Highlight selected button
-            btn.setBackgroundResource(R.drawable.bg_primary_button);
-            btn.setTextColor(getResources().getColor(R.color.white));
-            
-            // Set current category
-            if (text.equals("All Items")) {
-                currentCategory = "";
-            } else {
-                currentCategory = text;
-            }
-            
-            fetchInventoryData();
-        };
-
-        btnAll.setOnClickListener(categoryListener);
-        btnFloor.setOnClickListener(categoryListener);
-        btnWall.setOnClickListener(categoryListener);
-        btnKitchen.setOnClickListener(categoryListener);
-        btnBathroom.setOnClickListener(categoryListener);
-
         // Search Listener
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -153,6 +125,36 @@ public class InventoryActivity extends AppCompatActivity {
         });
     }
 
+    private void setupDynamicCategories() {
+        View.OnClickListener categoryListener = v -> {
+            Button btn = (Button) v;
+            String text = btn.getText().toString();
+            resetFilterButtons();
+            btn.setBackgroundResource(R.drawable.bg_primary_button);
+            btn.setTextColor(getResources().getColor(R.color.white));
+            currentCategory = text.equals("All Items") ? "" : text;
+            fetchInventoryData();
+        };
+
+        btnAll.setOnClickListener(categoryListener);
+
+        categoryContainer.removeAllViews();
+        for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
+            Button btn = new Button(new android.view.ContextThemeWrapper(this, R.style.FilterButtonStyle), null, 0);
+            btn.setText(category);
+            btn.setOnClickListener(categoryListener);
+            
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(0, 0, (int)(8 * getResources().getDisplayMetrics().density), 0);
+            btn.setLayoutParams(params);
+            
+            categoryContainer.addView(btn);
+        }
+    }
+
     private void resetFilterButtons() {
         int colorZinc600 = getResources().getColor(R.color.zinc_600);
         int bgOutline = R.drawable.bg_outline_button;
@@ -160,17 +162,13 @@ public class InventoryActivity extends AppCompatActivity {
         btnAll.setBackgroundResource(bgOutline);
         btnAll.setTextColor(colorZinc600);
         
-        btnFloor.setBackgroundResource(bgOutline);
-        btnFloor.setTextColor(colorZinc600);
-        
-        btnWall.setBackgroundResource(bgOutline);
-        btnWall.setTextColor(colorZinc600);
-        
-        btnKitchen.setBackgroundResource(bgOutline);
-        btnKitchen.setTextColor(colorZinc600);
-        
-        btnBathroom.setBackgroundResource(bgOutline);
-        btnBathroom.setTextColor(colorZinc600);
+        for (int i = 0; i < categoryContainer.getChildCount(); i++) {
+            View v = categoryContainer.getChildAt(i);
+            if (v instanceof Button) {
+                v.setBackgroundResource(bgOutline);
+                ((Button)v).setTextColor(colorZinc600);
+            }
+        }
     }
 
     private void fetchInventoryData() {

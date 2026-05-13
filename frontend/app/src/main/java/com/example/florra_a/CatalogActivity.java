@@ -83,105 +83,98 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void setupFilterButtons() {
         LinearLayout btnAllTiles = findViewById(R.id.btnAllTiles);
-        LinearLayout btnFloor   = findViewById(R.id.btnFloor);
-        LinearLayout btnWall = findViewById(R.id.btnWall);
-        LinearLayout btnLiving = findViewById(R.id.btnLiving);
-        LinearLayout btnBathroom = findViewById(R.id.btnBathroom);
-        LinearLayout btnKitchen = findViewById(R.id.btnKitchen);
-        LinearLayout btnBedroom = findViewById(R.id.btnBedroom);
+        LinearLayout categoryContainer = findViewById(R.id.categoryContainer);
+        
+        setupDynamicCategories(btnAllTiles, categoryContainer);
+    }
 
-        // Reset all buttons first
-        resetFilterButtons();
-
-        // Set initial state based on selectedFilter
-        switch (selectedFilter.toLowerCase()) {
-            case "floor":
-                activateButton(btnFloor, "Floor");
-                break;
-            case "wall":
-                activateButton(btnWall, "Wall");
-                break;
-            case "living":
-                activateButton(btnLiving, "Living");
-                break;
-            case "bathroom":
-                activateButton(btnBathroom, "Bathroom");
-                break;
-            case "kitchen":
-                activateButton(btnKitchen, "Kitchen");
-                break;
-            case "bedroom":
-                activateButton(btnBedroom, "Bedroom");
-                break;
-            default:
-                activateButton(btnAllTiles, "All Tiles");
-                break;
-        }
-
-        // Set click listeners
+    private void setupDynamicCategories(LinearLayout btnAllTiles, LinearLayout categoryContainer) {
         View.OnClickListener filterClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetFilterButtons();
                 String filter = "all";
                 String title = "All Tiles";
-
-                int id = v.getId();
-                if (id == R.id.btnAllTiles) {
+                
+                if (v.getId() == R.id.btnAllTiles) {
                     filter = "all";
                     title = "All Tiles";
-                } else if (id == R.id.btnFloor) {
-                    filter = "floor";
-                    title = "Floor";
-                } else if (id == R.id.btnWall) {
-                    filter = "wall";
-                    title = "Wall";
-                } else if (id == R.id.btnLiving) {
-                    filter = "living";
-                    title = "Living";
-                } else if (id == R.id.btnBathroom) {
-                    filter = "bathroom";
-                    title = "Bathroom";
-                } else if (id == R.id.btnKitchen) {
-                    filter = "kitchen";
-                    title = "Kitchen";
-                } else if (id == R.id.btnBedroom) {
-                    filter = "bedroom";
-                    title = "Bedroom";
+                } else {
+                    // It's a dynamic button
+                    TextView tv = (TextView) ((LinearLayout) v).getChildAt(0);
+                    title = tv.getText().toString();
+                    filter = title.toLowerCase();
                 }
 
+                resetFilterButtons();
                 activateButton((LinearLayout) v, title);
                 applyFilter(filter);
             }
         };
 
         if (btnAllTiles != null) btnAllTiles.setOnClickListener(filterClickListener);
-        if (btnFloor    != null) btnFloor.setOnClickListener(filterClickListener);
-        if (btnWall != null) btnWall.setOnClickListener(filterClickListener);
-        if (btnLiving != null) btnLiving.setOnClickListener(filterClickListener);
-        if (btnBathroom != null) btnBathroom.setOnClickListener(filterClickListener);
-        if (btnKitchen != null) btnKitchen.setOnClickListener(filterClickListener);
-        if (btnBedroom != null) btnBedroom.setOnClickListener(filterClickListener);
+
+        categoryContainer.removeAllViews();
+        // Re-add All Tiles if it was in the container (but it's outside in XML or first child)
+        // In XML btnAllTiles is the first child of the container.
+        categoryContainer.addView(btnAllTiles);
+
+        for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
+            LinearLayout btn = createCategoryButton(category);
+            btn.setOnClickListener(filterClickListener);
+            categoryContainer.addView(btn);
+            
+            // Check if this should be active
+            if (category.equalsIgnoreCase(selectedFilter)) {
+                activateButton(btn, category);
+            }
+        }
+        
+        if (selectedFilter.equalsIgnoreCase("all")) {
+            activateButton(btnAllTiles, "All Tiles");
+        }
     }
 
-    private void resetFilterButtons() {
-        int[][] buttonIds = {
-                {R.id.btnAllTiles, R.drawable.bg_filter_inactive},
-                {R.id.btnFloor,    R.drawable.bg_filter_inactive},
-                {R.id.btnWall, R.drawable.bg_filter_inactive},
-                {R.id.btnLiving, R.drawable.bg_filter_inactive},
-                {R.id.btnBathroom, R.drawable.bg_filter_inactive},
-                {R.id.btnKitchen, R.drawable.bg_filter_inactive},
-                {R.id.btnBedroom, R.drawable.bg_filter_inactive}
-        };
+    private LinearLayout createCategoryButton(String text) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setGravity(android.view.Gravity.CENTER);
+        layout.setBackgroundResource(R.drawable.bg_filter_inactive);
+        layout.setClickable(true);
+        layout.setFocusable(true);
+        
+        int paddingH = (int)(20 * getResources().getDisplayMetrics().density);
+        int paddingV = (int)(8 * getResources().getDisplayMetrics().density);
+        int marginR = (int)(8 * getResources().getDisplayMetrics().density);
+        
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, marginR, 0);
+        layout.setLayoutParams(params);
+        layout.setPadding(paddingH, paddingV, paddingH, paddingV);
 
-        for (int[] id : buttonIds) {
-            LinearLayout button = findViewById(id[0]);
-            if (button != null) {
-                button.setBackgroundResource(id[1]);
-                if (button.getChildAt(0) instanceof TextView) {
-                    ((TextView) button.getChildAt(0)).setTextColor(getResources().getColor(R.color.slate_600));
-                }
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        tv.setTextColor(getResources().getColor(R.color.slate_600));
+        tv.setTextSize(14);
+        tv.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        
+        layout.addView(tv);
+        return layout;
+    }
+
+
+    private void resetFilterButtons() {
+        LinearLayout categoryContainer = findViewById(R.id.categoryContainer);
+        if (categoryContainer == null) return;
+
+        for (int i = 0; i < categoryContainer.getChildCount(); i++) {
+            View v = categoryContainer.getChildAt(i);
+            if (v instanceof LinearLayout) {
+                v.setBackgroundResource(R.drawable.bg_filter_inactive);
+                TextView tv = (TextView) ((LinearLayout) v).getChildAt(0);
+                if (tv != null) tv.setTextColor(getResources().getColor(R.color.slate_600));
             }
         }
     }
@@ -246,6 +239,8 @@ public class CatalogActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerViewTiles);
         if (recyclerView != null) {
             tileAdapter = new TileAdapter(this, new ArrayList<>());
+            boolean isPicker = getIntent().getBooleanExtra("IS_PICKER", false);
+            tileAdapter.setPickerMode(isPicker);
             recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             recyclerView.setAdapter(tileAdapter);
             
@@ -399,21 +394,69 @@ public class CatalogActivity extends AppCompatActivity {
 
     private void fetchProducts() {
         ApiService apiService = RetrofitClient.getApiService();
-        apiService.getProducts().enqueue(new Callback<List<Product>>() {
+        
+        // 1. Fetch Favorites first to sync UI
+        apiService.getFavorites().enqueue(new Callback<List<Product>>() {
             @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    allProducts = response.body();
-                    tileAdapter.updateData(allProducts);
-                    applyFilter(selectedFilter);
-                } else {
-                    Toast.makeText(CatalogActivity.this, "Failed to load catalog", Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> favResponse) {
+                final java.util.Set<Integer> favoriteIds = new java.util.HashSet<>();
+                if (favResponse.isSuccessful() && favResponse.body() != null) {
+                    for (Product p : favResponse.body()) {
+                        favoriteIds.add(p.getId());
+                    }
                 }
+
+                // 2. Fetch all products
+                apiService.getProducts().enqueue(new Callback<List<Product>>() {
+                    @Override
+                    public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Product> fetchedProducts = response.body();
+                            
+                             // 3. Sync Favorite Status and Filter Inactive
+                             java.util.List<Product> visibleProducts = new java.util.ArrayList<>();
+                             for (Product product : fetchedProducts) {
+                                 product.setFavorite(favoriteIds.contains(product.getId()));
+                                 if (product.isActive()) {
+                                     visibleProducts.add(product);
+                                 }
+                             }
+                             
+                             allProducts = visibleProducts;
+                             tileAdapter.updateData(allProducts);
+                             applyFilter(selectedFilter);
+                        } else {
+                            Toast.makeText(CatalogActivity.this, "Failed to load catalog", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Product>> call, Throwable t) {
+                        Toast.makeText(CatalogActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onFailure(Call<List<Product>> call, Throwable t) {
-                Toast.makeText(CatalogActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                // If favorites fail, load products anyway
+                apiService.getProducts().enqueue(new Callback<List<Product>>() {
+                    @Override
+                    public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            java.util.List<Product> fetched = response.body();
+                            java.util.List<Product> visible = new java.util.ArrayList<>();
+                            for (Product p : fetched) {
+                                if (p.isActive()) visible.add(p);
+                            }
+                            allProducts = visible;
+                            tileAdapter.updateData(allProducts);
+                            applyFilter(selectedFilter);
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<List<Product>> call, Throwable t) {}
+                });
             }
         });
     }
@@ -464,48 +507,44 @@ public class CatalogActivity extends AppCompatActivity {
     }
 
     private void openProductDetails(Product product) {
-        // Check if in Picker Mode
-        if (getIntent().getBooleanExtra("IS_PICKER", false)) {
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("productName", product.getTileName());
-            resultIntent.putExtra("productPrice", String.valueOf(product.getPrice()));
-            resultIntent.putExtra("productCategory", product.getCategory());
-            resultIntent.putExtra("productSize", product.getSize());
-            resultIntent.putExtra("productFinish", product.getFinish());
-            resultIntent.putExtra("productImage", product.getImage());
-            resultIntent.putExtra("productTileNo", product.getTileNo());
-            resultIntent.putExtra("productThickness", product.getThickness());
-            resultIntent.putExtra("productCoverage", product.getCoverage());
-            resultIntent.putExtra("productPacking", "2 Pcs / Box"); // Default as model lacks this field
-            resultIntent.putExtra("productDescription", product.getDescription());
-            
-            setResult(RESULT_OK, resultIntent);
-            finish();
-            return;
-        }
-
         try {
             Intent intent = new Intent(CatalogActivity.this, ProductDetailsActivity.class);
 
             // Pass known data with standardized keys
+            intent.putExtra("productId", product.getId());
             intent.putExtra("tileName", product.getTileName());
             intent.putExtra("tilePrice", String.valueOf(product.getPrice()));
-            intent.putExtra("productName", product.getTileName()); // Keep for compatibility
-            intent.putExtra("productPrice", String.valueOf(product.getPrice())); // Keep for compatibility
+            intent.putExtra("productName", product.getTileName());
+            intent.putExtra("productPrice", String.valueOf(product.getPrice()));
             intent.putExtra("productStock", product.getStockStatus());
-            intent.putExtra("tileStock", product.getStockStatus()); // Fallback key
+            intent.putExtra("tileStock", product.getStockStatus());
             intent.putExtra("productCategory", product.getCategory());
-            // Add other fields from product if available
             intent.putExtra("productSize", product.getSize());
             intent.putExtra("productFinish", product.getFinish());
             intent.putExtra("productImage", product.getImage());
             intent.putExtra("productDescription", product.getDescription());
             intent.putExtra("productTileNo", product.getTileNo());
+            intent.putExtra("productThickness", product.getThickness());
+            intent.putExtra("productCoverage", product.getCoverage());
 
-            startActivity(intent);
+            // Pass picker mode to details so they can select from there
+            boolean isPicker = getIntent().getBooleanExtra("IS_PICKER", false);
+            intent.putExtra("IS_PICKER", isPicker);
+
+            startActivityForResult(intent, 1001); 
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } catch (Exception e) {
             Toast.makeText(this, "Cannot open product details", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001 && resultCode == RESULT_OK && data != null) {
+            // Forward the result from Details to the caller (e.g., CompareActivity)
+            setResult(RESULT_OK, data);
+            finish();
         }
     }
 

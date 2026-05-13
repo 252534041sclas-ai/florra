@@ -189,71 +189,26 @@ public class AdminCatalogActivity extends AppCompatActivity {
 
     private void setupFilterButtons() {
         LinearLayout btnAllTiles = findViewById(R.id.btnAllTiles);
-        LinearLayout btnFloor   = findViewById(R.id.btnFloor);
-        LinearLayout btnWall = findViewById(R.id.btnWall);
-        LinearLayout btnLiving = findViewById(R.id.btnLiving);
-        LinearLayout btnBathroom = findViewById(R.id.btnBathroom);
-        LinearLayout btnKitchen = findViewById(R.id.btnKitchen);
-        LinearLayout btnBedroom = findViewById(R.id.btnBedroom);
+        LinearLayout categoryContainer = findViewById(R.id.categoryContainer);
+        
+        setupDynamicCategories(btnAllTiles, categoryContainer);
+    }
 
-        // Reset all buttons first
-        resetFilterButtons();
-
-        // Set initial state based on selectedFilter
-        switch (selectedFilter.toLowerCase()) {
-            case "floor":
-                activateButton(btnFloor, "Floor");
-                break;
-            case "wall":
-                activateButton(btnWall, "Wall");
-                break;
-            case "living":
-                activateButton(btnLiving, "Living");
-                break;
-            case "bathroom":
-                activateButton(btnBathroom, "Bathroom");
-                break;
-            case "kitchen":
-                activateButton(btnKitchen, "Kitchen");
-                break;
-            case "bedroom":
-                activateButton(btnBedroom, "Bedroom");
-                break;
-            default:
-                activateButton(btnAllTiles, "All Tiles");
-                break;
-        }
-
-        // Set click listeners
+    private void setupDynamicCategories(LinearLayout btnAllTiles, LinearLayout categoryContainer) {
         View.OnClickListener filterClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                resetFilterButtons();
                 String filter = "all";
                 String title = "All Tiles";
-
-                int id = v.getId();
-                if (id == R.id.btnAllTiles) {
+                
+                if (v.getId() == R.id.btnAllTiles) {
                     filter = "all";
                     title = "All Tiles";
-                } else if (id == R.id.btnFloor) {
-                    filter = "floor";
-                    title = "Floor";
-                } else if (id == R.id.btnWall) {
-                    filter = "wall";
-                    title = "Wall";
-                } else if (id == R.id.btnLiving) {
-                    filter = "living";
-                    title = "Living";
-                } else if (id == R.id.btnBathroom) {
-                    filter = "bathroom";
-                    title = "Bathroom";
-                } else if (id == R.id.btnKitchen) {
-                    filter = "kitchen";
-                    title = "Kitchen";
-                } else if (id == R.id.btnBedroom) {
-                    filter = "bedroom";
-                    title = "Bedroom";
+                } else {
+                    // It's a dynamic button
+                    TextView tv = (TextView) ((LinearLayout) v).getChildAt(0);
+                    title = tv.getText().toString();
+                    filter = title.toLowerCase();
                 }
 
                 activateButton((LinearLayout) v, title);
@@ -262,32 +217,68 @@ public class AdminCatalogActivity extends AppCompatActivity {
         };
 
         if (btnAllTiles != null) btnAllTiles.setOnClickListener(filterClickListener);
-        if (btnFloor    != null) btnFloor.setOnClickListener(filterClickListener);
-        if (btnWall != null) btnWall.setOnClickListener(filterClickListener);
-        if (btnLiving != null) btnLiving.setOnClickListener(filterClickListener);
-        if (btnBathroom != null) btnBathroom.setOnClickListener(filterClickListener);
-        if (btnKitchen != null) btnKitchen.setOnClickListener(filterClickListener);
-        if (btnBedroom != null) btnBedroom.setOnClickListener(filterClickListener);
+
+        categoryContainer.removeAllViews();
+        // In XML btnAllTiles is already a child of the container in some layouts, but here it's inside
+        categoryContainer.addView(btnAllTiles);
+
+        for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
+            LinearLayout btn = createCategoryButton(category);
+            btn.setOnClickListener(filterClickListener);
+            categoryContainer.addView(btn);
+            
+            // Check if this should be active
+            if (category.equalsIgnoreCase(selectedFilter)) {
+                activateButton(btn, category);
+            }
+        }
+        
+        if (selectedFilter.equalsIgnoreCase("all")) {
+            activateButton(btnAllTiles, "All Tiles");
+        }
     }
 
-    private void resetFilterButtons() {
-        int[][] buttonIds = {
-                {R.id.btnAllTiles, R.drawable.bg_filter_inactive},
-                {R.id.btnFloor,    R.drawable.bg_filter_inactive},
-                {R.id.btnWall, R.drawable.bg_filter_inactive},
-                {R.id.btnLiving, R.drawable.bg_filter_inactive},
-                {R.id.btnBathroom, R.drawable.bg_filter_inactive},
-                {R.id.btnKitchen, R.drawable.bg_filter_inactive},
-                {R.id.btnBedroom, R.drawable.bg_filter_inactive}
-        };
+    private LinearLayout createCategoryButton(String text) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+        layout.setGravity(android.view.Gravity.CENTER);
+        layout.setBackgroundResource(R.drawable.bg_filter_inactive);
+        layout.setClickable(true);
+        layout.setFocusable(true);
+        
+        int paddingH = (int)(20 * getResources().getDisplayMetrics().density);
+        int paddingV = (int)(8 * getResources().getDisplayMetrics().density);
+        int marginR = (int)(8 * getResources().getDisplayMetrics().density);
+        
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, marginR, 0);
+        layout.setLayoutParams(params);
+        layout.setPadding(paddingH, paddingV, paddingH, paddingV);
 
-        for (int[] id : buttonIds) {
-            LinearLayout button = findViewById(id[0]);
-            if (button != null) {
-                button.setBackgroundResource(id[1]);
-                if (button.getChildAt(0) instanceof TextView) {
-                    ((TextView) button.getChildAt(0)).setTextColor(getResources().getColor(R.color.slate_600));
-                }
+        TextView tv = new TextView(this);
+        tv.setText(text);
+        tv.setTextColor(getResources().getColor(R.color.slate_600));
+        tv.setTextSize(14);
+        tv.setTypeface(android.graphics.Typeface.DEFAULT_BOLD);
+        
+        layout.addView(tv);
+        return layout;
+    }
+
+
+    private void resetFilterButtons() {
+        LinearLayout categoryContainer = findViewById(R.id.categoryContainer);
+        if (categoryContainer == null) return;
+
+        for (int i = 0; i < categoryContainer.getChildCount(); i++) {
+            View v = categoryContainer.getChildAt(i);
+            if (v instanceof LinearLayout) {
+                v.setBackgroundResource(R.drawable.bg_filter_inactive);
+                TextView tv = (TextView) ((LinearLayout) v).getChildAt(0);
+                if (tv != null) tv.setTextColor(getResources().getColor(R.color.slate_600));
             }
         }
     }
