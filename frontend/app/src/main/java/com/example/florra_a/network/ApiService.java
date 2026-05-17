@@ -111,6 +111,19 @@ public interface ApiService {
     @retrofit2.http.POST("api/admin/notifications/create/")
     Call<okhttp3.ResponseBody> createAdminNotification(@Body java.util.Map<String, String> body);
 
+    // === STAFF MANAGEMENT ENDPOINTS ===
+    @retrofit2.http.GET("api/admin/staff/")
+    Call<java.util.List<com.example.florra_a.models.StaffMember>> getStaff();
+
+    @retrofit2.http.POST("api/admin/staff/")
+    Call<com.example.florra_a.models.StaffMember> addStaff(@Body com.example.florra_a.models.StaffMember staff);
+
+    @retrofit2.http.PUT("api/admin/staff/{id}/")
+    Call<com.example.florra_a.models.StaffMember> updateStaff(@retrofit2.http.Path("id") int id, @Body com.example.florra_a.models.StaffMember staff);
+
+    @retrofit2.http.DELETE("api/admin/staff/{id}/")
+    Call<okhttp3.ResponseBody> deleteStaff(@retrofit2.http.Path("id") int id);
+
     // === REPORTS ENDPOINTS ===
     @retrofit2.http.GET("api/admin/reports/summary/")
     Call<com.example.florra_a.models.ReportSummaryResponse> getReportSummary(

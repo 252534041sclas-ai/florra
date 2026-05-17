@@ -31,6 +31,14 @@ public class SalesPredictionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Restrict staff role from accessing sales predictions activity if not permitted
+        com.example.florra_a.utils.SharedPrefManager pref = com.example.florra_a.utils.SharedPrefManager.getInstance(this);
+        if ("staff".equalsIgnoreCase(pref.getRole()) && !pref.canAccessPredictions()) {
+            Toast.makeText(this, "Access Denied: You do not have permission to access sales predictions", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         // Set status bar to black for consistency with animated header
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(0); // Clear light status bar flag

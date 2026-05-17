@@ -95,6 +95,10 @@ class InventoryProductSerializer(serializers.ModelSerializer):
             return "Low Stock"
         return "In Stock"
 
+from .models import AdminUser
 
-
+class AdminUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdminUser
+        fields = ['id', 'full_name', 'email', 'role', 'is_active', 'can_access_billing', 'can_access_reports', 'can_access_predictions', 'created_at']
 

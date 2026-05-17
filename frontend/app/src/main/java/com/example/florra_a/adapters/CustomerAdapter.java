@@ -41,6 +41,13 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         String stats = customer.getBillCount() + " Bills • " + customer.getEnquiryCount() + " Enquiries";
         holder.tvStats.setText(stats);
 
+        // Load Letter Avatar
+        String avatarUrl = "https://ui-avatars.com/api/?name=" + customer.getName() + "&background=random&size=128";
+        com.bumptech.glide.Glide.with(holder.itemView.getContext())
+                .load(avatarUrl)
+                .circleCrop()
+                .into(holder.ivProfile);
+
         holder.itemView.setOnClickListener(v -> listener.onItemClick(customer));
     }
 
@@ -56,12 +63,14 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvPhone, tvStats;
+        android.widget.ImageView ivProfile;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvCustomerName);
             tvPhone = itemView.findViewById(R.id.tvCustomerPhone);
             tvStats = itemView.findViewById(R.id.tvCustomerStats);
+            ivProfile = itemView.findViewById(R.id.ivCustomerProfile);
         }
     }
 }

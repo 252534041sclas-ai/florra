@@ -26,5 +26,9 @@ urlpatterns = [
     path('reports/analytics/', SalesAnalyticsView.as_view()),
     path('reports/customers/', CustomerReportView.as_view()),
     path('reports/export-pdf/', ExportReportPDFView.as_view()),
+
+    # Staff Management
+    path('staff/', StaffListView.as_view()),
+    path('staff/<int:pk>/', StaffDetailView.as_view()),
 ]
 

@@ -414,7 +414,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 progressDialog.dismiss();
                 if (response.isSuccessful() && response.body() != null) {
-                    saveUserData(response.body().getEmail(), response.body().getFullName(), response.body().getToken(), true, null);
+                    saveUserData(response.body().getEmail(), response.body().getFullName(), response.body().getToken(), true, response.body().getRole(), null, response.body().isCanAccessBilling(), response.body().isCanAccessReports(), response.body().isCanAccessPredictions());
                     navigateAfterLogin(true);
                 } else {
                     String errorMessage = "Admin Login Failed";
@@ -437,9 +437,17 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void saveUserData(String email, String fullName, String token, boolean isAdmin, String profileImage) {
-        SharedPrefManager.getInstance(this).saveUser(email, fullName, token, isAdmin, profileImage);
+    private void saveUserData(String email, String fullName, String token, boolean isAdmin, String role, String profileImage, boolean canAccessBilling, boolean canAccessReports, boolean canAccessPredictions) {
+        SharedPrefManager.getInstance(this).saveUser(email, fullName, token, isAdmin, role, profileImage, canAccessBilling, canAccessReports, canAccessPredictions);
         Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveUserData(String email, String fullName, String token, boolean isAdmin, String role, String profileImage, boolean canAccessBilling, boolean canAccessReports) {
+        saveUserData(email, fullName, token, isAdmin, role, profileImage, canAccessBilling, canAccessReports, false);
+    }
+
+    private void saveUserData(String email, String fullName, String token, boolean isAdmin, String profileImage) {
+        saveUserData(email, fullName, token, isAdmin, isAdmin ? "admin" : "customer", profileImage, false, false, false);
     }
 
     private void navigateAfterLogin(boolean isAdmin) {

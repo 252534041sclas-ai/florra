@@ -39,12 +39,28 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash);
 
+        checkNotificationPermission();
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                // Trigger an immediate check for testing/initial load
+                androidx.work.OneTimeWorkRequest immediateWork = 
+                    new androidx.work.OneTimeWorkRequest.Builder(com.example.florra_a.network.NotificationWorker.class).build();
+                androidx.work.WorkManager.getInstance(SplashActivity.this).enqueue(immediateWork);
+
                 navigateNext();
             }
         }, 3000); // 3 seconds delay
+    }
+
+    private void checkNotificationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) 
+                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
     }
 
     private void navigateNext() {

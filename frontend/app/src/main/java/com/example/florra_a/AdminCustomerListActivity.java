@@ -41,8 +41,8 @@ public class AdminCustomerListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(0);
-            getWindow().setStatusBarColor(android.graphics.Color.parseColor("#014D4E"));
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
         
         setContentView(R.layout.activity_admin_customer_list);

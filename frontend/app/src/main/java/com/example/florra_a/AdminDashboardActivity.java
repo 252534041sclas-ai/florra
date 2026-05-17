@@ -12,6 +12,7 @@
     import androidx.core.view.WindowCompat;
     import androidx.core.view.WindowInsetsControllerCompat;
     import androidx.cardview.widget.CardView;
+    import com.example.florra_a.utils.SharedPrefManager;
 
     public class AdminDashboardActivity extends AppCompatActivity {
 
@@ -207,9 +208,14 @@
                 btnReportsDashboard.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(AdminDashboardActivity.this, AdminReportsActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        SharedPrefManager pref = SharedPrefManager.getInstance(AdminDashboardActivity.this);
+                        if ("staff".equalsIgnoreCase(pref.getRole()) && !pref.canAccessReports()) {
+                            Toast.makeText(AdminDashboardActivity.this, "Access Denied: You do not have permission to access reports", Toast.LENGTH_LONG).show();
+                        } else {
+                            Intent intent = new Intent(AdminDashboardActivity.this, AdminReportsActivity.class);
+                            startActivity(intent);
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        }
                     }
                 });
             }
@@ -220,9 +226,14 @@
                 cardSalesPrediction.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(AdminDashboardActivity.this, SalesPredictionActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        SharedPrefManager pref = SharedPrefManager.getInstance(AdminDashboardActivity.this);
+                        if ("staff".equalsIgnoreCase(pref.getRole()) && !pref.canAccessPredictions()) {
+                            Toast.makeText(AdminDashboardActivity.this, "Access Denied: You do not have permission to access sales predictions", Toast.LENGTH_LONG).show();
+                        } else {
+                            Intent intent = new Intent(AdminDashboardActivity.this, SalesPredictionActivity.class);
+                            startActivity(intent);
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        }
                     }
                 });
             }
@@ -233,11 +244,35 @@
                 cardBilling.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(AdminDashboardActivity.this, GenerateBillActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        SharedPrefManager pref = SharedPrefManager.getInstance(AdminDashboardActivity.this);
+                        if ("staff".equalsIgnoreCase(pref.getRole()) && !pref.canAccessBilling()) {
+                            Toast.makeText(AdminDashboardActivity.this, "Access Denied: You do not have permission to generate bills", Toast.LENGTH_LONG).show();
+                        } else {
+                            Intent intent = new Intent(AdminDashboardActivity.this, GenerateBillActivity.class);
+                            startActivity(intent);
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        }
                     }
                 });
+            }
+
+            // MANAGE STAFF CARD
+            View cardManageStaff = findViewById(R.id.cardManageStaff);
+            if (cardManageStaff != null) {
+                String role = SharedPrefManager.getInstance(this).getRole();
+                if ("staff".equalsIgnoreCase(role)) {
+                    cardManageStaff.setVisibility(View.GONE);
+                } else {
+                    cardManageStaff.setVisibility(View.VISIBLE);
+                    cardManageStaff.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(AdminDashboardActivity.this, ManageStaffActivity.class);
+                            startActivity(intent);
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        }
+                    });
+                }
             }
 
             // ========== ACTIVITY ITEMS CLICK LISTENERS ==========

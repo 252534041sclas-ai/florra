@@ -63,6 +63,15 @@ public class AdminReportsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Restrict staff role from accessing reports activity if not permitted
+        SharedPrefManager pref = SharedPrefManager.getInstance(this);
+        if ("staff".equalsIgnoreCase(pref.getRole()) && !pref.canAccessReports()) {
+            Toast.makeText(this, "Access Denied: You do not have permission to view reports", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_admin_reports);
 
         // Set status bar to black for professional look
@@ -112,8 +121,8 @@ public class AdminReportsActivity extends AppCompatActivity {
     private void setupSpinners() {
         String[] months = {"January", "February", "March", "April", "May", "June", 
                           "July", "August", "September", "October", "November", "December"};
-        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, months);
-        monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> monthAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_reports, months);
+        monthAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_reports);
         spinnerMonth.setAdapter(monthAdapter);
 
         Calendar cal = Calendar.getInstance();
@@ -126,8 +135,8 @@ public class AdminReportsActivity extends AppCompatActivity {
         for (int i = selectedYear; i >= 2023; i--) {
             years.add(String.valueOf(i));
         }
-        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, years);
-        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_reports, years);
+        yearAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_reports);
         spinnerYear.setAdapter(yearAdapter);
         spinnerYear.setSelection(0);
     }

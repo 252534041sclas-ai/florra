@@ -52,6 +52,15 @@ public class AdminAccountActivity extends AppCompatActivity {
     private Button btnEditProfileImage;
     private ActivityResultLauncher<Intent> pickImageLauncher;
 
+    // Profile Details & Access Badge
+    private android.widget.TextView tvName, tvEmail, tvAccess;
+    private View layoutAccessBadge;
+    private ImageView ivAccessIcon;
+
+    // Shop Management Container Views (to hide for staff)
+    private android.widget.TextView tvShopManagementTitle;
+    private View layoutShopManagementCards;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +77,9 @@ public class AdminAccountActivity extends AppCompatActivity {
 
         // Initialize all views
         initViews();
+
+        // Display dynamic name, email, and access badge
+        displayUserDetails();
 
         // Setup click listeners
         setupClickListeners();
@@ -104,8 +116,73 @@ public class AdminAccountActivity extends AppCompatActivity {
             cardHelp = findViewById(R.id.cardHelp);
             cardAbout = findViewById(R.id.cardAbout);
 
+            // Profile Details & Access Badge Views
+            tvName = findViewById(R.id.tvName);
+            tvEmail = findViewById(R.id.tvEmail);
+            tvAccess = findViewById(R.id.tvAccess);
+            layoutAccessBadge = findViewById(R.id.layoutAccessBadge);
+            ivAccessIcon = findViewById(R.id.ivAccessIcon);
+
+            // Shop Management Container Views
+            tvShopManagementTitle = findViewById(R.id.tvShopManagementTitle);
+            layoutShopManagementCards = findViewById(R.id.layoutShopManagementCards);
+
         } catch (Exception e) {
             Toast.makeText(this, "Error initializing views: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void displayUserDetails() {
+        try {
+            SharedPrefManager prefManager = SharedPrefManager.getInstance(this);
+            String name = prefManager.getFullName();
+            String email = prefManager.getEmail();
+            String role = prefManager.getRole();
+
+            if (tvName != null && name != null) {
+                tvName.setText(name);
+            }
+            if (tvEmail != null && email != null) {
+                tvEmail.setText(email);
+            }
+
+            if (tvAccess != null && role != null) {
+                if ("staff".equalsIgnoreCase(role)) {
+                    tvAccess.setText("Staff Access");
+                    if (ivAccessIcon != null) {
+                        ivAccessIcon.setImageResource(R.drawable.ic_lock); // Show lock for staff
+                        ivAccessIcon.setColorFilter(ContextCompat.getColor(this, R.color.slate_600));
+                    }
+                    if (layoutAccessBadge != null) {
+                        layoutAccessBadge.setBackgroundResource(R.drawable.bg_tag);
+                    }
+                    // Hide Shop Management completely for staff
+                    if (tvShopManagementTitle != null) {
+                        tvShopManagementTitle.setVisibility(View.GONE);
+                    }
+                    if (layoutShopManagementCards != null) {
+                        layoutShopManagementCards.setVisibility(View.GONE);
+                    }
+                } else {
+                    tvAccess.setText("Admin Access");
+                    if (ivAccessIcon != null) {
+                        ivAccessIcon.setImageResource(R.drawable.ic_verified); // Show verified check for admin
+                        ivAccessIcon.setColorFilter(ContextCompat.getColor(this, R.color.primary_color));
+                    }
+                    if (layoutAccessBadge != null) {
+                        layoutAccessBadge.setBackgroundResource(R.drawable.bg_admin_badge);
+                    }
+                    // Show Shop Management for admin
+                    if (tvShopManagementTitle != null) {
+                        tvShopManagementTitle.setVisibility(View.VISIBLE);
+                    }
+                    if (layoutShopManagementCards != null) {
+                        layoutShopManagementCards.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Toast.makeText(this, "Error displaying user details: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -129,6 +206,19 @@ public class AdminAccountActivity extends AppCompatActivity {
                 // Load image with Picasso
                 Picasso.get()
                         .load(profileImageUrl)
+                        .placeholder(R.drawable.ic_profile_placeholder)
+                        .error(R.drawable.ic_profile_placeholder)
+                        .transform(new CircleTransform())
+                        .into(ivProfile);
+            } else {
+                // Premium dynamic letter-avatar fallback if no profile image is present
+                String fullName = prefManager.getFullName();
+                if (fullName == null || fullName.trim().isEmpty()) {
+                    fullName = "User";
+                }
+                String dynamicAvatarUrl = "https://ui-avatars.com/api/?name=" + Uri.encode(fullName) + "&background=random&size=128";
+                Picasso.get()
+                        .load(dynamicAvatarUrl)
                         .placeholder(R.drawable.ic_profile_placeholder)
                         .error(R.drawable.ic_profile_placeholder)
                         .transform(new CircleTransform())
@@ -200,7 +290,11 @@ public class AdminAccountActivity extends AppCompatActivity {
 
         // Shop Management Cards
         if (cardEditShop != null) {
-            cardEditShop.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Edit Shop Profile", Toast.LENGTH_SHORT).show());
+            cardEditShop.setOnClickListener(v -> {
+                Intent intent = new Intent(AdminAccountActivity.this, EditShopProfileActivity.class);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            });
         }
 
         if (cardBusinessInfo != null) {
@@ -208,7 +302,17 @@ public class AdminAccountActivity extends AppCompatActivity {
         }
 
         if (cardManageStaff != null) {
-            cardManageStaff.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Manage Staff", Toast.LENGTH_SHORT).show());
+            String role = SharedPrefManager.getInstance(this).getRole();
+            if ("staff".equalsIgnoreCase(role)) {
+                cardManageStaff.setVisibility(View.GONE);
+            } else {
+                cardManageStaff.setVisibility(View.VISIBLE);
+                cardManageStaff.setOnClickListener(v -> {
+                    Intent intent = new Intent(AdminAccountActivity.this, ManageStaffActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                });
+            }
         }
 
         // Dashboard Card
@@ -225,11 +329,27 @@ public class AdminAccountActivity extends AppCompatActivity {
 
         // System & Support Cards
         if (cardHelp != null) {
-            cardHelp.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Help & Support", Toast.LENGTH_SHORT).show());
+            cardHelp.setOnClickListener(v -> {
+                try {
+                    Intent intent = new Intent(AdminAccountActivity.this, HelpSupportActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                } catch (Exception e) {
+                    Toast.makeText(AdminAccountActivity.this, "Cannot open Help & Support", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         if (cardAbout != null) {
-            cardAbout.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "About Florra", Toast.LENGTH_SHORT).show());
+            cardAbout.setOnClickListener(v -> {
+                try {
+                    Intent intent = new Intent(AdminAccountActivity.this, AboutFlorraActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                } catch (Exception e) {
+                    Toast.makeText(AdminAccountActivity.this, "Cannot open About Florra", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         // Bottom Navigation

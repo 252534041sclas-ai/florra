@@ -6,7 +6,8 @@
     android:layout_marginHorizontal="20dp"
     android:layout_marginVertical="6dp"
     app:cardCornerRadius="12dp"
-    app:cardElevation="1dp">
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,10 +17,11 @@
         android:gravity="center_vertical">
 
         <!-- Avatar Placeholder -->
-        <View
+        <ImageView
+            android:id="@+id/ivCustomerProfile"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/bg_circle_primary" />
+            android:scaleType="centerCrop" />
             
         <LinearLayout
             android:layout_width="0dp"
@@ -50,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="2 Bills • 1 Enquiries"
-                android:textColor="#014D4E"
+                android:textColor="#64748B"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:layout_marginTop="2dp" />
@@ -61,7 +63,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_chevron_right"
-            app:tint="#CBD5E1" />
+            app:tint="#94A3B8" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -254,7 +254,13 @@ public class CustomerAccountActivity extends AppCompatActivity {
             btnAboutFlorra.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(CustomerAccountActivity.this, "About Florra", Toast.LENGTH_SHORT).show();
+                    try {
+                        Intent intent = new Intent(CustomerAccountActivity.this, AboutFlorraActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                    } catch (Exception e) {
+                        Toast.makeText(CustomerAccountActivity.this, "Cannot open About Florra", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }

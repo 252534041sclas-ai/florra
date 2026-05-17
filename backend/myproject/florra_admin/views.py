@@ -40,7 +40,11 @@ class AdminLoginView(APIView):
             "token": token.key,
             "email": admin.email,
             "full_name": admin.full_name,
-            "user_type": "admin"
+            "user_type": "admin",
+            "role": admin.role,
+            "can_access_billing": admin.can_access_billing,
+            "can_access_reports": admin.can_access_reports,
+            "can_access_predictions": admin.can_access_predictions
         }, status=status.HTTP_200_OK)
 
 
@@ -889,9 +893,91 @@ class AdminNotificationCreateView(APIView):
             import traceback
             return Response(
                 {"error": str(e), "traceback": traceback.format_exc()},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
 
+from .serializers import AdminUserSerializer
+
+class StaffListView(APIView):
+    def get(self, request):
+        staff = AdminUser.objects.all().order_by('-created_at')
+        serializer = AdminUserSerializer(staff, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        full_name = request.data.get('full_name')
+        role = request.data.get('role', 'staff')
+
+        if not email or not password or not full_name:
+            return Response({"error": "All fields are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if AdminUser.objects.filter(email=email).exists():
+            return Response({"error": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = AdminUser(
+            email=email,
+            full_name=full_name,
+            role=role,
+            can_access_billing=request.data.get('can_access_billing', False),
+            can_access_reports=request.data.get('can_access_reports', False),
+            can_access_predictions=request.data.get('can_access_predictions', False)
+        )
+        user.set_password(password)
+        user.save()
+
+        serializer = AdminUserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class StaffDetailView(APIView):
+    def put(self, request, pk):
+        try:
+            user = AdminUser.objects.get(pk=pk)
+        except AdminUser.DoesNotExist:
+            return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        email = request.data.get('email')
+        full_name = request.data.get('full_name')
+        role = request.data.get('role')
+        password = request.data.get('password')
+
+        if email:
+            if AdminUser.objects.filter(email=email).exclude(pk=pk).exists():
+                return Response({"error": "Email already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            user.email = email
+
+        if full_name:
+            user.full_name = full_name
+
+        if role:
+            user.role = role
+
+        if password:
+            user.set_password(password)
+
+        can_access_billing = request.data.get('can_access_billing')
+        if can_access_billing is not None:
+            user.can_access_billing = can_access_billing
+
+        can_access_reports = request.data.get('can_access_reports')
+        if can_access_reports is not None:
+            user.can_access_reports = can_access_reports
+
+        can_access_predictions = request.data.get('can_access_predictions')
+        if can_access_predictions is not None:
+            user.can_access_predictions = can_access_predictions
+
+        user.save()
+        serializer = AdminUserSerializer(user)
+        return Response(serializer.data)
+
+    def delete(self, request, pk):
+        try:
+            user = AdminUser.objects.get(pk=pk)
+        except AdminUser.DoesNotExist:
+            return Response({"error": "Not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        user.delete()
+        return Response({"message": "Staff member deleted successfully"})

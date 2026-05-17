@@ -22,6 +22,7 @@ public class AdminCustomerDetailsActivity extends AppCompatActivity {
 
     private String customerName, customerPhone;
     private TextView tvName, tvPhone, tvBillCount, tvEnquiryCount;
+    private android.widget.ImageView ivProfile;
     private RecyclerView rvBills, rvEnquiries;
     
     private List<Bill> customerBills = new ArrayList<>();
@@ -33,6 +34,11 @@ public class AdminCustomerDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            getWindow().setStatusBarColor(android.graphics.Color.WHITE);
+            getWindow().getDecorView().setSystemUiVisibility(android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+        
         setContentView(R.layout.activity_admin_customer_details);
 
         customerName = getIntent().getStringExtra("customer_name");
@@ -49,9 +55,17 @@ public class AdminCustomerDetailsActivity extends AppCompatActivity {
         tvEnquiryCount = findViewById(R.id.tvEnquiryCount);
         rvBills = findViewById(R.id.rvBills);
         rvEnquiries = findViewById(R.id.rvEnquiries);
+        ivProfile = findViewById(R.id.ivCustomerProfile);
 
         tvName.setText(customerName);
         tvPhone.setText(customerPhone);
+
+        // Load Letter Avatar
+        String avatarUrl = "https://ui-avatars.com/api/?name=" + customerName + "&background=random&size=256";
+        com.bumptech.glide.Glide.with(this)
+                .load(avatarUrl)
+                .circleCrop()
+                .into(ivProfile);
 
         // Setup Bill Recycler
         rvBills.setLayoutManager(new LinearLayoutManager(this));

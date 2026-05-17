@@ -8,6 +8,10 @@ class AdminUser(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
     is_active = models.BooleanField(default=True)
+    role = models.CharField(max_length=20, choices=[('admin', 'Admin'), ('staff', 'Staff')], default='admin')
+    can_access_billing = models.BooleanField(default=False)
+    can_access_reports = models.BooleanField(default=False)
+    can_access_predictions = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def set_password(self, raw_password):

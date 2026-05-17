@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="340dp"
+    android:layout_height="480dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Title Header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Florra Showroom Handbook"
+            android:textColor="@color/slate_900"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:letterSpacing="-0.01" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Official user guidelines and app handbook"
+            android:textColor="@color/slate_400"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Scrollable content -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:scrollbars="vertical"
+            android:scrollbarSize="2dp"
+            android:scrollbarThumbHorizontal="@color/slate_200">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingRight="4dp">
+
+                <!-- Section 1 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1. Dashboard &amp; Navigation"
+                    android:textColor="@color/slate_900"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="The Florra Home Screen acts as your central console. You can view current announcements, explore top-performing tile categories, access recently viewed collections, and monitor active quotations at a single glance. Tap the bottom navigation bar to switch context instantly."
+                    android:textColor="@color/slate_600"
+                    android:textSize="12sp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Section 2 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2. Catalog &amp; Comparisons"
+                    android:textColor="@color/slate_900"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="The Catalog screen presents tiles categorized by material (porcelain, ceramic, marble, travertine, wood). You can filter tiles by finish (polished, matte, glossy, satin) and size. Use the Compare button on the product details page to add up to 3 tiles for side-by-side spec comparison."
+                    android:textColor="@color/slate_600"
+                    android:textSize="12sp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Section 3 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3. Requesting Custom Quotations"
+                    android:textColor="@color/slate_900"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="To request pricing for your showroom order, select a tile from the Catalog and press 'Request Quotation'. Enter the total floor/wall area in sq ft, add custom wastage percentages (we recommend 8-10%), and hit submit. You will receive updates directly in the 'Quotations' tab."
+                    android:textColor="@color/slate_600"
+                    android:textSize="12sp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Section 4 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4. AI Chatbot &amp; Photo Recommendations"
+                    android:textColor="@color/slate_900"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Access the AI Support Assistant to chat naturally about tile recommendations, design ideas, inventory stock details, and custom calculations. You can also upload a reference photo to match real-life designs with catalog models."
+                    android:textColor="@color/slate_600"
+                    android:textSize="12sp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:layout_marginBottom="8dp" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Close Button -->
+        <RelativeLayout
+            android:id="@+id/btnClose"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_button_gray"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dismiss"
+                android:textColor="@color/slate_600"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

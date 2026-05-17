@@ -12,6 +12,10 @@ public class SharedPrefManager {
     private static final String KEY_FULL_NAME = "full_name";
     private static final String KEY_TOKEN = "auth_token";
     private static final String KEY_PROFILE_IMAGE = "profile_image";
+    private static final String KEY_ROLE = "role";
+    private static final String KEY_CAN_ACCESS_BILLING = "can_access_billing";
+    private static final String KEY_CAN_ACCESS_REPORTS = "can_access_reports";
+    private static final String KEY_CAN_ACCESS_PREDICTIONS = "can_access_predictions";
 
     private static SharedPrefManager instance;
     private final SharedPreferences sharedPreferences;
@@ -28,14 +32,42 @@ public class SharedPrefManager {
     }
 
     public boolean saveUser(String email, String fullName, String token, boolean isAdmin, String profileImage) {
+        return saveUser(email, fullName, token, isAdmin, isAdmin ? "admin" : "customer", profileImage);
+    }
+
+    public boolean saveUser(String email, String fullName, String token, boolean isAdmin, String role, String profileImage) {
+        return saveUser(email, fullName, token, isAdmin, role, profileImage, false, false, false);
+    }
+
+    public boolean saveUser(String email, String fullName, String token, boolean isAdmin, String role, String profileImage, boolean canAccessBilling, boolean canAccessReports) {
+        return saveUser(email, fullName, token, isAdmin, role, profileImage, canAccessBilling, canAccessReports, false);
+    }
+
+    public boolean saveUser(String email, String fullName, String token, boolean isAdmin, String role, String profileImage, boolean canAccessBilling, boolean canAccessReports, boolean canAccessPredictions) {
         return sharedPreferences.edit()
                 .putBoolean(KEY_IS_LOGGED_IN, true)
                 .putString(KEY_USER_TYPE, isAdmin ? "admin" : "customer")
                 .putString(KEY_EMAIL, email)
                 .putString(KEY_FULL_NAME, fullName != null ? fullName : (isAdmin ? "Admin User" : "Customer User"))
                 .putString(KEY_TOKEN, token)
+                .putString(KEY_ROLE, role != null ? role : (isAdmin ? "admin" : "customer"))
                 .putString(KEY_PROFILE_IMAGE, profileImage)
+                .putBoolean(KEY_CAN_ACCESS_BILLING, canAccessBilling)
+                .putBoolean(KEY_CAN_ACCESS_REPORTS, canAccessReports)
+                .putBoolean(KEY_CAN_ACCESS_PREDICTIONS, canAccessPredictions)
                 .commit();
+    }
+
+    public boolean canAccessBilling() {
+        return sharedPreferences.getBoolean(KEY_CAN_ACCESS_BILLING, false);
+    }
+
+    public boolean canAccessReports() {
+        return sharedPreferences.getBoolean(KEY_CAN_ACCESS_REPORTS, false);
+    }
+
+    public boolean canAccessPredictions() {
+        return sharedPreferences.getBoolean(KEY_CAN_ACCESS_PREDICTIONS, false);
     }
 
     public boolean isLoggedIn() {
@@ -48,6 +80,10 @@ public class SharedPrefManager {
 
     public boolean isAdmin() {
         return "admin".equals(getUserType());
+    }
+
+    public String getRole() {
+        return sharedPreferences.getString(KEY_ROLE, "admin");
     }
 
     public String getEmail() {

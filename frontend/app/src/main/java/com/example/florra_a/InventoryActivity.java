@@ -139,6 +139,7 @@ public class InventoryActivity extends AppCompatActivity {
         btnAll.setOnClickListener(categoryListener);
 
         categoryContainer.removeAllViews();
+        categoryContainer.addView(btnAll);
         for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
             Button btn = new Button(new android.view.ContextThemeWrapper(this, R.style.FilterButtonStyle), null, 0);
             btn.setText(category);

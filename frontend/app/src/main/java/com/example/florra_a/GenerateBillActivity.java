@@ -64,6 +64,14 @@ public class GenerateBillActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Watertight restriction: block staff role from opening GenerateBillActivity if not permitted
+        com.example.florra_a.utils.SharedPrefManager pref = com.example.florra_a.utils.SharedPrefManager.getInstance(this);
+        if ("staff".equalsIgnoreCase(pref.getRole()) && !pref.canAccessBilling()) {
+            Toast.makeText(this, "Access Denied: You do not have permission to access billing", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+
         super.onCreate(savedInstanceState);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);

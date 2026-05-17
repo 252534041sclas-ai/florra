@@ -211,6 +211,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
                     filter = title.toLowerCase();
                 }
 
+                resetFilterButtons();
                 activateButton((LinearLayout) v, title);
                 applyFilter(filter);
             }
