@@ -64,7 +64,7 @@ public class CatalogActivity extends AppCompatActivity {
         }
 
         // Search button
-        ImageView btnSearch = findViewById(R.id.btnSearch);
+        View btnSearch = findViewById(R.id.btnSearch);
         if (btnSearch != null) {
             btnSearch.setOnClickListener(new View.OnClickListener() {
                 @Override

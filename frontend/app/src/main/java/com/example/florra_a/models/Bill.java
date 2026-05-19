@@ -19,6 +19,9 @@ public class Bill implements Serializable {
     @SerializedName("customer_address")
     private String customer_address;
     
+    @SerializedName("customer_image")
+    private String customer_image;
+    
     @SerializedName("subtotal")
     private double subtotal;
     
@@ -88,6 +91,9 @@ public class Bill implements Serializable {
 
     public String getCustomerAddress() { return customer_address; }
     public void setCustomerAddress(String customer_address) { this.customer_address = customer_address; }
+
+    public String getCustomerImage() { return customer_image; }
+    public void setCustomerImage(String customer_image) { this.customer_image = customer_image; }
 
     public double getSubtotal() { return subtotal; }
     public void setSubtotal(double subtotal) { this.subtotal = subtotal; }

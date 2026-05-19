@@ -20,6 +20,8 @@ public class Enquiry implements Serializable {
     private String created_at;
     @SerializedName("customer_email")
     private String customer_email;
+    @SerializedName("customer_image")
+    private String customer_image;
     
     // Quotation Details
     private String quotation_price;
@@ -36,6 +38,7 @@ public class Enquiry implements Serializable {
     public String getReference() { return reference; }
     public String getCreatedAt() { return created_at; }
     public String getCustomerEmail() { return customer_email; }
+    public String getCustomerImage() { return customer_image; }
     
     public String getQuotationPrice() { return quotation_price; }
     public String getQuotationBoxes() { return quotation_boxes; }
@@ -51,6 +54,7 @@ public class Enquiry implements Serializable {
     public void setReference(String reference) { this.reference = reference; }
     public void setCreatedAt(String created_at) { this.created_at = created_at; }
     public void setCustomerEmail(String customer_email) { this.customer_email = customer_email; }
+    public void setCustomerImage(String customer_image) { this.customer_image = customer_image; }
 
     public void setQuotationPrice(String quotation_price) { this.quotation_price = quotation_price; }
     public void setQuotationBoxes(String quotation_boxes) { this.quotation_boxes = quotation_boxes; }

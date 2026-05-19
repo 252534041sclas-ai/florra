@@ -43,7 +43,8 @@ public class GenerateBillActivity extends AppCompatActivity {
     private EditText etGST, etDiscount, etLoading;
 
     // Buttons
-    private Button btnBack, btnGenerateBill, btnAddItem, btnPreviewBill;
+    private View btnBack;
+    private Button btnGenerateBill, btnAddItem, btnPreviewBill;
     
     // RecyclerView
     private androidx.recyclerview.widget.RecyclerView rvBillItems;

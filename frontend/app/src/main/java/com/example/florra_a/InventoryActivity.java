@@ -55,6 +55,13 @@ public class InventoryActivity extends AppCompatActivity {
         fetchInventoryData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Always refresh the inventory when returning to this screen
+        fetchInventoryData();
+    }
+
     private void initViews() {
         btnBack = findViewById(R.id.btnBack);
         
@@ -136,23 +143,12 @@ public class InventoryActivity extends AppCompatActivity {
             fetchInventoryData();
         };
 
-        btnAll.setOnClickListener(categoryListener);
-
-        categoryContainer.removeAllViews();
-        categoryContainer.addView(btnAll);
-        for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
-            Button btn = new Button(new android.view.ContextThemeWrapper(this, R.style.FilterButtonStyle), null, 0);
-            btn.setText(category);
-            btn.setOnClickListener(categoryListener);
-            
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            params.setMargins(0, 0, (int)(8 * getResources().getDisplayMetrics().density), 0);
-            btn.setLayoutParams(params);
-            
-            categoryContainer.addView(btn);
+        // Attach listener to all buttons defined in XML
+        for (int i = 0; i < categoryContainer.getChildCount(); i++) {
+            View child = categoryContainer.getChildAt(i);
+            if (child instanceof Button) {
+                child.setOnClickListener(categoryListener);
+            }
         }
     }
 

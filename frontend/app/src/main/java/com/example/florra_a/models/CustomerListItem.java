@@ -9,6 +9,7 @@ public class CustomerListItem implements Serializable {
     private String address;
     private int billCount;
     private int enquiryCount;
+    private String profileImageUrl;
 
     public CustomerListItem(String name, String phone) {
         this.name = name;
@@ -32,4 +33,7 @@ public class CustomerListItem implements Serializable {
 
     public int getEnquiryCount() { return enquiryCount; }
     public void setEnquiryCount(int enquiryCount) { this.enquiryCount = enquiryCount; }
+
+    public String getProfileImageUrl() { return profileImageUrl; }
+    public void setProfileImageUrl(String profileImageUrl) { this.profileImageUrl = profileImageUrl; }
 }

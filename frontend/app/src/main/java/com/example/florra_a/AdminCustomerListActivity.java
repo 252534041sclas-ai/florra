@@ -63,6 +63,9 @@ public class AdminCustomerListActivity extends AppCompatActivity {
             Intent intent = new Intent(AdminCustomerListActivity.this, AdminCustomerDetailsActivity.class);
             intent.putExtra("customer_name", customer.getName());
             intent.putExtra("customer_phone", customer.getPhone());
+            if (customer.getProfileImageUrl() != null) {
+                intent.putExtra("customer_image", customer.getProfileImageUrl());
+            }
             startActivity(intent);
         });
         rvCustomers.setAdapter(adapter);
@@ -131,6 +134,9 @@ public class AdminCustomerListActivity extends AppCompatActivity {
                 item = new CustomerListItem(name, phone != null ? phone : "N/A");
                 customerMap.put(key, item);
             }
+            if (bill.getCustomerImage() != null && !bill.getCustomerImage().isEmpty()) {
+                item.setProfileImageUrl(bill.getCustomerImage());
+            }
             item.setBillCount(item.getBillCount() + 1);
         }
 
@@ -145,6 +151,9 @@ public class AdminCustomerListActivity extends AppCompatActivity {
             if (item == null) {
                 item = new CustomerListItem(name, phone != null ? phone : "N/A");
                 customerMap.put(key, item);
+            }
+            if (enquiry.getCustomerImage() != null && !enquiry.getCustomerImage().isEmpty()) {
+                item.setProfileImageUrl(enquiry.getCustomerImage());
             }
             item.setEnquiryCount(item.getEnquiryCount() + 1);
         }

@@ -43,7 +43,8 @@
                         app:tint="#000000"
                         android:padding="8dp"
                         android:clickable="true"
-                        android:focusable="true" />
+                        android:focusable="true"
+                        android:visibility="gone" />
 
                     <!-- Title -->
                     <LinearLayout

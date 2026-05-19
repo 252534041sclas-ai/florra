@@ -76,7 +76,13 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Prod
             
             // Consistent "No:" label
             String tileNo = product.getTileNo();
-            tvSku.setText("No: " + (tileNo != null ? tileNo : product.getId()));
+            if (tileNo != null && !tileNo.trim().isEmpty()) {
+                tvSku.setText("No: " + tileNo.trim());
+            } else if (product.getId() > 0) {
+                tvSku.setText("No: " + product.getId());
+            } else {
+                tvSku.setText("No: N/A");
+            }
             
             tvStockCount.setText(String.valueOf(product.getStock()));
 

@@ -30,7 +30,7 @@ FAQS = {
 MODEL_NAME = "sentence-transformers/clip-ViT-L-14"
 INDEX_FILE = "vectorstore/products.index"
 META_FILE = "vectorstore/products.pkl"
-MIN_SIMILARITY_THRESHOLD = 0.85  # Strict threshold for 100% accuracy feel
+MIN_SIMILARITY_THRESHOLD = 0.55  # Improved softer threshold for comprehensive AI matches
 
 # Global State
 model = None
@@ -260,7 +260,8 @@ def chat(req: ChatRequest):
         # For greeting, search for "trending"
         search_query = req.message if intent != "greeting" else "trending top quality tiles"
         vec = model.encode([search_query])
-        products = search_index(vec, k=3)
+        k_val = 12 if intent != "greeting" else 4
+        products = search_index(vec, k=k_val)
 
     reply = get_personality_response(intent, products, req.message)
     return {"reply": reply, "products": products}
@@ -281,7 +282,7 @@ async def search_image(file: UploadFile = File(...), message: str = Query(None))
         final_vec = img_vec
         
     final_vec = np.expand_dims(final_vec, axis=0)
-    products = search_index(final_vec, k=3)
+    products = search_index(final_vec, k=12)
     
     if not products:
         return {"reply": "Photo analyze pannen, but exactly match aagura designs ippo illa. 😅 Similar pattern vera designs show pannalama?"}

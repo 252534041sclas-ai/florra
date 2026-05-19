@@ -36,7 +36,8 @@
                     android:focusable="true"
                     android:padding="8dp"
                     android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true" />
+                    android:layout_centerVertical="true"
+                    android:visibility="gone" />
 
                 <TextView
                     android:layout_width="wrap_content"

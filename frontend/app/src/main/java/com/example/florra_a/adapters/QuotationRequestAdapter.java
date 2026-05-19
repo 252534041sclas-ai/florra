@@ -42,9 +42,28 @@ public class QuotationRequestAdapter extends RecyclerView.Adapter<QuotationReque
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         Enquiry e = items.get(position);
 
-        // Avatar initial
         String name = e.getCustomerName() != null ? e.getCustomerName() : "?";
-        h.tvAvatar.setText(name.length() > 0 ? String.valueOf(name.charAt(0)).toUpperCase() : "?");
+
+        // Avatar circle fallback / dynamic image loading
+        if (e.getCustomerImage() != null && !e.getCustomerImage().isEmpty()) {
+            String fullUrl = e.getCustomerImage();
+            if (!fullUrl.startsWith("http")) {
+                String baseUrl = com.example.florra_a.network.RetrofitClient.BASE_URL;
+                if (baseUrl.endsWith("/") && fullUrl.startsWith("/")) fullUrl = baseUrl + fullUrl.substring(1);
+                else if (!baseUrl.endsWith("/") && !fullUrl.startsWith("/")) fullUrl = baseUrl + "/" + fullUrl;
+                else fullUrl = baseUrl + fullUrl;
+            }
+            h.ivCustomerProfile.setVisibility(View.VISIBLE);
+            h.tvAvatar.setVisibility(View.GONE);
+            com.bumptech.glide.Glide.with(h.itemView.getContext())
+                .load(fullUrl)
+                .circleCrop()
+                .into(h.ivCustomerProfile);
+        } else {
+            h.ivCustomerProfile.setVisibility(View.GONE);
+            h.tvAvatar.setVisibility(View.VISIBLE);
+            h.tvAvatar.setText(name.length() > 0 ? String.valueOf(name.charAt(0)).toUpperCase() : "?");
+        }
 
         h.tvCustomerName.setText(name);
         h.tvPhone.setText(e.getPhone() != null ? e.getPhone() : "");
@@ -94,6 +113,7 @@ public class QuotationRequestAdapter extends RecyclerView.Adapter<QuotationReque
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvAvatar, tvCustomerName, tvPhone, tvMessage, tvDate, tvStatus, tvRespond;
+        android.widget.ImageView ivCustomerProfile;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -104,6 +124,7 @@ public class QuotationRequestAdapter extends RecyclerView.Adapter<QuotationReque
             tvDate         = itemView.findViewById(R.id.tvRequestDate);
             tvStatus       = itemView.findViewById(R.id.tvStatus);
             tvRespond      = itemView.findViewById(R.id.tvRespond);
+            ivCustomerProfile = itemView.findViewById(R.id.ivCustomerProfile);
         }
     }
 }

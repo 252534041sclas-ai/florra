@@ -6,54 +6,57 @@
     android:background="@color/background_light"
     android:fitsSystemWindows="true">
 
-    <!-- Main Scroll View -->
+    <!-- Fixed Header -->
+    <LinearLayout
+        android:id="@+id/layoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:elevation="2dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:gravity="center_vertical"
+        android:layout_alignParentTop="true">
+
+        <!-- Back Button -->
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/primary_color"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp" />
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Generate Bill"
+            android:textColor="@color/primary_color"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingRight="40dp" />
+
+    </LinearLayout>
+
+    <!-- Scrollable Bounded Content View -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:paddingBottom="100dp">
+        android:layout_below="@id/layoutHeader"
+        android:layout_above="@+id/layoutBottomButtons"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <!-- Header -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@color/white"
-                android:elevation="2dp"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="12dp"
-                android:gravity="center_vertical">
-
-                <!-- Back Button -->
-                <Button
-                    android:id="@+id/btnBack"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/ic_back_arrow"
-                    android:gravity="center"
-                    android:text="←"
-                    android:textColor="@color/primary_color"
-                    android:textSize="20sp"
-                    android:stateListAnimator="@null" />
-
-                <!-- Title -->
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Generate Bill"
-                    android:textColor="@color/primary_color"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:paddingRight="40dp" />
-
-            </LinearLayout>
 
             <!-- Billed To Section -->
             <LinearLayout
@@ -616,17 +619,13 @@
 
             </LinearLayout>
 
-            <!-- Bottom Spacer -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="50dp" />
-
         </LinearLayout>
 
     </ScrollView>
 
     <!-- Fixed Bottom Button -->
     <LinearLayout
+        android:id="@+id/layoutBottomButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

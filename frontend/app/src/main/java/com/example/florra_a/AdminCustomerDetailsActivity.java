@@ -43,12 +43,13 @@ public class AdminCustomerDetailsActivity extends AppCompatActivity {
 
         customerName = getIntent().getStringExtra("customer_name");
         customerPhone = getIntent().getStringExtra("customer_phone");
+        String customerImage = getIntent().getStringExtra("customer_image");
 
-        initViews();
+        initViews(customerImage);
         fetchCustomerData();
     }
 
-    private void initViews() {
+    private void initViews(String customerImage) {
         tvName = findViewById(R.id.tvCustomerName);
         tvPhone = findViewById(R.id.tvCustomerPhone);
         tvBillCount = findViewById(R.id.tvBillCount);
@@ -60,12 +61,28 @@ public class AdminCustomerDetailsActivity extends AppCompatActivity {
         tvName.setText(customerName);
         tvPhone.setText(customerPhone);
 
-        // Load Letter Avatar
-        String avatarUrl = "https://ui-avatars.com/api/?name=" + customerName + "&background=random&size=256";
-        com.bumptech.glide.Glide.with(this)
-                .load(avatarUrl)
+        if (customerImage != null && !customerImage.isEmpty()) {
+            String fullUrl = customerImage;
+            if (!fullUrl.startsWith("http")) {
+                String baseUrl = com.example.florra_a.network.RetrofitClient.BASE_URL;
+                if (baseUrl.endsWith("/") && fullUrl.startsWith("/")) fullUrl = baseUrl + fullUrl.substring(1);
+                else if (!baseUrl.endsWith("/") && !fullUrl.startsWith("/")) fullUrl = baseUrl + "/" + fullUrl;
+                else fullUrl = baseUrl + fullUrl;
+            }
+            com.bumptech.glide.Glide.with(this)
+                .load(fullUrl)
                 .circleCrop()
+                .placeholder(R.drawable.ic_person)
                 .into(ivProfile);
+        } else {
+            // Load Letter Avatar
+            String encodedName = customerName != null ? customerName.replace(" ", "+") : "User";
+            String avatarUrl = "https://ui-avatars.com/api/?name=" + encodedName + "&background=random&size=256";
+            com.bumptech.glide.Glide.with(this)
+                    .load(avatarUrl)
+                    .circleCrop()
+                    .into(ivProfile);
+        }
 
         // Setup Bill Recycler
         rvBills.setLayoutManager(new LinearLayoutManager(this));
@@ -85,6 +102,22 @@ public class AdminCustomerDetailsActivity extends AppCompatActivity {
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v -> onBackPressed());
         }
+
+        // Smoothly fade out profile photo on scroll so it is completely invisible when collapsed
+        com.google.android.material.appbar.AppBarLayout appBarLayout = findViewById(R.id.appBarLayout);
+        if (appBarLayout != null && ivProfile != null) {
+            appBarLayout.addOnOffsetChangedListener(new com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener() {
+                @Override
+                public void onOffsetChanged(com.google.android.material.appbar.AppBarLayout appBarLayout, int verticalOffset) {
+                    float totalScrollRange = appBarLayout.getTotalScrollRange();
+                    if (totalScrollRange == 0) return;
+
+                    float percentage = Math.abs(verticalOffset) / totalScrollRange;
+                    ivProfile.setAlpha(1.0f - percentage);
+                }
+            });
+        }
+
     }
 
     private void fetchCustomerData() {

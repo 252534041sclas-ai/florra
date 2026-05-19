@@ -12,6 +12,16 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import android.net.Uri;
+import android.content.Intent;
+import android.widget.ImageView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+import com.bumptech.glide.Glide;
 
 public class EditShopProfileActivity extends AppCompatActivity {
 
@@ -26,6 +36,38 @@ public class EditShopProfileActivity extends AppCompatActivity {
     private static final String KEY_SHOP_GST = "shop_gst";
     private static final String KEY_SHOP_WASTAGE = "shop_wastage";
     private static final String KEY_SHOP_ADDRESS = "shop_address";
+    private static final String KEY_SHOP_LOGO = "shop_logo_path";
+
+    private ImageView ivShopLogo;
+    private String selectedLogoPath = null;
+
+    private final ActivityResultLauncher<Intent> logoPickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Uri imageUri = result.getData().getData();
+                    if (imageUri != null) {
+                        try {
+                            InputStream is = getContentResolver().openInputStream(imageUri);
+                            File logoFile = new File(getFilesDir(), "shop_logo.jpg");
+                            OutputStream os = new FileOutputStream(logoFile);
+                            byte[] buffer = new byte[1024];
+                            int length;
+                            while ((length = is.read(buffer)) > 0) {
+                                os.write(buffer, 0, length);
+                            }
+                            os.flush();
+                            os.close();
+                            is.close();
+                            selectedLogoPath = logoFile.getAbsolutePath();
+                            Glide.with(this).load(logoFile).into(ivShopLogo);
+                        } catch (Exception e) {
+                            Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +111,13 @@ public class EditShopProfileActivity extends AppCompatActivity {
         }
 
         // Change storefront photo click simulator
+        ivShopLogo = findViewById(R.id.ivShopLogo);
         View btnChangeLogo = findViewById(R.id.btnChangeLogo);
         if (btnChangeLogo != null) {
-            btnChangeLogo.setOnClickListener(v -> Toast.makeText(this, "Showroom logo selection is simulated! Default logo loaded.", Toast.LENGTH_SHORT).show());
+            btnChangeLogo.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                logoPickerLauncher.launch(intent);
+            });
         }
     }
 
@@ -96,6 +142,14 @@ public class EditShopProfileActivity extends AppCompatActivity {
         }
         if (edtShopAddress != null) {
             edtShopAddress.setText(sharedPrefs.getString(KEY_SHOP_ADDRESS, "NH-8A, Morbi Bypass Road, Morbi, Gujarat, 363641"));
+        }
+
+        selectedLogoPath = sharedPrefs.getString(KEY_SHOP_LOGO, null);
+        if (selectedLogoPath != null && ivShopLogo != null) {
+            File logoFile = new File(selectedLogoPath);
+            if (logoFile.exists()) {
+                Glide.with(this).load(logoFile).into(ivShopLogo);
+            }
         }
     }
 
@@ -189,6 +243,9 @@ public class EditShopProfileActivity extends AppCompatActivity {
             editor.putString(KEY_SHOP_GST, shopGst);
             editor.putString(KEY_SHOP_WASTAGE, shopWastage);
             editor.putString(KEY_SHOP_ADDRESS, shopAddress);
+            if (selectedLogoPath != null) {
+                editor.putString(KEY_SHOP_LOGO, selectedLogoPath);
+            }
             editor.apply();
 
             // Display success popup

@@ -614,8 +614,8 @@ public class AddProductActivity extends AppCompatActivity {
         });
     }
 
-    private okhttp3.RequestBody createPartFromString(String partString) {
-        return okhttp3.RequestBody.create(okhttp3.MultipartBody.FORM, partString);
+    private okhttp3.RequestBody createPartFromString(String value) {
+        return okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), value != null ? value : "");
     }
 
     @Override

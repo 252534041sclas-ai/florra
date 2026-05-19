@@ -12,6 +12,8 @@ class AdminUser(models.Model):
     can_access_billing = models.BooleanField(default=False)
     can_access_reports = models.BooleanField(default=False)
     can_access_predictions = models.BooleanField(default=False)
+    mobile = models.CharField(max_length=15, blank=True, null=True)
+    profile_image = models.ImageField(upload_to="profile_images/", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def set_password(self, raw_password):

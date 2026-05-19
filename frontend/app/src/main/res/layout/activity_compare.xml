@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="#F8F9FA">
 
     <!-- Header -->
     <RelativeLayout
@@ -19,8 +20,9 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
             android:src="@drawable/ic_arrow_back"
-            android:padding="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
+            android:padding="10dp"
+            android:tint="@color/primary"
+            android:background="@drawable/bg_circle_icon"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -32,363 +34,582 @@
             android:layout_centerInParent="true"/>
     </RelativeLayout>
 
-    <!-- Comparison Grid -->
-    <LinearLayout
+    <!-- Single synchronized comparison scroll container -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        android:fillViewport="true">
 
-        <!-- Product A (Left) -->
-        <ScrollView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
+            <!-- Side-by-side Top Cards -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="24dp">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginBottom="8dp">
-                    <ImageView
-                        android:id="@+id/imgProductA"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/tile_placeholder"/>
-                </androidx.cardview.widget.CardView>
-
-                <TextView
-                    android:id="@+id/tvNameA"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Product Name"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"/>
-
-                <TextView
-                    android:id="@+id/tvPriceA"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="₹0.00 / sq.ft"
-                    android:textSize="12sp"
-                    android:textColor="@color/primary"
-                    android:layout_marginBottom="16dp"/>
-
-                <!-- Attributes -->
-                <TextView 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Model" 
-                    android:textSize="10sp" 
-                    android:textColor="@color/gray_600"/>
-                <TextView 
-                    android:id="@+id/tvModelA" 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="-" 
-                    android:textSize="12sp" 
-                    android:textColor="@color/black" 
-                    android:layout_marginBottom="8dp"/>
-
-                <TextView 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Category" 
-                    android:textSize="10sp" 
-                    android:textColor="@color/gray_600"/>
-                <TextView 
-                    android:id="@+id/tvCategoryA" 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="-" 
-                    android:textSize="12sp" 
-                    android:textColor="@color/black" 
-                    android:layout_marginBottom="8dp"/>
-
-                <TextView 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Size" 
-                    android:textSize="10sp" 
-                    android:textColor="@color/gray_600"/>
-                <TextView 
-                    android:id="@+id/tvSizeA" 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="-" 
-                    android:textSize="12sp" 
-                    android:textColor="@color/black" 
-                    android:layout_marginBottom="8dp" />
-
-                <TextView 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Finish" 
-                    android:textSize="10sp" 
-                    android:textColor="@color/gray_600"/>
-                <TextView 
-                    android:id="@+id/tvFinishA" 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="-" 
-                    android:textSize="12sp" 
-                    android:textColor="@color/black" 
-                    android:layout_marginBottom="8dp"/>
-
-                <TextView 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Thickness" 
-                    android:textSize="10sp" 
-                    android:textColor="@color/gray_600"/>
-                <TextView 
-                    android:id="@+id/tvThicknessA" 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="-" 
-                    android:textSize="12sp" 
-                    android:textColor="@color/black" 
-                    android:layout_marginBottom="8dp"/>
-
-                <TextView 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Coverage" 
-                    android:textSize="10sp" 
-                    android:textColor="@color/gray_600"/>
-                <TextView 
-                    android:id="@+id/tvCoverageA" 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="-" 
-                    android:textSize="12sp" 
-                    android:textColor="@color/black" 
-                    android:layout_marginBottom="8dp"/>
-
-                <TextView 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Packing" 
-                    android:textSize="10sp" 
-                    android:textColor="@color/gray_600"/>
-                <TextView 
-                    android:id="@+id/tvPackingA" 
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="-" 
-                    android:textSize="12sp" 
-                    android:textColor="@color/black" 
-                    android:layout_marginBottom="8dp"/>
-
-            </LinearLayout>
-        </ScrollView>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="#E0E0E0"/>
-
-        <!-- Product B (Right - Placeholder or Details) -->
-        <ScrollView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:fillViewport="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <!-- Helper Layout for Adding Product -->
+                <!-- Product A top card -->
                 <LinearLayout
-                    android:id="@+id/layoutAddProduct"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:gravity="center"
-                    android:minHeight="200dp">
-                    
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_add"
-                        android:tint="@color/gray_400"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Select Product"
-                        android:textColor="@color/gray_600"
-                        android:layout_marginTop="8dp"/>
-                </LinearLayout>
-
-                <!-- Details Layout (Initially Gone) -->
-                <LinearLayout
-                    android:id="@+id/layoutProductBDetails"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:paddingEnd="8dp">
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
+                        android:layout_height="140dp"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="2dp"
                         android:layout_marginBottom="8dp">
+
                         <ImageView
-                            android:id="@+id/imgProductB"
+                            android:id="@+id/imgProductA"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
                             android:src="@drawable/tile_placeholder"/>
-                        
-                        <ImageView
-                            android:id="@+id/btnCloseB"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_close"
-                            android:background="@drawable/bg_circle_button"
-                            android:layout_gravity="end|top"
-                            android:padding="4dp"
-                            android:layout_margin="4dp"/>
                     </androidx.cardview.widget.CardView>
 
                     <TextView
-                        android:id="@+id/tvNameB"
+                        android:id="@+id/tvNameA"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Product Name"
                         android:textStyle="bold"
                         android:textSize="14sp"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black"
+                        android:maxLines="2"
+                        android:ellipsize="end"/>
 
                     <TextView
-                        android:id="@+id/tvPriceB"
+                        android:id="@+id/tvPriceA"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="₹0.00 / sq.ft"
-                        android:textSize="12sp"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
                         android:textColor="@color/primary"
-                        android:layout_marginBottom="16dp"/>
-
-                    <!-- Attributes -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Model"
-                        android:textSize="10sp"
-                        android:textColor="@color/gray_600"/>
-                    <TextView
-                        android:id="@+id/tvModelB"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="12sp"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Category"
-                        android:textSize="10sp"
-                        android:textColor="@color/gray_600"/>
-                    <TextView
-                        android:id="@+id/tvCategoryB"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="12sp"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Size"
-                        android:textSize="10sp"
-                        android:textColor="@color/gray_600"/>
-                    <TextView
-                        android:id="@+id/tvSizeB"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="12sp"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Finish"
-                        android:textSize="10sp"
-                        android:textColor="@color/gray_600"/>
-                    <TextView
-                        android:id="@+id/tvFinishB"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="12sp"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Thickness"
-                        android:textSize="10sp"
-                        android:textColor="@color/gray_600"/>
-                    <TextView
-                        android:id="@+id/tvThicknessB"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="12sp"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Coverage"
-                        android:textSize="10sp"
-                        android:textColor="@color/gray_600"/>
-                    <TextView
-                        android:id="@+id/tvCoverageB"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="12sp"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="8dp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Packing"
-                        android:textSize="10sp"
-                        android:textColor="@color/gray_600"/>
-                    <TextView
-                        android:id="@+id/tvPackingB"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:textSize="12sp"
-                        android:textColor="@color/black"
-                        android:layout_marginBottom="8dp"/>
+                        android:layout_marginTop="4dp"/>
                 </LinearLayout>
 
-            </LinearLayout>
-        </ScrollView>
+                <!-- Product B top card (Container for select / details) -->
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp">
 
-    </LinearLayout>
+                    <!-- Select Product B Placeholder -->
+                    <LinearLayout
+                        android:id="@+id/layoutAddProduct"
+                        android:layout_width="match_parent"
+                        android:layout_height="140dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@drawable/border_dashed_gray"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:src="@drawable/ic_add"
+                            android:tint="@color/gray_400"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Select Product"
+                            android:textColor="@color/gray_600"
+                            android:textSize="12sp"
+                            android:layout_marginTop="6dp"/>
+                    </LinearLayout>
+
+                    <!-- Product B details -->
+                    <LinearLayout
+                        android:id="@+id/layoutProductBDetails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="2dp"
+                            android:layout_marginBottom="8dp">
+
+                            <ImageView
+                                android:id="@+id/imgProductB"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/tile_placeholder"/>
+
+                            <!-- Close Button B -->
+                            <ImageView
+                                android:id="@+id/btnCloseB"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_close"
+                                android:background="@drawable/bg_circle_icon"
+                                android:layout_gravity="end|top"
+                                android:padding="4dp"
+                                android:layout_margin="6dp"
+                                android:tint="@color/red_600"
+                                android:clickable="true"
+                                android:focusable="true"/>
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:id="@+id/tvNameB"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Product Name"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:textColor="@color/black"
+                            android:maxLines="2"
+                            android:ellipsize="end"/>
+
+                        <TextView
+                            android:id="@+id/tvPriceB"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="₹0.00 / sq.ft"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/primary"
+                            android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+                </FrameLayout>
+            </LinearLayout>
+
+            <!-- Specification Container Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/white"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Section Header -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PRODUCT SPECIFICATIONS"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"
+                        android:textColor="@color/gray_600"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="16dp"/>
+
+                    <!-- SPECIFICATION ROW: MODEL -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Model"
+                            android:textColor="@color/gray_500"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/bg_tag"
+                            android:backgroundTint="#F3F4F6"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2"
+                            android:layout_marginTop="8dp">
+
+                            <TextView
+                                android:id="@+id/tvModelA"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+
+                            <TextView
+                                android:id="@+id/tvModelB"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+                        </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E5E7EB"
+                            android:layout_marginTop="12dp"/>
+                    </LinearLayout>
+
+                    <!-- SPECIFICATION ROW: CATEGORY -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Category"
+                            android:textColor="@color/gray_500"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/bg_tag"
+                            android:backgroundTint="#F3F4F6"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2"
+                            android:layout_marginTop="8dp">
+
+                            <TextView
+                                android:id="@+id/tvCategoryA"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+
+                            <TextView
+                                android:id="@+id/tvCategoryB"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+                        </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E5E7EB"
+                            android:layout_marginTop="12dp"/>
+                    </LinearLayout>
+
+                    <!-- SPECIFICATION ROW: SIZE -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Size"
+                            android:textColor="@color/gray_500"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/bg_tag"
+                            android:backgroundTint="#F3F4F6"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2"
+                            android:layout_marginTop="8dp">
+
+                            <TextView
+                                android:id="@+id/tvSizeA"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+
+                            <TextView
+                                android:id="@+id/tvSizeB"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+                        </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E5E7EB"
+                            android:layout_marginTop="12dp"/>
+                    </LinearLayout>
+
+                    <!-- SPECIFICATION ROW: FINISH -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Finish"
+                            android:textColor="@color/gray_500"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/bg_tag"
+                            android:backgroundTint="#F3F4F6"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2"
+                            android:layout_marginTop="8dp">
+
+                            <TextView
+                                android:id="@+id/tvFinishA"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+
+                            <TextView
+                                android:id="@+id/tvFinishB"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+                        </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E5E7EB"
+                            android:layout_marginTop="12dp"/>
+                    </LinearLayout>
+
+                    <!-- SPECIFICATION ROW: THICKNESS -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thickness"
+                            android:textColor="@color/gray_500"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/bg_tag"
+                            android:backgroundTint="#F3F4F6"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2"
+                            android:layout_marginTop="8dp">
+
+                            <TextView
+                                android:id="@+id/tvThicknessA"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+
+                            <TextView
+                                android:id="@+id/tvThicknessB"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+                        </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E5E7EB"
+                            android:layout_marginTop="12dp"/>
+                    </LinearLayout>
+
+                    <!-- SPECIFICATION ROW: COVERAGE -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Coverage"
+                            android:textColor="@color/gray_500"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/bg_tag"
+                            android:backgroundTint="#F3F4F6"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2"
+                            android:layout_marginTop="8dp">
+
+                            <TextView
+                                android:id="@+id/tvCoverageA"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+
+                            <TextView
+                                android:id="@+id/tvCoverageB"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+                        </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#E5E7EB"
+                            android:layout_marginTop="12dp"/>
+                    </LinearLayout>
+
+                    <!-- SPECIFICATION ROW: PACKING -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Packing"
+                            android:textColor="@color/gray_500"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/bg_tag"
+                            android:backgroundTint="#F3F4F6"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2"
+                            android:layout_marginTop="8dp">
+
+                            <TextView
+                                android:id="@+id/tvPackingA"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+
+                            <TextView
+                                android:id="@+id/tvPackingB"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:text="-"
+                                android:textColor="@color/black"
+                                android:textSize="13sp"
+                                android:gravity="center"
+                                android:paddingHorizontal="8dp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

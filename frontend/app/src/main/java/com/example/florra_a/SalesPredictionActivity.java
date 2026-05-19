@@ -25,6 +25,7 @@ public class SalesPredictionActivity extends AppCompatActivity {
     private View loadingOverlay;
     
     private boolean isPredictedMode = true;
+    private boolean isFirstLoad = true;
     private com.example.florra_a.models.SalesPredictionResponse currentData;
 
     @Override
@@ -94,7 +95,7 @@ public class SalesPredictionActivity extends AppCompatActivity {
     }
     
     private void fetchSalesPrediction() {
-        if (loadingOverlay != null) {
+        if (isFirstLoad && loadingOverlay != null) {
             loadingOverlay.setVisibility(View.VISIBLE);
             startLoadingSimulation();
         }
@@ -110,16 +111,26 @@ public class SalesPredictionActivity extends AppCompatActivity {
             public void onResponse(retrofit2.Call<com.example.florra_a.models.SalesPredictionResponse> call, 
                                    retrofit2.Response<com.example.florra_a.models.SalesPredictionResponse> response) {
                 
-                // Add a small delay for simulation effect if it's too fast
-                new android.os.Handler().postDelayed(() -> {
-                    if (loadingOverlay != null) loadingOverlay.setVisibility(View.GONE);
+                if (isFirstLoad) {
+                    // Add a small delay for simulation effect if it's too fast
+                    new android.os.Handler().postDelayed(() -> {
+                        if (loadingOverlay != null) loadingOverlay.setVisibility(View.GONE);
+                        isFirstLoad = false;
+                        if (response.isSuccessful() && response.body() != null) {
+                            currentData = response.body();
+                            updateUI();
+                        } else {
+                            Toast.makeText(SalesPredictionActivity.this, "No data for this selection", Toast.LENGTH_SHORT).show();
+                        }
+                    }, 2000);
+                } else {
                     if (response.isSuccessful() && response.body() != null) {
                         currentData = response.body();
                         updateUI();
                     } else {
                         Toast.makeText(SalesPredictionActivity.this, "No data for this selection", Toast.LENGTH_SHORT).show();
                     }
-                }, 2000);
+                }
             }
 
             @Override

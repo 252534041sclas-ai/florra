@@ -12,22 +12,21 @@
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <!-- Product Image Container with 6dp Radius -->
+        <!-- Product Image Container -->
         <androidx.cardview.widget.CardView
             android:id="@+id/imageContainer"
             android:layout_width="96dp"
             android:layout_height="96dp"
-            android:layout_marginEnd="16dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
             app:cardCornerRadius="6dp"
             app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/zinc_100">
+            app:cardBackgroundColor="@color/zinc_100"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/ivProductImage"
@@ -35,10 +34,9 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_tile_placeholder"
                 android:scaleType="centerCrop" />
-
         </androidx.cardview.widget.CardView>
 
-        <!-- Stock Status Badge (Top Right) -->
+        <!-- Stock Status Badge -->
         <TextView
             android:id="@+id/tvStockStatus"
             android:layout_width="wrap_content"
@@ -50,105 +48,108 @@
             android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
             android:background="@drawable/bg_green_badge"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Product Details -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvProductName"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/imageContainer"
-            android:layout_toStartOf="@id/tvStockStatus"
-            android:orientation="vertical"
-            android:layout_alignParentTop="true"
-            android:paddingVertical="4dp">
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:text="Product Name"
+            android:textColor="@color/primary_color"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintStart_toEndOf="@id/imageContainer"
+            app:layout_constraintEnd_toStartOf="@id/tvStockStatus"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tvProductName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Product Name"
-                android:textColor="@color/primary_color"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:maxLines="1"
-                android:ellipsize="end" />
+        <TextView
+            android:id="@+id/tvProductDetails"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Category • Size"
+            android:textColor="@color/zinc_500"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/tvProductName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvProductName" />
 
-            <TextView
-                android:id="@+id/tvProductDetails"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Category • Size"
-                android:textColor="@color/zinc_500"
-                android:textSize="12sp"
-                android:layout_marginTop="2dp" />
+        <TextView
+            android:id="@+id/tvSku"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="No: --"
+            android:textColor="@color/zinc_400"
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="@id/tvProductName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvProductDetails" />
 
-            <TextView
-                android:id="@+id/tvSku"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No: --"
-                android:textColor="@color/zinc_400"
-                android:textSize="11sp"
-                android:layout_marginTop="4dp" />
-
-        </LinearLayout>
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="imageContainer,tvSku" />
 
         <!-- Bottom Action Row -->
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/zinc_100"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barrier" />
+
+        <TextView
+            android:id="@+id/lblStockCount"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/imageContainer"
-            android:layout_marginTop="8dp"
-            android:paddingTop="8dp">
+            android:layout_marginTop="12dp"
+            android:text="STOCK COUNT"
+            android:textColor="@color/zinc_400"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/zinc_100"
-                android:layout_alignParentTop="true" />
+        <TextView
+            android:id="@+id/tvStockCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="--"
+            android:textColor="@color/primary_color"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lblStockCount" 
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_centerVertical="true">
+        <Button
+            android:id="@+id/btnAction"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="Update"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingHorizontal="20dp"
+            android:background="@drawable/bg_action_button_filled"
+            android:textColor="@color/white"
+            android:stateListAnimator="@null"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/lblStockCount"
+            app:layout_constraintBottom_toBottomOf="@id/tvStockCount" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="STOCK COUNT"
-                    android:textColor="@color/zinc_400"
-                    android:textSize="10sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.05" />
-
-                <TextView
-                    android:id="@+id/tvStockCount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="--"
-                    android:textColor="@color/primary_color"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btnAction"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:text="Update"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:paddingHorizontal="20dp"
-                android:background="@drawable/bg_action_button_filled"
-                android:textColor="@color/white"
-                android:stateListAnimator="@null" />
-
-        </RelativeLayout>
-
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

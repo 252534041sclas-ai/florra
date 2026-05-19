@@ -65,6 +65,13 @@ public class AdminCatalogActivity extends AppCompatActivity {
         fetchProducts();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Always refresh the catalog when returning to this screen
+        fetchProducts();
+    }
+
     private void setupBottomNavigation() {
         // Dashboard button
         View btnDashboard = findViewById(R.id.bottomDashboard);

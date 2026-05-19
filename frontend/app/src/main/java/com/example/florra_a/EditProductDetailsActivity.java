@@ -394,6 +394,19 @@ public class EditProductDetailsActivity extends AppCompatActivity {
                     Toast.makeText(EditProductDetailsActivity.this, "Product updated!", Toast.LENGTH_SHORT).show();
                     Intent result = new Intent();
                     result.putExtra("updated_product_name", tileName);
+                    result.putExtra("updated_product_tile_no", tileNo);
+                    result.putExtra("updated_product_brand", brandName);
+                    result.putExtra("updated_product_category", category);
+                    result.putExtra("updated_product_size", size);
+                    result.putExtra("updated_product_finish", finish);
+                    result.putExtra("updated_product_color", color);
+                    result.putExtra("updated_product_price", price);
+                    result.putExtra("updated_product_stock", stock);
+                    result.putExtra("updated_product_description", description);
+                    result.putExtra("updated_product_thickness", thickness);
+                    result.putExtra("updated_product_coverage", coverage);
+                    result.putExtra("updated_product_warehouse", warehouse);
+                    result.putExtra("updated_product_is_active", isActive);
                     setResult(RESULT_OK, result);
                     finish();
                 } else {
@@ -417,6 +430,6 @@ public class EditProductDetailsActivity extends AppCompatActivity {
     }
 
     private RequestBody createPartFromString(String value) {
-        return RequestBody.create(MultipartBody.FORM, value);
+        return RequestBody.create(MediaType.parse("text/plain"), value != null ? value : "");
     }
 }

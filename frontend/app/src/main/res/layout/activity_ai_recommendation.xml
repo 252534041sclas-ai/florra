@@ -27,10 +27,10 @@
                 android:id="@+id/btnBack"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/bg_circle_gray"
+                android:background="@drawable/bg_circle_icon"
                 android:padding="10dp"
                 android:src="@drawable/ic_arrow_back"
-                android:tint="#1a1a1a" />
+                android:tint="@color/primary" />
 
             <TextView
                 android:layout_width="wrap_content"

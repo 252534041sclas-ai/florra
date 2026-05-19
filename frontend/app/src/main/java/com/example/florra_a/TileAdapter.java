@@ -131,18 +131,26 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         if (category == null) category = product.getFinish();
         holder.tileFinish.setText(category != null ? category.toUpperCase() : "PORCELAIN");
 
-        // Stock Status
-        String stockStatus = product.getStockStatus();
-        if (stockStatus == null) stockStatus = "IN STOCK"; // Default
-        holder.stockBadgeText.setText(stockStatus);
-
-        // Set stock color
-        if ("LOW STOCK".equalsIgnoreCase(stockStatus) || "OUT OF STOCK".equalsIgnoreCase(stockStatus)) {
-            holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.orange_600));
-            holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
+        // Stock Status or Match Score
+        if (product.getSimilarityScore() > 0) {
+            int percentage = (int) (product.getSimilarityScore() * 100);
+            if (percentage > 100) percentage = 100;
+            holder.stockBadgeText.setText(percentage + "% MATCH");
+            holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.green_800));
+            holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_green);
         } else {
-            holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.green_600));
-            holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_stock);
+            String stockStatus = product.getStockStatus();
+            if (stockStatus == null) stockStatus = "IN STOCK"; // Default
+            holder.stockBadgeText.setText(stockStatus);
+
+            // Set stock color
+            if ("LOW STOCK".equalsIgnoreCase(stockStatus) || "OUT OF STOCK".equalsIgnoreCase(stockStatus)) {
+                holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.orange_600));
+                holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
+            } else {
+                holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.green_600));
+                holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_stock);
+            }
         }
 
         // Load image using Glide

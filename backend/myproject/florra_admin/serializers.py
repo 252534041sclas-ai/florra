@@ -31,10 +31,25 @@ class BillItemSerializer(serializers.ModelSerializer):
 
 class BillSerializer(serializers.ModelSerializer):
     items = BillItemSerializer(many=True, required=False)
+    customer_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Bill
         fields = "__all__"
+
+    def get_customer_image(self, obj):
+        from florra.models import CustomerUser
+        if obj.customer_phone:
+            try:
+                user = CustomerUser.objects.filter(mobile=obj.customer_phone).first()
+                if user and user.profile_image:
+                    request = self.context.get('request')
+                    if request:
+                        return request.build_absolute_uri(user.profile_image.url)
+                    return user.profile_image.url
+            except Exception:
+                pass
+        return None
 
     def create(self, validated_data):
         items_data = validated_data.pop('items', [])
@@ -50,9 +65,26 @@ from rest_framework import serializers
 from .models import Enquiry
 
 class EnquirySerializer(serializers.ModelSerializer):
+    customer_image = serializers.SerializerMethodField()
+
     class Meta:
         model = Enquiry
         fields = "__all__"
+
+    def get_customer_image(self, obj):
+        from florra.models import CustomerUser
+        user = None
+        if obj.customer_email:
+            user = CustomerUser.objects.filter(email=obj.customer_email).first()
+        if not user and obj.phone:
+            user = CustomerUser.objects.filter(mobile=obj.phone).first()
+        
+        if user and user.profile_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(user.profile_image.url)
+            return user.profile_image.url
+        return None
 
 
 from rest_framework import serializers
@@ -100,5 +132,5 @@ from .models import AdminUser
 class AdminUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdminUser
-        fields = ['id', 'full_name', 'email', 'role', 'is_active', 'can_access_billing', 'can_access_reports', 'can_access_predictions', 'created_at']
+        fields = ['id', 'full_name', 'email', 'role', 'is_active', 'can_access_billing', 'can_access_reports', 'can_access_predictions', 'mobile', 'profile_image', 'created_at']
 

@@ -55,6 +55,22 @@ public class RequestQuotationActivity extends AppCompatActivity {
 
         // Setup spinner
         setupRoomTypeSpinner();
+        
+        // Load default customer details
+        loadDefaultCustomerDetails();
+    }
+
+    private void loadDefaultCustomerDetails() {
+        com.example.florra_a.utils.SharedPrefManager prefManager = com.example.florra_a.utils.SharedPrefManager.getInstance(this);
+        String name = prefManager.getFullName();
+        String email = prefManager.getEmail();
+
+        if (name != null && !name.trim().isEmpty() && !name.equals("User") && !name.equals("Customer User") && !name.equals("Admin User")) {
+            etFullName.setText(name);
+        }
+        if (email != null && !email.trim().isEmpty()) {
+            etEmail.setText(email);
+        }
     }
 
     private void initializeViews() {

@@ -175,6 +175,8 @@ public class AIRecommendationActivity extends AppCompatActivity {
         resetChips();
         int activeChipId = 0;
 
+        Product ref = originalProducts.isEmpty() ? null : originalProducts.get(0);
+
         switch (currentFilterType) {
             case "top":
                 filteredProducts.addAll(baseList);
@@ -183,14 +185,36 @@ public class AIRecommendationActivity extends AppCompatActivity {
                 activeChipId = R.id.btnTopMatches;
                 break;
             case "texture":
-                for (Product p : baseList) {
-                    if (p.getFinish() != null && !p.getFinish().isEmpty()) filteredProducts.add(p);
+                if (ref != null && ref.getFinish() != null && !ref.getFinish().isEmpty()) {
+                    String refFinish = ref.getFinish().toLowerCase().trim();
+                    for (Product p : baseList) {
+                        if (p.getFinish() != null && p.getFinish().toLowerCase().contains(refFinish)) {
+                            filteredProducts.add(p);
+                        }
+                    }
+                }
+                // Fallback: If no direct matches, show all items with a finish
+                if (filteredProducts.isEmpty()) {
+                    for (Product p : baseList) {
+                        if (p.getFinish() != null && !p.getFinish().isEmpty()) filteredProducts.add(p);
+                    }
                 }
                 activeChipId = R.id.btnTexture;
                 break;
             case "color":
-                for (Product p : baseList) {
-                    if (p.getColor() != null && !p.getColor().isEmpty()) filteredProducts.add(p);
+                if (ref != null && ref.getColor() != null && !ref.getColor().isEmpty()) {
+                    String refColor = ref.getColor().toLowerCase().trim();
+                    for (Product p : baseList) {
+                        if (p.getColor() != null && p.getColor().toLowerCase().contains(refColor)) {
+                            filteredProducts.add(p);
+                        }
+                    }
+                }
+                // Fallback: If no direct matches, show all items with a color
+                if (filteredProducts.isEmpty()) {
+                    for (Product p : baseList) {
+                        if (p.getColor() != null && !p.getColor().isEmpty()) filteredProducts.add(p);
+                    }
                 }
                 activeChipId = R.id.btnColorPalette;
                 break;

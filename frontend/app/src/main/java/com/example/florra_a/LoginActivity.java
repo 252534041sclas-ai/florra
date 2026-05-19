@@ -148,6 +148,18 @@ public class LoginActivity extends AppCompatActivity {
 
         // Logo for secret gesture
         logoIcon = findViewById(R.id.logoIcon);
+
+        // Load custom logo if exists
+        if (logoIcon != null) {
+            SharedPreferences shopPrefs = getSharedPreferences("ShowroomPrefs", MODE_PRIVATE);
+            String customLogoPath = shopPrefs.getString("shop_logo_path", null);
+            if (customLogoPath != null && !customLogoPath.isEmpty()) {
+                java.io.File imgFile = new java.io.File(customLogoPath);
+                if (imgFile.exists()) {
+                    com.bumptech.glide.Glide.with(this).load(imgFile).into(logoIcon);
+                }
+            }
+        }
     }
 
     private void setupClickListeners() {

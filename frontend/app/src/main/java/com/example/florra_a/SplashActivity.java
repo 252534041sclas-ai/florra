@@ -39,6 +39,19 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash);
 
+        // Load custom logo if exists
+        android.widget.ImageView ivSplashLogo = findViewById(R.id.ivSplashLogo);
+        if (ivSplashLogo != null) {
+            SharedPreferences shopPrefs = getSharedPreferences("ShowroomPrefs", MODE_PRIVATE);
+            String customLogoPath = shopPrefs.getString("shop_logo_path", null);
+            if (customLogoPath != null && !customLogoPath.isEmpty()) {
+                java.io.File imgFile = new java.io.File(customLogoPath);
+                if (imgFile.exists()) {
+                    com.bumptech.glide.Glide.with(this).load(imgFile).into(ivSplashLogo);
+                }
+            }
+        }
+
         checkNotificationPermission();
 
         new Handler().postDelayed(new Runnable() {

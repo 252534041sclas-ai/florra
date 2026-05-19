@@ -256,25 +256,6 @@
                 });
             }
 
-            // MANAGE STAFF CARD
-            View cardManageStaff = findViewById(R.id.cardManageStaff);
-            if (cardManageStaff != null) {
-                String role = SharedPrefManager.getInstance(this).getRole();
-                if ("staff".equalsIgnoreCase(role)) {
-                    cardManageStaff.setVisibility(View.GONE);
-                } else {
-                    cardManageStaff.setVisibility(View.VISIBLE);
-                    cardManageStaff.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(AdminDashboardActivity.this, ManageStaffActivity.class);
-                            startActivity(intent);
-                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                        }
-                    });
-                }
-            }
-
             // ========== ACTIVITY ITEMS CLICK LISTENERS ==========
             // NOTE: Using the correct IDs from the updated XML
 

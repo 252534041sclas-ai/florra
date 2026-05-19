@@ -44,7 +44,8 @@ class AdminLoginView(APIView):
             "role": admin.role,
             "can_access_billing": admin.can_access_billing,
             "can_access_reports": admin.can_access_reports,
-            "can_access_predictions": admin.can_access_predictions
+            "can_access_predictions": admin.can_access_predictions,
+            "profile_image": admin.profile_image.url if admin.profile_image else None
         }, status=status.HTTP_200_OK)
 
 

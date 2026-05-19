@@ -104,7 +104,7 @@ public class CompareActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        findViewById(R.id.btnBack).setOnClickListener(v -> onBackPressed());
 
         layoutAddProduct.setOnClickListener(v -> {
             Intent intent = new Intent(CompareActivity.this, CatalogActivity.class);
@@ -215,5 +215,11 @@ public class CompareActivity extends AppCompatActivity {
             
             loadProductB(p, packing);
         }
+     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 }

@@ -41,12 +41,28 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         String stats = customer.getBillCount() + " Bills • " + customer.getEnquiryCount() + " Enquiries";
         holder.tvStats.setText(stats);
 
-        // Load Letter Avatar
-        String avatarUrl = "https://ui-avatars.com/api/?name=" + customer.getName() + "&background=random&size=128";
-        com.bumptech.glide.Glide.with(holder.itemView.getContext())
-                .load(avatarUrl)
+        if (customer.getProfileImageUrl() != null && !customer.getProfileImageUrl().isEmpty()) {
+            String fullUrl = customer.getProfileImageUrl();
+            if (!fullUrl.startsWith("http")) {
+                String baseUrl = com.example.florra_a.network.RetrofitClient.BASE_URL;
+                if (baseUrl.endsWith("/") && fullUrl.startsWith("/")) fullUrl = baseUrl + fullUrl.substring(1);
+                else if (!baseUrl.endsWith("/") && !fullUrl.startsWith("/")) fullUrl = baseUrl + "/" + fullUrl;
+                else fullUrl = baseUrl + fullUrl;
+            }
+            com.bumptech.glide.Glide.with(holder.itemView.getContext())
+                .load(fullUrl)
                 .circleCrop()
+                .placeholder(R.drawable.ic_person)
                 .into(holder.ivProfile);
+        } else {
+            // Load Letter Avatar
+            String encodedName = customer.getName() != null ? customer.getName().replace(" ", "+") : "User";
+            String avatarUrl = "https://ui-avatars.com/api/?name=" + encodedName + "&background=random&size=128";
+            com.bumptech.glide.Glide.with(holder.itemView.getContext())
+                    .load(avatarUrl)
+                    .circleCrop()
+                    .into(holder.ivProfile);
+        }
 
         holder.itemView.setOnClickListener(v -> listener.onItemClick(customer));
     }

@@ -529,7 +529,31 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
                 String updatedName = data.getStringExtra("updated_product_name");
                 if (updatedName != null) {
                     currentProductName = updatedName;
-                    tvProductName.setText(updatedName);
+                    currentProductTileNo = data.getStringExtra("updated_product_tile_no");
+                    currentProductSku = currentProductTileNo;
+                    currentProductBrand = data.getStringExtra("updated_product_brand");
+                    currentProductCategory = data.getStringExtra("updated_product_category");
+                    currentProductSize = data.getStringExtra("updated_product_size");
+                    currentFinish = data.getStringExtra("updated_product_finish");
+                    currentProductColor = data.getStringExtra("updated_product_color");
+                    currentPrice = data.getStringExtra("updated_product_price");
+                    currentStock = data.getStringExtra("updated_product_stock");
+                    currentDescription = data.getStringExtra("updated_product_description");
+                    currentThickness = data.getStringExtra("updated_product_thickness");
+                    currentCoverage = data.getStringExtra("updated_product_coverage");
+                    currentWarehouse = data.getStringExtra("updated_product_warehouse");
+                    currentIsActive = data.getBooleanExtra("updated_product_is_active", currentIsActive);
+                    
+                    try {
+                        int stockNum = Integer.parseInt(currentStock);
+                        if (stockNum <= 0) currentStockStatus = "Out of Stock";
+                        else if (stockNum < 20) currentStockStatus = "Low Stock";
+                        else currentStockStatus = "In Stock";
+                    } catch (Exception e) {
+                        currentStockStatus = "In Stock";
+                    }
+                    
+                    updateUIWithProductData();
                     Toast.makeText(this, "Product updated successfully", Toast.LENGTH_SHORT).show();
                 }
             }
