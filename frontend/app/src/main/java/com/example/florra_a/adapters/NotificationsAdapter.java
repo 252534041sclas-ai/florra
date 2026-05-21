@@ -64,14 +64,39 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             holder.layoutIcon.setBackgroundColor(Color.parseColor("#F1F5F9"));
         }
 
-        // Set Icon based on type
-        // Ensure you have these drawables or use default
-        if ("QUOTATION".equalsIgnoreCase(notification.getType())) {
-            holder.imgIcon.setImageResource(R.drawable.ic_description); 
-        } else if ("SYSTEM".equalsIgnoreCase(notification.getType())) {
-            holder.imgIcon.setImageResource(R.drawable.ic_info);
+        // Load tagged product image if present, otherwise default to icon
+        if (notification.getProductImage() != null && !notification.getProductImage().isEmpty()) {
+            holder.cardProductImage.setVisibility(View.VISIBLE);
+            holder.layoutIcon.setVisibility(View.GONE);
+
+            String imageUrl = notification.getProductImage();
+            if (!imageUrl.startsWith("http")) {
+                String baseUrl = com.example.florra_a.network.RetrofitClient.BASE_URL;
+                if (baseUrl.endsWith("/") && imageUrl.startsWith("/")) {
+                    imageUrl = baseUrl + imageUrl.substring(1);
+                } else if (!baseUrl.endsWith("/") && !imageUrl.startsWith("/")) {
+                    imageUrl = baseUrl + "/" + imageUrl;
+                } else {
+                    imageUrl = baseUrl + imageUrl;
+                }
+            }
+
+            com.bumptech.glide.Glide.with(context)
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_grid_view)
+                .error(R.drawable.ic_grid_view)
+                .into(holder.imgProduct);
         } else {
-            holder.imgIcon.setImageResource(R.drawable.ic_notifications); // Default
+            holder.cardProductImage.setVisibility(View.GONE);
+            holder.layoutIcon.setVisibility(View.VISIBLE);
+
+            if ("QUOTATION".equalsIgnoreCase(notification.getType())) {
+                holder.imgIcon.setImageResource(R.drawable.ic_description); 
+            } else if ("SYSTEM".equalsIgnoreCase(notification.getType())) {
+                holder.imgIcon.setImageResource(R.drawable.ic_info);
+            } else {
+                holder.imgIcon.setImageResource(R.drawable.ic_notifications); // Default
+            }
         }
 
         holder.itemView.setOnClickListener(v -> {
@@ -90,6 +115,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         CardView cardView;
         View layoutIcon;
         ImageView imgIcon;
+        CardView cardProductImage;
+        ImageView imgProduct;
         TextView tvTitle, tvTime, tvMessage;
         View viewUnread;
 
@@ -98,6 +125,8 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
             cardView = itemView.findViewById(R.id.cardNotification);
             layoutIcon = itemView.findViewById(R.id.layoutIcon);
             imgIcon = itemView.findViewById(R.id.imgIcon);
+            cardProductImage = itemView.findViewById(R.id.cardProductImage);
+            imgProduct = itemView.findViewById(R.id.imgProduct);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvTime = itemView.findViewById(R.id.tvTime);
             tvMessage = itemView.findViewById(R.id.tvMessage);

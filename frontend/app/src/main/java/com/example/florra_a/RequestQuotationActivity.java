@@ -18,7 +18,7 @@ public class RequestQuotationActivity extends AppCompatActivity {
 
     // UI Components
     private ImageView btnBack, imgProduct;
-    private TextView btnClear, txtProductName, txtProductDetails, stockBadge;
+    private TextView btnClear, txtProductName, txtProductCategory, txtProductDetails, stockBadge;
     private EditText etFullName, etPhone, etEmail, etTotalArea, etAdditionalNotes;
     private RadioGroup rgProjectType;
     private RadioButton rbResidential, rbCommercial;
@@ -30,6 +30,7 @@ public class RequestQuotationActivity extends AppCompatActivity {
     private String productDetails = "";
     private String productImage = "";
     private String stockStatus = "";
+    private String productCategory = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,9 @@ public class RequestQuotationActivity extends AppCompatActivity {
 
         // Initialize all views
         initializeViews();
+
+        // Setup initial project type selection
+        updateProjectTypeSelection(true);
 
         // Get product data from intent
         getProductDataFromIntent();
@@ -78,6 +82,7 @@ public class RequestQuotationActivity extends AppCompatActivity {
         btnClear = findViewById(R.id.btnClear);
         imgProduct = findViewById(R.id.imgProduct);
         txtProductName = findViewById(R.id.txtProductName);
+        txtProductCategory = findViewById(R.id.txtProductCategory);
         txtProductDetails = findViewById(R.id.txtProductDetails);
         stockBadge = findViewById(R.id.stockBadge);
 
@@ -102,10 +107,17 @@ public class RequestQuotationActivity extends AppCompatActivity {
             productDetails = intent.getStringExtra("productDetails");
             stockStatus = intent.getStringExtra("stockStatus");
             productImage = intent.getStringExtra("productImage");
+            productCategory = intent.getStringExtra("productCategory");
 
             // Set product details
             if (productName != null && !productName.isEmpty()) {
                 txtProductName.setText(productName);
+            }
+
+            if (productCategory != null && !productCategory.isEmpty()) {
+                txtProductCategory.setText("Category: " + productCategory);
+            } else {
+                txtProductCategory.setText("Category: -");
             }
 
             if (productDetails != null && !productDetails.isEmpty()) {
@@ -154,14 +166,9 @@ public class RequestQuotationActivity extends AppCompatActivity {
     }
 
     private void setupRoomTypeSpinner() {
-        // Create array of room types programmatically
-        String[] roomTypes = {
-                "Living Room",
-                "Bathroom",
-                "Kitchen",
-                "Outdoor",
-                "Lobby"
-        };
+        java.util.ArrayList<String> items = new java.util.ArrayList<>(com.example.florra_a.utils.Constants.CATEGORIES);
+
+        String[] roomTypes = items.toArray(new String[0]);
 
         // Create ArrayAdapter
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
@@ -171,9 +178,36 @@ public class RequestQuotationActivity extends AppCompatActivity {
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerRoomType.setAdapter(adapter);
+
+        // Pre-select the product's category
+        int selectIndex = 0;
+        if (productCategory != null && !productCategory.trim().isEmpty()) {
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).equalsIgnoreCase(productCategory.trim())) {
+                    selectIndex = i;
+                    break;
+                }
+            }
+        }
+        spinnerRoomType.setSelection(selectIndex);
     }
 
     private void setupClickListeners() {
+        // Project Type Toggles
+        rbResidential.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateProjectTypeSelection(true);
+            }
+        });
+
+        rbCommercial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateProjectTypeSelection(false);
+            }
+        });
+
         // Back button
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,7 +242,7 @@ public class RequestQuotationActivity extends AppCompatActivity {
         etAdditionalNotes.setText("");
 
         // Reset project type to Residential
-        rbResidential.setChecked(true);
+        updateProjectTypeSelection(true);
 
         // Reset spinner to first item
         spinnerRoomType.setSelection(0);
@@ -275,6 +309,9 @@ public class RequestQuotationActivity extends AppCompatActivity {
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append("New Quotation Request\n");
         messageBuilder.append("Product: ").append(productName).append("\n");
+        if (productCategory != null && !productCategory.isEmpty()) {
+            messageBuilder.append("Category: ").append(productCategory).append("\n");
+        }
         // Append Image URL if available
         if (productImage != null && !productImage.isEmpty()) {
             messageBuilder.append("Product Image: ").append(productImage).append("\n");
@@ -336,8 +373,18 @@ public class RequestQuotationActivity extends AppCompatActivity {
 
         dialog.show();
     }
+    private void updateProjectTypeSelection(boolean isResidential) {
+        rbResidential.setChecked(isResidential);
+        rbCommercial.setChecked(!isResidential);
 
-
+        if (isResidential) {
+            rbResidential.setTextColor(getResources().getColor(android.R.color.white));
+            rbCommercial.setTextColor(getResources().getColor(R.color.gray_600));
+        } else {
+            rbResidential.setTextColor(getResources().getColor(R.color.gray_600));
+            rbCommercial.setTextColor(getResources().getColor(android.R.color.white));
+        }
+    }
 
     @Override
     public void onBackPressed() {

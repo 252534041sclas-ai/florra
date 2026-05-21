@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@color/calc_gray_50"
+        android:background="@color/white"
         android:elevation="4dp">
 
         <!-- Status Bar Spacer Removed -->
@@ -24,7 +24,7 @@
             android:orientation="horizontal"
             android:paddingHorizontal="16dp"
             android:gravity="center_vertical"
-            android:background="@color/calc_gray_50">
+            android:background="@color/white">
 
             <TextView
                 android:layout_width="match_parent"
@@ -508,22 +508,6 @@
                         android:layout_centerInParent="true" />
                 </RelativeLayout>
 
-                <!-- Version Info -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Florra for Customer v2.4.0"
-                    android:textColor="@color/slate_400"
-                    android:textSize="12sp"
-                    android:layout_marginBottom="4dp" />
-
-                <!-- Copyright -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="© 2024 Florra Designs Inc."
-                    android:textColor="@color/slate_400"
-                    android:textSize="10sp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

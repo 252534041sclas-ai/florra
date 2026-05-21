@@ -102,6 +102,32 @@ class Product(models.Model):
     image = models.ImageField(upload_to="products/", null=True, blank=True)
 
 
+    @property
+    def thickness(self):
+        cat = str(self.category).lower()
+        if 'parking' in cat:
+            return "15 mm"
+        elif 'steps' in cat or 'floor' in cat:
+            return "12 mm"
+        elif 'roof' in cat:
+            return "10 mm"
+        else:
+            return "9 mm"
+
+    @property
+    def coverage(self):
+        sz = str(self.size).lower()
+        if '80x80' in sz:
+            return "1.92 Sq. Mt (20.67 Sq. Ft) per Box"
+        elif '60x120' in sz or '20x120' in sz:
+            return "1.44 Sq. Mt (15.50 Sq. Ft) per Box"
+        elif '60x60' in sz or '30x60' in sz:
+            return "1.44 Sq. Mt (15.50 Sq. Ft) per Box"
+        elif '40x40' in sz:
+            return "0.96 Sq. Mt (10.33 Sq. Ft) per Box"
+        else:
+            return "1.44 Sq. Mt (15.50 Sq. Ft) per Box"
+
     def __str__(self):
         return self.tile_name
 
@@ -192,6 +218,7 @@ class Enquiry(models.Model):
     quotation_boxes = models.CharField(max_length=50, blank=True, null=True)
     quotation_delivery_time = models.CharField(max_length=50, blank=True, null=True)
     quotation_notes = models.TextField(blank=True, null=True)
+    admin_name = models.CharField(max_length=100, blank=True, null=True)
 
     # Link to Registered Customer
     customer_email = models.EmailField(blank=True, null=True)

@@ -111,7 +111,22 @@ public class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAd
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailsActivity.class);
+            intent.putExtra("productId", product.getId());
             intent.putExtra("product_id", product.getId());
+            intent.putExtra("productName", product.getTileName());
+            intent.putExtra("tileName", product.getTileName());
+            intent.putExtra("productPrice", String.valueOf(product.getPrice()));
+            intent.putExtra("tilePrice", String.valueOf(product.getPrice()));
+            intent.putExtra("productStock", product.getStockStatus());
+            intent.putExtra("tileStock", product.getStockStatus());
+            intent.putExtra("productCategory", product.getCategory());
+            intent.putExtra("productSize", product.getSize());
+            intent.putExtra("productFinish", product.getFinish());
+            intent.putExtra("productImage", product.getImage());
+            intent.putExtra("productDescription", product.getDescription());
+            intent.putExtra("productTileNo", product.getTileNo());
+            intent.putExtra("productThickness", product.getThickness());
+            intent.putExtra("productCoverage", product.getCoverage());
             context.startActivity(intent);
         });
     }

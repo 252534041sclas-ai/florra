@@ -25,7 +25,7 @@ public class RespondEnquiryActivity extends AppCompatActivity {
     private com.example.florra_a.models.Enquiry currentEnquiry;
 
     // Info Views
-    private TextView tvEnquiryId, tvStockStatus, tvProductName, tvProductSize, tvEnquiryDate;
+    private TextView tvEnquiryId, tvStockStatus, tvProductName, tvProductCategory, tvProductSize, tvEnquiryDate;
     private TextView tvCustomerName, tvCustomerPhone, tvCustomerEmail, tvProjectType, tvRoomType, tvTotalArea, tvCustomerNotes;
 
     @Override
@@ -69,6 +69,7 @@ public class RespondEnquiryActivity extends AppCompatActivity {
         tvEnquiryId = findViewById(R.id.tvEnquiryId);
         tvStockStatus = findViewById(R.id.tvStockStatus);
         tvProductName = findViewById(R.id.tvProductName);
+        tvProductCategory = findViewById(R.id.tvProductCategory);
         tvProductSize = findViewById(R.id.tvProductSize);
         tvEnquiryDate = findViewById(R.id.tvEnquiryDate);
         tvCustomerName = findViewById(R.id.tvCustomerName);
@@ -106,6 +107,7 @@ public class RespondEnquiryActivity extends AppCompatActivity {
 
     private void parseMessageAndUpdateUI(String message) {
         String product = "-";
+        String category = "-";
         String details = "-";
         String projectType = "-";
         String roomType = "-";
@@ -121,6 +123,8 @@ public class RespondEnquiryActivity extends AppCompatActivity {
             for (String line : lines) {
                 if (line.startsWith("Product: ")) {
                     product = line.replace("Product: ", "").trim();
+                } else if (line.startsWith("Category: ")) {
+                    category = line.replace("Category: ", "").trim();
                 } else if (line.startsWith("Product Image: ")) {
                     image = line.replace("Product Image: ", "").trim();
                 } else if (line.startsWith("Details: ")) {
@@ -151,6 +155,7 @@ public class RespondEnquiryActivity extends AppCompatActivity {
 
         // Update UI
         tvProductName.setText(!product.isEmpty() && !product.equals("-") ? product : "Enquiry Product");
+        tvProductCategory.setText("Category: " + (!category.isEmpty() && !category.equals("-") ? category : "-"));
         
         // Show actual product details (Size, Finish) if available, else show Area, else "-"
         if (!details.isEmpty() && !details.equals("-")) {
@@ -282,6 +287,14 @@ public class RespondEnquiryActivity extends AppCompatActivity {
             currentEnquiry.setQuotationBoxes(etBoxes.getText().toString());
             currentEnquiry.setQuotationDeliveryTime(etDeliveryTime.getText().toString());
             currentEnquiry.setQuotationNotes(etAdditionalNotes.getText().toString());
+            
+            // Set dynamic admin name
+            String loggedInAdmin = com.example.florra_a.utils.SharedPrefManager.getInstance(this).getFullName();
+            if (loggedInAdmin == null || loggedInAdmin.equals("User") || loggedInAdmin.equals("Customer User")) {
+                loggedInAdmin = "Showroom Manager";
+            }
+            currentEnquiry.setAdminName(loggedInAdmin);
+            
             currentEnquiry.setStatus("Quoted"); // Update status
 
             com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();

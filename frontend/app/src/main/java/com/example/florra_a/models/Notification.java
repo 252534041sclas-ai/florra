@@ -22,6 +22,12 @@ public class Notification implements Serializable {
     @SerializedName("is_read")
     private boolean isRead;
 
+    @SerializedName("product_id")
+    private Integer productId;
+
+    @SerializedName("product_image")
+    private String productImage;
+
     // Constructors
     public Notification() {}
 
@@ -51,4 +57,10 @@ public class Notification implements Serializable {
 
     public boolean isRead() { return isRead; }
     public void setRead(boolean read) { isRead = read; }
+
+    public Integer getProductId() { return productId; }
+    public void setProductId(Integer productId) { this.productId = productId; }
+
+    public String getProductImage() { return productImage; }
+    public void setProductImage(String productImage) { this.productImage = productImage; }
 }

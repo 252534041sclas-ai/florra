@@ -293,6 +293,7 @@ public class CalculatorActivity extends AppCompatActivity {
             intent.putExtra("productDetails", getIntent().getStringExtra("productDetails"));
             intent.putExtra("stockStatus", getIntent().getStringExtra("stockStatus"));
             intent.putExtra("productImage", getIntent().getStringExtra("productImage"));
+            intent.putExtra("productCategory", getIntent().getStringExtra("productCategory"));
             intent.putExtra("totalArea", areaText); // Pass calculated area
             
             startActivity(intent);

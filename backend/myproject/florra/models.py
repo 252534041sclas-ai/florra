@@ -145,6 +145,7 @@ class Notification(models.Model):
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255)
     message = models.TextField()
 

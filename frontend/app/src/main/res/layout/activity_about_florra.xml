@@ -20,9 +20,10 @@
             android:id="@+id/btnBack"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:background="@drawable/bg_circle_icon"
             android:contentDescription="Back button"
             android:src="@drawable/ic_arrow_back"
+            android:scaleType="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -110,6 +111,7 @@
 
             <!-- Section Title: Customer Benefits -->
             <TextView
+                android:id="@+id/tvCustomerBenefitsHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -120,6 +122,12 @@
                 android:textSize="13sp"
                 android:letterSpacing="0.1"
                 android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/layoutCustomerBenefits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
             <!-- Benefit Card 1: Quotation Requests -->
             <LinearLayout
@@ -363,6 +371,8 @@
                         android:textColor="#475569"
                         android:textSize="12sp" />
                 </LinearLayout>
+            </LinearLayout>
+
             </LinearLayout>
 
             <!-- Section Title: Admin Features (Conditional) -->

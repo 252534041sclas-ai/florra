@@ -1,5 +1,6 @@
 import requests
 import re
+import math
 from fastapi import FastAPI, UploadFile, File, Query
 from pydantic import BaseModel
 from sentence_transformers import SentenceTransformer
@@ -18,12 +19,56 @@ INDEX_FILE = "vectorstore/products.index"
 META_FILE = "vectorstore/products.pkl"
 DJANGO_BASE_URL = "http://127.0.0.1:8000/api"
 
-# FAQ Store (Basic)
+# FAQ Store (Dramatically Expanded and Showroom Trained)
 FAQS = {
-    "delivery": "We usually deliver within 3-5 business days across Tamil Nadu. Out-of-state delivery takes 7-10 days.",
-    "return": "Tiles can be returned within 48 hours of delivery if they are unused and in original packaging. Broken tiles are replaced if reported immediately.",
-    "installation": "Yes, we provide installation support through our verified partner contractors. Pricing depends on the area (sqft).",
-    "contact": "You can visit our showroom at Florra Tiles, Coimbatore or WhatsApp us at +91 98765 43210."
+    "delivery": "We deliver within **3-5 business days** across Tamil Nadu. Out-of-state deliveries take 7-10 days. 🚛 Safe, padded transportation is guaranteed!",
+    "return": "Unopened tiles in original packaging can be returned within **48 hours** of delivery. Any shipping breakages are replaced completely free of charge! 👍",
+    "installation": "Yes, we connect you with verified partner contractors for expert tile laying/fixing. Pricing typically ranges from **₹25 to ₹45 per sq.ft** depending on the tile size and site complexity. 👷‍♂️",
+    "contact": "You can visit our flagship showroom at Florra Tiles, Avinashi Road, Coimbatore, or WhatsApp our support line directly at +91 98765 43210. 📞",
+    "timing": "Our showroom is open from **10:00 AM to 8:00 PM** everyday, including Sundays! 🕙",
+    
+    # 1. Vitrified vs Ceramic
+    "vitrified_vs_ceramic": (
+        "💡 *Vitrified vs. Ceramic Tiles*:\n\n"
+        "• **Vitrified Tiles**: Made using a hydraulic press mixture of clay, quartz, and feldspar. They are highly dense, have an extremely low water absorption rate (<0.5%), and are scratch and stain resistant. **Best for floors** in high-traffic zones.\n"
+        "• **Ceramic Tiles**: Made from baking natural clay at lower temperatures. They have a higher water absorption rate and are lighter, making them **perfect for walls** (like kitchens and bathrooms) where ease of cutting and lower weight matter most."
+    ),
+    
+    # 2. GVT vs PGVT
+    "gvt_pgvt": (
+        "💡 *GVT (Glazed Vitrified) vs. PGVT (Polished Glazed Vitrified)*:\n\n"
+        "• **GVT**: Features a protective glazed layer allowing matte, satin, wooden, or structured textures. Best for heavy foot traffic and outdoor/slip-prone areas.\n"
+        "• **PGVT**: Has a highly polished glazed layer giving a magnificent mirror-like high-gloss finish. Perfect for living rooms and bedrooms to add spectacular grandeur, but not recommended for wet bathrooms or high-traffic commercial entryways."
+    ),
+    
+    # 3. Cleaning & Maintenance
+    "cleaning_maintenance": (
+        "🧼 *Tile Cleaning & Maintenance Guidelines*:\n\n"
+        "• **Matte & Structured Tiles**: Sweep regularly to clear dirt from textures. Mop using a pH-neutral cleaner. Avoid harsh floor acids, as they can permanently erode the protective finish.\n"
+        "• **High-Gloss/Polished Tiles**: Use a soft microfiber mop with water and a mild glass or tile cleaner to maintain the reflective shine without streaking.\n"
+        "• **Grout Lines**: Clean grout joints using a simple paste of baking soda and water or mild specialized grout cleaner. Do NOT use wire brushes."
+    ),
+    
+    # 4. Spacers & Grout
+    "spacers_grout": (
+        "🧱 *Tile Spacers & Grout Recommendations*:\n\n"
+        "• **Spacers**: We highly recommend using **2mm or 3mm spacers** for all floor tile installations. They allow natural building expansion/contraction, preventing tile cracking (buckling) over time, and ensure perfectly straight grout lines.\n"
+        "• **Grout**: Use epoxy grout for bathrooms, kitchens, and water-prone areas because it is fully waterproof, anti-bacterial, and non-staining. For dry rooms, standard cement-based grout is perfectly suitable."
+    ),
+    
+    # 5. Making Small Rooms Look Bigger
+    "small_room_tips": (
+        "🎨 *How to Make a Small Room Look Much Bigger*:\n\n"
+        "• **Size**: Use larger formats like **2x4 ft** instead of 2x2 ft. Fewer grout lines visually expand the floor space.\n"
+        "• **Color**: Choose light, soft tones such as ivory, beige, soft grey, or crisp white. Light reflections brighten and open up tight spaces.\n"
+        "• **Finish**: High-gloss or polished tiles reflect light beautifully, creating the illusion of deep visual space."
+    ),
+    
+    # 6. Site Measurement & Home Visits
+    "site_measurement": "📐 Yes! We offer **free site measurements and design consultations** for all orders above **500 sq.ft** in the Coimbatore metropolitan area. Our engineer will visit with samples to measure and guide you on wastage estimation.",
+    
+    # 7. Customization
+    "customization": "🎨 We support customized tile patterning and personalized digital printing (such as custom mosaic wall highlights) for bulk orders exceeding **2,000 sq.ft**. Let us know your style vision!"
 }
 
 # Configuration
@@ -101,37 +146,65 @@ def get_django_data(endpoint, params=None):
         print(f"❌ Django API Error: {e}")
     return None
 
+def parse_calculation_query(message):
+    message = message.lower().strip()
+    
+    # 1. Look for dimensions like "10x12", "10 x 12", "10 by 12", "10*12"
+    dim_match = re.findall(r'(\d+(?:\.\d+)?)\s*(?:x|by|\*)\s*(\d+(?:\.\d+)?)', message)
+    if dim_match:
+        length = float(dim_match[0][0])
+        width = float(dim_match[0][1])
+        area = length * width
+        return {"area": area, "length": length, "width": width}
+    
+    # 2. Look for single area like "150 sqft", "150 sq ft", "150 square feet", "150sqft"
+    area_match = re.findall(r'(\d+(?:\.\d+)?)\s*(?:sqft|sq\s*ft|square\s*feet|sq\s*meters|sqm)', message)
+    if area_match:
+        area = float(area_match[0])
+        return {"area": area, "length": None, "width": None}
+        
+    # 3. Look for any numbers if the message contains calculate or area keywords
+    if any(k in message for k in ["calculate", "calc", "area", "size", "room", "box", "dimension"]):
+        nums = [float(x) for x in re.findall(r'\d+(?:\.\d+)?', message)]
+        if len(nums) >= 2:
+            length, width = nums[0], nums[1]
+            return {"area": length * width, "length": length, "width": width}
+        elif len(nums) == 1:
+            return {"area": nums[0], "length": None, "width": None}
+            
+    return None
+
 def classify_intent(message):
     message = message.lower().strip()
     
     # 0. Greetings
     if any(k in message for k in ["hi", "hello", "hey", "vanakkam", "vanakam", "good morning", "good evening", "how are you", "yo"]):
-        # But if it also contains "tile" or categories, it might be a search
         if not any(k in message for k in ["tile", "floor", "wall", "bathroom", "kitchen"]):
             return "greeting"
+            
     if any(k in message for k in ["match", "similar", "iddhu mari", "idhupola", "photo", "image", "upload"]):
         return "visual_search_hint"
 
-    # 1. Order Tracking (Eng + Tamil + Tanglish)
+    # 1. Order Tracking
     if any(k in message for k in ["order", "track", "delivery", "bill", "invoice", "yenga", "enga", "status", "varum"]):
         return "track_order"
     
-    # 2. Quotation Status (Eng + Tamil + Tanglish)
+    # 2. Quotation Status
     if any(k in message for k in ["quote", "quotation", "enquiry", "status", "update", "kodu"]):
         return "check_quote"
     
-    # 3. Price Estimation / Area Calc (Eng + Tamil + Tanglish)
-    if any(k in message for k in ["cost", "how much", "price", "sqft", "sq ft", "room", "calculate", "vilai", "rate", "evlo", "evvalavu"]):
-        if re.search(r'\d+', message):
+    # 3. Price Estimation / Area Calc
+    if any(k in message for k in ["cost", "how much", "price", "sqft", "sq ft", "room", "calculate", "calc", "vilai", "rate", "evlo", "evvalavu", "box", "dimension"]):
+        if re.search(r'\d+', message) or parse_calculation_query(message) is not None:
             return "calculate_price"
         return "search_products"
     
-    # 4. FAQs (Eng + Tamil + Tanglish)
+    # 4. FAQs
     if any(k in message for k in ["return", "policy", "contact", "address", "phone", "install", "panna", "idham", "edam", "ponnu"]):
         return "faq"
     
-    # 5. Recommendations (Eng + Tamil + Tanglish)
-    if any(k in message for k in ["suggest", "recommend", "best", "bathroom", "kitchen", "hall", "living", "bedroom", "pannu", "nalla"]):
+    # 5. Recommendations / Tile Design / Room Specific Advice
+    if any(k in message for k in ["suggest", "recommend", "best", "bathroom", "kitchen", "hall", "living", "bedroom", "pannu", "nalla", "design", "pattern", "color", "style"]):
         return "recommendations"
         
     return "search_products"
@@ -167,84 +240,184 @@ def get_personality_response(intent, products=None, query=""):
     # 1. GREETINGS & INTRO
     if intent == "greeting":
         if "hello" in query:
-            return "Hello! 👋 Welcome back to Florra. Designing ungada dream home? I'm here to help!"
-        if any(k in query for k in ["vanakkam", "vanakam", "namaste"]):
-            return "Vanakkam! 🙏 Florra Tiles ungali anbudan varaverkirathu. Enna tiles choose panna help venum?"
+            return "Hello! 👋 Welcome to Florra Tiles. Are you designing your dream home? I am here to help you!"
+        if any(k in query for k in ["vanakkam", "vanakam", "namaste", "vanakam"]):
+            return "Welcome! 🙏 Florra Tiles warmly welcomes you. Which room are you selecting tiles for today?"
         
         # Proactive suggestion on simple Hi
-        trending_reply = "Hi there! 😊 I'm your Florra Assistant.\n\nIppo trend-ah irukura top 3 designs check pannunga: \n\n"
+        trending_reply = "Hi there! 😊 I'm your Florra AI Assistant. Here to help you with tile selections, layouts, and calculations.\n\nCheck out our currently trending top-rated designs: \n\n"
         if products:
             trending_reply += format_product_list(products)
         else:
-            trending_reply += "✨ *Carrara White* (Floor)\n✨ *Rustic Oak* (Living)\n✨ *Black Marquina* (Floor)"
-        trending_reply += "\n\nEdhavadhu particular room-ku designs venuma? Bathroom or Kitchen?"
+            trending_reply += "✨ *Carrara White Marble* (Floor)\n✨ *Rustic Oak Plank* (Living)\n✨ *Satin Grey Matte* (Floor)"
+        trending_reply += "\n\nWhich area are you designing? Bathroom, Kitchen, Living Room, or Bedroom?"
         return trending_reply
 
-    # 2. ROOM SPECIFIC ADVICE (Tanglish)
+    # 2. TILE DESIGN & ROOM SPECIFIC RECOMMENDATIONS (In premium English)
     if any(k in query for k in ["bathroom", "restroom", "toilet"]):
-        return "Bathroom ku anti-skid matte tiles thaan best safety. 🚿 Dark colors like Grey or Brown choice pannunga, maintain panna easy ah irukum. Matching wall tiles show pannata?"
+        return (
+            "For bathrooms, safety, slip-resistance, and moisture management are essential. 🚿\n\n"
+            "💡 *Design Recommendations*:\n"
+            "• *Flooring*: Always select **Anti-skid Matte finish tiles** (like 12x12 inch or 2x2 ft) to guarantee safety when wet.\n"
+            "• *Walls*: Use high-gloss Vitrified tiles (like 2x4 ft or 12x18 inch) to reflect light, making the bathroom appear clean, bright, and spacious.\n"
+            "• *Style Tip*: A dark textured charcoal or mocha floor paired with crisp light-grey glossy walls creates a spectacular premium modern contrast!\n\n"
+            "Would you like me to show you anti-skid bathroom floor tiles?"
+        )
     
     if any(k in query for k in ["hall", "living", "veranda"]):
-        return "Living room ku glossy large size tiles (2x4 or 4x8) premium look kudukum. ✨ Light colors like Beige or Off-White try pannunga, room perusa theriyum. Options kaatata?"
+        return (
+            "For your living room, you want to create a grand, warm, and highly inviting entrance. ✨\n\n"
+            "💡 *Design Recommendations*:\n"
+            "• *Size*: Use large-format tiles like **2x4 ft or 4x8 ft** to minimize grout joints, achieving a seamless luxury appearance.\n"
+            "• *Finish*: **High-Gloss Glazed Vitrified Tiles (GVT)** offer a gorgeous polished mirror sheen that brightens the room.\n"
+            "• *Style Tip*: Classic Italian marble texture (like Carrara or Calacatta) or cozy light beige creates a stunning showroom look.\n\n"
+            "Would you like to browse our collection of premium glossy living room tiles?"
+        )
     
     if any(k in query for k in ["kitchen", "samayal"]):
-        return "Kitchen wall tiles stain-resistant-ah irukanum. 🍳 Pattern designs or subway tiles ippo trend. Floor-ku anti-skid matte finish suggest panren."
+        return (
+            "Kitchens require durable materials that are fully stain-resistant and easy to clean. 🍳\n\n"
+            "💡 *Design Recommendations*:\n"
+            "• *Backsplash*: Go with glazed Ceramic tiles in **Subway, Mosaic, or colorful Moroccan patterns** to add a beautiful design statement.\n"
+            "• *Flooring*: Choose heavy-duty Matte-finish Vitrified tiles (2x2 ft) as they are highly stain and scratch resistant.\n\n"
+            "Shall I recommend our top-selling kitchen wall highlights for you?"
+        )
     
     if any(k in query for k in ["bedroom", "padukai"]):
-        return "Bedroom ku wooden finish tiles or light marble designs romba cozy-ah irukum. 🛌 Nalla sleep and comfort kulla look idhu!"
+        return (
+            "Bedrooms are personal spaces designed for relaxation, quiet, and comfort. 🛌\n\n"
+            "💡 *Design Recommendations*:\n"
+            "• *Flooring*: **Wood-plank texture tiles** are extremely popular, offering the warm, rich look of hardwood with zero maintenance.\n"
+            "• *Finish*: Soft Satin or Matte finishes are preferred here as they reduce glare from lighting and feel highly comforting.\n\n"
+            "Would you like to view our wooden-finish bedroom collection?"
+        )
 
     if any(k in query for k in ["parking", "outdoor", "balcony"]):
-        return "Parking and Outdoor-ku heavy-duty 12mm or 16mm thickness tiles thaan correct. 🚗 Rough finish anti-skid tiles select pannunga, rain time la safety-ah irukum."
+        return (
+            "Balconies, pathways, and parking zones require extreme weather resistance and load durability. 🚗\n\n"
+            "💡 *Design Recommendations*:\n"
+            "• *Body*: Choose heavy-duty **12mm to 16mm thick vitrified parking tiles** engineered to withstand high vehicle weight.\n"
+            "• *Safety*: Structured anti-skid rough finishes are mandatory for absolute safety during rains.\n\n"
+            "Would you like to see our highly durable parking tile options?"
+        )
 
-    # 3. MATERIAL & TEXTURE (Tanglish)
+    # 3. MATERIAL & TEXTURE RECOMMENDATIONS
     if "marble" in query:
-        return "Marble finish tiles eppovume classic look! 😍 Real marble range la premium vitrified tiles available. Maintenance-free luxury idhu!"
+        return (
+            "Marble-look vitrified tiles give you a timeless classic luxury aesthetic! 😍\n\n"
+            "With modern high-definition printing, they replicate genuine Italian marble perfectly, with absolutely zero sealing or maintenance needed."
+        )
     
     if "wood" in query or "maram" in query:
-        return "Wooden finish tiles natural look kudukum. 🌳 Hall or Bedroom ku idhu best choice. Real wood mariye textures available!"
+        return (
+            "Wood-plank ceramic and vitrified tiles are exceptional! 🌳\n\n"
+            "They capture the natural grain, knots, and textures of premium oak or walnut, giving your space a warm, organic design with highly durable properties."
+        )
 
-    # 4. BUDGET & PRICE (Tanglish)
+    # 4. BUDGET & PRICE
     if any(k in query for k in ["budget", "cheap", "low price", "kammi", "koraivana"]):
-        return "Kandippa! 😊 Budget-friendly options starting from ₹45/sqft la iruku. Economy range matte and glossy designs kaatava?"
+        return "Of course! 😊 We offer high-quality budget-friendly tiles starting from just **₹45/sq.ft**. Shall I display our highly popular and affordable glossy and matte designs?"
     
     if any(k in query for k in ["premium", "luxury", "best quality", "costly"]):
-        return "Luxury search panringala? ✨ Full-body vitrified and Italian marble finish tiles thaan premium choice. Uncompromised quality!"
+        return "Are you looking for absolute luxury? ✨ Our full-body vitrified collections, Italian marble series, and designer large-format tiles represent our ultimate premium standard. They look spectacular!"
 
-    # 5. FAQ & SERVICES
+    # 5. DYNAMIC CALCULATIONS & PRICE ESTIMATIONS
+    if intent == "calculate_price":
+        calc_data = parse_calculation_query(query)
+        if calc_data:
+            area = calc_data["area"]
+            # Standard tile calculations (including 10% wastage)
+            wastage_area = area * 1.10
+            
+            # 1. Standard 2x2 ft tiles (4 sqft per tile)
+            tiles_2x2 = math.ceil(wastage_area / 4.0)
+            boxes_2x2 = math.ceil(tiles_2x2 / 4.0)  # 4 tiles per box (16 sqft)
+            
+            # 2. Standard 2x4 ft tiles (8 sqft per tile)
+            tiles_2x4 = math.ceil(wastage_area / 8.0)
+            boxes_2x4 = math.ceil(tiles_2x4 / 2.0)  # 2 tiles per box (16 sqft)
+            
+            # 3. Standard 12x12 inch tiles (1 sqft per tile)
+            tiles_12x12 = math.ceil(wastage_area / 1.0)
+            boxes_12x12 = math.ceil(tiles_12x12 / 10.0) # 10 tiles per box (10 sqft)
+            
+            dims_str = f"📐 *Dimensions Provided*: {calc_data['length']} ft × {calc_data['width']} ft\n" if calc_data['length'] else ""
+            
+            return (
+                f"Here is your customized tile estimate! 📐\n\n"
+                f"{dims_str}"
+                f"📊 *Net Floor Area*: **{area:.1f} sq.ft**\n"
+                f"⚠️ *With 10% Wastage Buffer*: **{wastage_area:.1f} sq.ft** (Highly recommended for corner cuts and future replacements)\n\n"
+                f"💡 *Select Your Preferred Size Option*:\n\n"
+                f"🧱 **Option 1: 2x2 ft Tiles (Standard Floor)**\n"
+                f"   • Total Tiles Required: *{tiles_2x2} tiles*\n"
+                f"   • Total Boxes to Order: **{boxes_2x2} boxes** (16 sqft/box)\n\n"
+                f"🧱 **Option 2: 2x4 ft Tiles (Premium Seamless)**\n"
+                f"   • Total Tiles Required: *{tiles_2x4} tiles*\n"
+                f"   • Total Boxes to Order: **{boxes_2x4} boxes** (16 sqft/box)\n\n"
+                f"🧱 **Option 3: 12x12 inch Tiles (Bathroom Floor/Small Room)**\n"
+                f"   • Total Tiles Required: *{tiles_12x12} tiles*\n"
+                f"   • Total Boxes to Order: **{boxes_12x12} boxes** (10 sqft/box)\n\n"
+                f"Would you like me to recommend trending designs or calculate the exact cost for these options?"
+            )
+        return "I can calculate the exact tiles and boxes you need! 📐 Please provide your room dimensions (e.g. *10x12*) or total square footage (e.g. *250 sqft*)."
+
+    # 6. FAQ & SERVICES
     if intent == "faq":
-        if any(k in query for k in ["delivery", "time", "eppo"]):
-            return "Delivery usually 3-5 days la aayidum across Tamil Nadu. 🚛 Fast delivery panna try panvom!"
-        if any(k in query for k in ["return", "replace", "broken"]):
-            return "48 hours kulla return pannalam if tiles unused. Broken tiles direct-ah replace aayidum. 👍"
-        if any(k in query for k in ["install", "partner", "fixing"]):
-            return "Yes, fixing-ku nalla partner contractors irukanga. Area details sonna correct cost solren. 👷‍♂️"
-        if any(k in query for k in ["timing", "open", "close"]):
-            return "Showroom Morning 10 AM to Night 8 PM open-ah irukum. All days active! 🕙"
-        return "Showroom timing, delivery, return policy pathi na solluven. Enna help venum? 😊"
+        query_clean = query.lower()
+        if any(k in query_clean for k in ["delivery", "time", "eppo"]):
+            return FAQS["delivery"]
+        if any(k in query_clean for k in ["return", "replace", "broken", "damage"]):
+            return FAQS["return"]
+        if any(k in query_clean for k in ["install", "partner", "fixing", "laying", "mason"]):
+            return FAQS["installation"]
+        if any(k in query_clean for k in ["timing", "open", "close", "hour"]):
+            return FAQS["timing"]
+        if any(k in query_clean for k in ["difference", "vitrified", "ceramic", "versus", "vs"]):
+            return FAQS["vitrified_vs_ceramic"]
+        if any(k in query_clean for k in ["gvt", "pgvt"]):
+            return FAQS["gvt_pgvt"]
+        if any(k in query_clean for k in ["clean", "wash", "maintenance", "stain", "acid"]):
+            return FAQS["cleaning_maintenance"]
+        if any(k in query_clean for k in ["spacer", "grout", "joint", "gap"]):
+            return FAQS["spacers_grout"]
+        if any(k in query_clean for k in ["small room", "make bigger", "enlarge", "expand"]):
+            return FAQS["small_room_tips"]
+        if any(k in query_clean for k in ["visit", "measurement", "site", "home visit"]):
+            return FAQS["site_measurement"]
+        if any(k in query_clean for k in ["custom", "print"]):
+            return FAQS["customization"]
+            
+        return (
+            "I can answer all your technical and design doubts! 📚 Here is what I am trained on:\n\n"
+            "• *Tile Care*: 'How do I clean matte tiles?'\n"
+            "• *Technology*: 'What is the difference between vitrified and ceramic?'\n"
+            "• *Installation*: 'Should I use spacers or grout?'\n"
+            "• *Aesthetics*: 'How do I make a small room look bigger?'\n"
+            "• *Services*: 'Do you offer site measurements?'\n\n"
+            "What would you like to ask? 😊"
+        )
 
     if intent == "track_order":
-        return "Sure! Order track panna ungada Bill Number sollunga. Delivery status check panni solren. 📦"
+        return "Absolutely! To track your order status, please enter your **Bill Number** or Invoice ID. 📦"
 
-    if intent == "calculate_price":
-        return "Okay! Room dimensions (length x width) sollunga, approximate cost and box count calculate panni solren. 📐"
-
-    # 6. PRODUCT SHOWCASE (FALLBACK)
+    # 7. RECOMMENDATIONS & SEARCH SHOWCASE (FALLBACKS)
     if intent == "recommendations":
-        reply = "🌟 Based on your choice, check out these premium tiles. Designs trending-ah irukum! \n\n"
+        reply = "🌟 Based on your style preferences, here are our trending premium tile selections: \n\n"
         reply += format_product_list(products) if products else "• Carrara Marble\n• Satin Grey\n• Oak Wood"
-        reply += "\nUngal budget range sollunga, specific options suggest panren. 😊"
+        reply += "\nCould you tell me your target budget or size preferences to refine this?"
         return reply
 
     if intent == "search_products":
         if not products:
-            return "Sorry, andha design ippo stock la illa. 😅 Vera design or different color try pannalama?"
+            return "I couldn't find any exact matches for that in our current inventory. 😅 Would you like to try a different color, style, or finish?"
         
-        reply = "Yes, kandippa! 😊 Indha designs unga description ku matching-ah irukum: \n\n"
+        reply = "Certainly! Here are the matches from our current inventory: \n\n"
         reply += format_product_list(products)
-        reply += "\nLarge size tiles venuma or standard size?"
+        reply += "\nWould you like to compare these or request a quote for any of them?"
         return reply
 
-    return "I'm here to help! Tiles choice, quotations, or tracking orders pathi edhu venum nallum kelunga. 😊"
+    return "I am here to help you! Please ask me anything about tile designs, sizes, dynamic calculators, quotations, or order statuses. 😊"
 
 @app.post("/customer/chat")
 def chat(req: ChatRequest):
@@ -285,7 +458,7 @@ async def search_image(file: UploadFile = File(...), message: str = Query(None))
     products = search_index(final_vec, k=12)
     
     if not products:
-        return {"reply": "Photo analyze pannen, but exactly match aagura designs ippo illa. 😅 Similar pattern vera designs show pannalama?"}
+        return {"reply": "I've analyzed your photo, but I couldn't find an exact match in our current inventory. 😅 Would you like to view some similar trending patterns?"}
     
-    reply = "I've analyzed your photo! 😍 Indha tiles unga photo ku romba match aaguthu. Check pannunga:"
+    reply = "I've analyzed your photo! 😍 Here are the tiles that match your design perfectly. Please check them out:"
     return {"reply": reply, "products": products}

@@ -170,14 +170,26 @@ public class NotificationsActivity extends AppCompatActivity implements Notifica
     }
 
     private void markAllAsRead() {
-        // Mock implementation for UI update
         for (Notification n : allNotifications) {
             n.setRead(true);
         }
         adapter.notifyDataSetChanged();
         Toast.makeText(this, "All notifications marked as read", Toast.LENGTH_SHORT).show();
         
-        // TODO: Call API endpoint to update status on server
+        ApiService apiService = RetrofitClient.getApiService();
+        apiService.markAllNotificationsAsRead().enqueue(new Callback<okhttp3.ResponseBody>() {
+            @Override
+            public void onResponse(Call<okhttp3.ResponseBody> call, Response<okhttp3.ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Log.d("NotificationsActivity", "All notifications marked as read in DB");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<okhttp3.ResponseBody> call, Throwable t) {
+                Log.e("NotificationsActivity", "Error marking all as read", t);
+            }
+        });
     }
 
     private void showError(String message) {
@@ -188,13 +200,36 @@ public class NotificationsActivity extends AppCompatActivity implements Notifica
 
     @Override
     public void onNotificationClick(Notification notification) {
-        // Handle click, e.g., open details
-        Toast.makeText(this, "Clicked: " + notification.getTitle(), Toast.LENGTH_SHORT).show();
-        
         if (!notification.isRead()) {
             notification.setRead(true);
             adapter.notifyDataSetChanged();
-            // TODO: API call to mark single read
+            
+            java.util.Map<String, Integer> body = new java.util.HashMap<>();
+            body.put("id", notification.getId());
+            
+            ApiService apiService = RetrofitClient.getApiService();
+            apiService.markNotificationAsRead(body).enqueue(new Callback<okhttp3.ResponseBody>() {
+                @Override
+                public void onResponse(Call<okhttp3.ResponseBody> call, Response<okhttp3.ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("NotificationsActivity", "Notification marked as read in DB");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<okhttp3.ResponseBody> call, Throwable t) {
+                    Log.e("NotificationsActivity", "Error marking single notification as read", t);
+                }
+            });
+        }
+
+        // Tagged product click handling: open ProductDetailsActivity
+        if (notification.getProductId() != null && notification.getProductId() != 0) {
+            android.content.Intent intent = new android.content.Intent(this, ProductDetailsActivity.class);
+            intent.putExtra("productId", (int) notification.getProductId());
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, notification.getTitle(), Toast.LENGTH_SHORT).show();
         }
     }
 }

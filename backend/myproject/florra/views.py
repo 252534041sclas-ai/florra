@@ -372,6 +372,18 @@ class NotificationListView(APIView):
         )
         return Response(serializer.data)
 
+    def patch(self, request):
+        notif_id = request.data.get("id")
+        if not notif_id:
+            return Response({"error": "id required"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            notification = Notification.objects.get(id=notif_id, user=request.user)
+            notification.is_read = True
+            notification.save()
+            return Response({"message": "Notification marked as read"}, status=status.HTTP_200_OK)
+        except Notification.DoesNotExist:
+            return Response({"error": "Notification not found"}, status=status.HTTP_404_NOT_FOUND)
+
 
 class MarkAllReadView(APIView):
     permission_classes = [IsAuthenticated]
@@ -402,7 +414,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 class AIScanView(APIView):
     """
-    Vision-based AI Recommendation (ResNet50).
+    Vision-based AI Recommendation (ResNet50 + Color Histogram matching).
     Input: Image File
     Output: Ranked list of products (Exact Match + Related)
     """
@@ -411,6 +423,9 @@ class AIScanView(APIView):
 
     def post(self, request):
         import logging
+        import numpy as np
+        from PIL import Image
+
         logging.basicConfig(
             filename='debug_matching.log',
             filemode='w',
@@ -424,9 +439,21 @@ class AIScanView(APIView):
 
         image_file = request.FILES.get('image')
         
-        # 1. Run AI Matcher
+        # 1. Extract average RGB color from query image for color-guided matching
+        avg_rgb = None
         try:
-            results = find_similar_tiles(image_file, top_k=6)
+            image_file.seek(0)
+            img = Image.open(image_file).convert('RGB')
+            avg_img = img.resize((1, 1))
+            avg_rgb = np.array(avg_img.getpixel((0, 0)))
+            logging.info(f"Query Image Average RGB: {avg_rgb}")
+            image_file.seek(0) # Seek back for CNN model input
+        except Exception as e:
+            logging.error(f"Error extracting image color: {e}")
+
+        # 2. Run CNN texture/shape matcher
+        try:
+            results = find_similar_tiles(image_file, top_k=10) # Retrieve top 10 candidates to ensure variety
             logging.info(f"Matcher returned {len(results)} results")
         except Exception as e:
             logging.error(f"Matcher failed: {e}")
@@ -436,52 +463,56 @@ class AIScanView(APIView):
             logging.warning("No vectors found in index or no matches.")
             return Response({"message": "No matching tiles found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # 2. Fetch Product Details from DB
+        # 3. Fetch Product Details and fuse Color similarity
         response_data = []
         
-        # Debug: Check if we can see Product ID 6
-        try:
-            p6 = Product.objects.get(id=6)
-            logging.info(f"DEBUG CHECK: Product ID 6 exists: '{p6.tile_name}', Image: '{p6.image}'")
-        except Exception as e:
-            logging.error(f"DEBUG CHECK: Product ID 6 lookup FAILED: {e}")
-
         for filename, score in results:
-            filename = str(filename).strip() # Sanitize
+            filename = str(filename).strip()
             
-            # Hex Debug
-            try:
-                fname_hex = filename.encode('utf-8').hex()
-                logging.info(f"Processing result: filename='{filename}' (Hex: {fname_hex}), score={score}")
-            except:
-                logging.info(f"Processing result: filename='{filename}', score={score}")
-
-            # Try exact/partial match
-            # Explicitly cast to string just in case
+            # Match product in DB
             product = Product.objects.filter(image__icontains=str(filename)).first()
-            
-            if product:
-                logging.info(f"  -> Found match: ID={product.id}, Name='{product.tile_name}'")
-            else:
-                 logging.warning(f"  -> NO MATCH in DB for '{filename}'")
-                 # Check what is actually in DB for similar names?
-                 # Debug: try to list some close matches?
-
-            # Fallback: Try matching without extension
             if not product and "." in filename:
                 name_only = filename.rsplit(".", 1)[0]
                 if len(name_only) > 3:
                     product = Product.objects.filter(image__icontains=name_only).first()
-                    if product:
-                        logging.info(f"  -> Found match (fallback): ID={product.id}, Name='{product.tile_name}'")
 
             if product:
+                # Calculate Color Score
+                color_score = 1.0
+                if avg_rgb is not None:
+                    prod_color = str(product.color).lower().strip()
+                    
+                    COLOR_RGB_MAP = {
+                        'grey': np.array([128, 128, 128]),
+                        'gray': np.array([128, 128, 128]),
+                        'ash': np.array([128, 128, 128]),
+                        'black': np.array([25, 25, 25]),
+                        'white': np.array([240, 240, 240]),
+                        'blue': np.array([30, 80, 150]),
+                        'green': np.array([20, 120, 60]),
+                        'brown': np.array([120, 80, 45]),
+                        'copper': np.array([180, 110, 60]),
+                        'mixed': np.array([128, 128, 128])
+                    }
+                    
+                    target_rgb = COLOR_RGB_MAP.get(prod_color, np.array([128, 128, 128]))
+                    
+                    # Euclidean distance in RGB space
+                    dist = np.linalg.norm(avg_rgb - target_rgb)
+                    # Normalised to [0, 1] (Max possible distance is ~441.67)
+                    color_score = 1.0 - (dist / 442.0)
+                    logging.info(f"  -> Product '{product.tile_name}' (Color: {prod_color}) RGB Dist: {dist:.1f}, Color Score: {color_score:.3f}")
+
+                # Fuse: 30% ResNet texture/shape + 70% pure color similarity!
+                combined_score = 0.3 * float(score) + 0.7 * color_score
+                logging.info(f"  -> Combined score for '{product.tile_name}': {combined_score:.3f} (CNN: {score:.3f}, Color: {color_score:.3f})")
+
                 data = ProductSerializer(product, context={'request': request}).data
-                data['similarity_score'] = round(float(score), 3)
+                data['similarity_score'] = round(combined_score, 3)
                 
-                if score > 0.92:
+                if combined_score > 0.88:
                     data['match_type'] = "EXACT MATCH"
-                elif score > 0.75:
+                elif combined_score > 0.75:
                     data['match_type'] = "SIMILAR"
                 else:
                     data['match_type'] = "RELATED"
@@ -491,6 +522,12 @@ class AIScanView(APIView):
         if not response_data:
             logging.warning("All matcher results failed DB lookup.")
             return Response({"message": "No matching tiles found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Re-sort results dynamically based on fused color score descending
+        response_data.sort(key=lambda x: x['similarity_score'], reverse=True)
+        
+        # Keep top 6
+        response_data = response_data[:6]
 
         return Response(response_data)
 

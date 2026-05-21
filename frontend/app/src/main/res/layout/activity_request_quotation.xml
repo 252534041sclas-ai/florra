@@ -148,6 +148,17 @@
                             android:ellipsize="end"
                             android:layout_marginBottom="4dp" />
 
+                        <!-- Product Category -->
+                        <TextView
+                            android:id="@+id/txtProductCategory"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Category: -"
+                            android:textColor="@color/gray_600"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="4dp" />
+
                         <!-- Product Details -->
                         <TextView
                             android:id="@+id/txtProductDetails"

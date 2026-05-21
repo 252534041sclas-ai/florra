@@ -16,23 +16,45 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
-        <!-- Icon -->
-        <LinearLayout
-            android:id="@+id/layoutIcon"
+        <!-- Icon / Product Image Container -->
+        <RelativeLayout
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginEnd="16dp"
-            android:background="#f1f5f9"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_marginEnd="16dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imgIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_description"
-                android:tint="#1a1a1a" />
-        </LinearLayout>
+            <!-- Default Notification Icon Container -->
+            <LinearLayout
+                android:id="@+id/layoutIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#f1f5f9"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/imgIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_description"
+                    android:tint="#1a1a1a" />
+            </LinearLayout>
+
+            <!-- Product Image View -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardProductImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/imgProduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
 
         <!-- Content -->
         <LinearLayout

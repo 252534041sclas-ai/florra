@@ -60,7 +60,7 @@ public class QuotationsAdapter extends RecyclerView.Adapter<QuotationsAdapter.Vi
         holder.tvStatus.setText(status);
 
         // Styling based on status
-        if (status.equalsIgnoreCase("Approved")) {
+        if (status.equalsIgnoreCase("Approved") || status.equalsIgnoreCase("quoted") || status.equalsIgnoreCase("responded")) {
             holder.statusBadge.setBackgroundResource(R.drawable.bg_status_approved);
             holder.tvStatus.setTextColor(Color.WHITE);
             holder.icon.setImageResource(R.drawable.ic_verified);

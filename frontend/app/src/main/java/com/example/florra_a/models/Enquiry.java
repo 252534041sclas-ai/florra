@@ -28,6 +28,9 @@ public class Enquiry implements Serializable {
     private String quotation_boxes;
     private String quotation_delivery_time;
     private String quotation_notes;
+    
+    @SerializedName("admin_name")
+    private String admin_name;
 
     // Getters
     public int getId() { return id; }
@@ -44,6 +47,7 @@ public class Enquiry implements Serializable {
     public String getQuotationBoxes() { return quotation_boxes; }
     public String getQuotationDeliveryTime() { return quotation_delivery_time; }
     public String getQuotationNotes() { return quotation_notes; }
+    public String getAdminName() { return admin_name; }
 
     // Setters
     public void setId(int id) { this.id = id; }
@@ -60,4 +64,5 @@ public class Enquiry implements Serializable {
     public void setQuotationBoxes(String quotation_boxes) { this.quotation_boxes = quotation_boxes; }
     public void setQuotationDeliveryTime(String quotation_delivery_time) { this.quotation_delivery_time = quotation_delivery_time; }
     public void setQuotationNotes(String quotation_notes) { this.quotation_notes = quotation_notes; }
+    public void setAdminName(String admin_name) { this.admin_name = admin_name; }
 }

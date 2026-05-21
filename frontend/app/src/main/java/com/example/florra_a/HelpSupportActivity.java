@@ -16,9 +16,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class HelpSupportActivity extends AppCompatActivity {
 
-    private boolean isFaqExpanded = false;
-    private LinearLayout faqAccordionContent;
-    private ImageView imgFaqChevron;
     private EditText edtFeedback;
 
     @Override
@@ -35,8 +32,6 @@ public class HelpSupportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_help_support);
 
         // Bind layout views
-        faqAccordionContent = findViewById(R.id.faqAccordionContent);
-        imgFaqChevron = findViewById(R.id.imgFaqChevron);
         edtFeedback = findViewById(R.id.edtFeedback);
 
         setupBackButton();
@@ -72,53 +67,12 @@ public class HelpSupportActivity extends AppCompatActivity {
         if (btnLaunchAI != null) {
             btnLaunchAI.setOnClickListener(v -> launchAIChatbot());
         }
-
-        // Accordion FAQ dropdown toggle
-        View btnFaqs = findViewById(R.id.btnFaqs);
-        if (btnFaqs != null) {
-            btnFaqs.setOnClickListener(v -> toggleFaqAccordion());
-        }
-
-        // Resources & Guides Dialog Modals
-        View btnVideoTutorials = findViewById(R.id.btnVideoTutorials);
-        if (btnVideoTutorials != null) {
-            btnVideoTutorials.setOnClickListener(v -> showVideoTutorialsDialog());
-        }
-
-        View btnUserManual = findViewById(R.id.btnUserManual);
-        if (btnUserManual != null) {
-            btnUserManual.setOnClickListener(v -> showUserManualDialog());
-        }
-
-        // Real Intents for Communication
-        View btnCallService = findViewById(R.id.btnCallService);
-        if (btnCallService != null) {
-            btnCallService.setOnClickListener(v -> launchPhoneDialer());
-        }
-
-        View btnEmailSupport = findViewById(R.id.btnEmailSupport);
-        if (btnEmailSupport != null) {
-            btnEmailSupport.setOnClickListener(v -> launchEmailComposer());
-        }
     }
 
     private void setupFeedbackSubmission() {
         View btnSubmitFeedback = findViewById(R.id.btnSubmitFeedback);
         if (btnSubmitFeedback != null) {
             btnSubmitFeedback.setOnClickListener(v -> handleFeedbackSubmission());
-        }
-    }
-
-    private void toggleFaqAccordion() {
-        if (faqAccordionContent == null || imgFaqChevron == null) return;
-
-        isFaqExpanded = !isFaqExpanded;
-        if (isFaqExpanded) {
-            faqAccordionContent.setVisibility(View.VISIBLE);
-            imgFaqChevron.animate().rotation(90).setDuration(200).start();
-        } else {
-            faqAccordionContent.setVisibility(View.GONE);
-            imgFaqChevron.animate().rotation(0).setDuration(200).start();
         }
     }
 
@@ -143,12 +97,49 @@ public class HelpSupportActivity extends AppCompatActivity {
         }
         loaderDialog.show();
 
-        // Simulate backend submission lag (1.5 seconds)
-        new Handler().postDelayed(() -> {
-            loaderDialog.dismiss();
-            edtFeedback.setText(""); // Reset the input box
-            showFeedbackSuccessDialog();
-        }, 1500);
+        // Get details from SharedPrefManager
+        com.example.florra_a.utils.SharedPrefManager prefManager = com.example.florra_a.utils.SharedPrefManager.getInstance(this);
+        String customerName = prefManager.getFullName();
+        String customerEmail = prefManager.getEmail();
+
+        // Construct Enquiry object as feedback container
+        com.example.florra_a.models.Enquiry feedbackEnquiry = new com.example.florra_a.models.Enquiry();
+        feedbackEnquiry.setCustomerName(customerName != null && !customerName.isEmpty() ? customerName : "Anonymous Customer");
+        feedbackEnquiry.setPhone(customerEmail != null && !customerEmail.isEmpty() ? customerEmail : "no-email@florra.design");
+        feedbackEnquiry.setCustomerEmail(customerEmail);
+        
+        // Formulate feedback body
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append("FEEDBACK: ").append(feedbackText).append("\n\n");
+        messageBuilder.append("Submitted via Help & Support Screen\n");
+        messageBuilder.append("App Version: v2.4.0\n");
+        messageBuilder.append("Device: ").append(Build.MANUFACTURER).append(" ").append(Build.MODEL).append("\n");
+        messageBuilder.append("Device OS: Android ").append(Build.VERSION.RELEASE);
+        
+        feedbackEnquiry.setMessage(messageBuilder.toString());
+        feedbackEnquiry.setStatus("new");
+        feedbackEnquiry.setReference("FEEDBACK-" + System.currentTimeMillis());
+
+        // Make the real backend API network call
+        com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();
+        apiService.createEnquiry(feedbackEnquiry).enqueue(new retrofit2.Callback<com.example.florra_a.models.Enquiry>() {
+            @Override
+            public void onResponse(retrofit2.Call<com.example.florra_a.models.Enquiry> call, retrofit2.Response<com.example.florra_a.models.Enquiry> response) {
+                loaderDialog.dismiss();
+                if (response.isSuccessful()) {
+                    edtFeedback.setText(""); // Reset the input box
+                    showFeedbackSuccessDialog();
+                } else {
+                    Toast.makeText(HelpSupportActivity.this, "Failed to send feedback. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<com.example.florra_a.models.Enquiry> call, Throwable t) {
+                loaderDialog.dismiss();
+                Toast.makeText(HelpSupportActivity.this, "Network error. Please check your connection.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showFeedbackSuccessDialog() {
@@ -169,86 +160,12 @@ public class HelpSupportActivity extends AppCompatActivity {
         successDialog.show();
     }
 
-    private void showVideoTutorialsDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View tutorialsView = getLayoutInflater().inflate(R.layout.dialog_video_tutorials, null);
-        builder.setView(tutorialsView);
-        AlertDialog dialog = builder.create();
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
-        }
-
-        View btnClose = tutorialsView.findViewById(R.id.btnClose);
-        if (btnClose != null) {
-            btnClose.setOnClickListener(v -> dialog.dismiss());
-        }
-
-        // Setup mock play triggers on cards
-        View videoCard1 = tutorialsView.findViewById(R.id.videoCard1);
-        if (videoCard1 != null) {
-            videoCard1.setOnClickListener(v -> Toast.makeText(this, "Playing 'Catalog Navigation' tutorial...", Toast.LENGTH_SHORT).show());
-        }
-
-        View videoCard2 = tutorialsView.findViewById(R.id.videoCard2);
-        if (videoCard2 != null) {
-            videoCard2.setOnClickListener(v -> Toast.makeText(this, "Playing 'Request Quotations' tutorial...", Toast.LENGTH_SHORT).show());
-        }
-
-        View videoCard3 = tutorialsView.findViewById(R.id.videoCard3);
-        if (videoCard3 != null) {
-            videoCard3.setOnClickListener(v -> Toast.makeText(this, "Playing 'Using AI Recommendations' tutorial...", Toast.LENGTH_SHORT).show());
-        }
-
-        dialog.show();
-    }
-
-    private void showUserManualDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View manualView = getLayoutInflater().inflate(R.layout.dialog_user_manual, null);
-        builder.setView(manualView);
-        AlertDialog dialog = builder.create();
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
-        }
-
-        View btnClose = manualView.findViewById(R.id.btnClose);
-        if (btnClose != null) {
-            btnClose.setOnClickListener(v -> dialog.dismiss());
-        }
-
-        dialog.show();
-    }
-
     private void launchAIChatbot() {
         try {
             Intent intent = new Intent(this, AIChatActivity.class);
             startActivity(intent);
         } catch (Exception e) {
             Toast.makeText(this, "AI Chatbot is currently unavailable", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void launchPhoneDialer() {
-        try {
-            Intent dialIntent = new Intent(Intent.ACTION_DIAL);
-            dialIntent.setData(Uri.parse("tel:+18005550199"));
-            startActivity(dialIntent);
-        } catch (Exception e) {
-            Toast.makeText(this, "Unable to access phone dialer", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void launchEmailComposer() {
-        try {
-            Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
-            emailIntent.setData(Uri.parse("mailto:support@florra.design"));
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Florra App Support Request");
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "Hello Florra Support Team,\n\n[Explain your problem/feedback here]\n\n-----------------\nApp Version: v2.4.0\nDevice OS: Android " + Build.VERSION.RELEASE);
-            startActivity(Intent.createChooser(emailIntent, "Send support email..."));
-        } catch (Exception e) {
-            Toast.makeText(this, "No email client application found", Toast.LENGTH_SHORT).show();
         }
     }
 

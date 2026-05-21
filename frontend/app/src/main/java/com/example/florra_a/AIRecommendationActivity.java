@@ -50,6 +50,48 @@ public class AIRecommendationActivity extends AppCompatActivity {
         loadRecommendations();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        syncFavorites();
+    }
+
+    private void syncFavorites() {
+        com.example.florra_a.network.RetrofitClient.getApiService().getFavorites().enqueue(new retrofit2.Callback<List<Product>>() {
+            @Override
+            public void onResponse(retrofit2.Call<List<Product>> call, retrofit2.Response<List<Product>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Product> favoriteList = response.body();
+                    java.util.Set<Integer> favIds = new java.util.HashSet<>();
+                    for (Product p : favoriteList) {
+                        favIds.add(p.getId());
+                    }
+                    
+                    if (originalProducts != null) {
+                        for (Product p : originalProducts) {
+                            p.setFavorite(favIds.contains(p.getId()));
+                        }
+                    }
+                    
+                    if (filteredProducts != null) {
+                        for (Product p : filteredProducts) {
+                            p.setFavorite(favIds.contains(p.getId()));
+                        }
+                    }
+                    
+                    if (adapter != null) {
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<List<Product>> call, Throwable t) {
+                // Fallback silently
+            }
+        });
+    }
+
     private void initializeViews() {
         rvRecommendations = findViewById(R.id.rvRecommendations);
         // Use Grid Layout with 2 columns
@@ -62,11 +104,6 @@ public class AIRecommendationActivity extends AppCompatActivity {
         // Get data from intent
         if (getIntent().hasExtra("recommendations")) {
             originalProducts = (List<Product>) getIntent().getSerializableExtra("recommendations");
-            if (originalProducts != null) {
-                Toast.makeText(this, "Received " + originalProducts.size() + " matches", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "No matches in intent", Toast.LENGTH_SHORT).show();
-            }
         }
 
         if (originalProducts == null) {
@@ -143,8 +180,9 @@ public class AIRecommendationActivity extends AppCompatActivity {
 
         findViewById(R.id.btnFilterIcon).setOnClickListener(v -> showFilterBottomSheet());
         
-        findViewById(R.id.btnRefineSearch).setOnClickListener(v -> 
-             Toast.makeText(this, "Refine Search Parameters", Toast.LENGTH_SHORT).show());
+        findViewById(R.id.btnRefineSearch).setOnClickListener(v -> {
+             // Handle parameters refinement silently
+        });
         
         // Setup filter button listeners
         findViewById(R.id.btnTopMatches).setOnClickListener(v -> applyFilter("top"));
@@ -254,13 +292,13 @@ public class AIRecommendationActivity extends AppCompatActivity {
                     currentCategory = item.getTitle().toString();
                     refreshList();
                 } catch (Exception e) {
-                    Toast.makeText(this, "Filter logic error", Toast.LENGTH_SHORT).show();
+                    // Fail silently
                 }
                 return true;
             });
             popup.show();
         } catch (Exception e) {
-            Toast.makeText(this, "Error showing categories", Toast.LENGTH_SHORT).show();
+            // Fail silently
         }
     }
 
@@ -270,7 +308,7 @@ public class AIRecommendationActivity extends AppCompatActivity {
             View bottomSheetView = getLayoutInflater().inflate(R.layout.layout_filter_bottom_sheet, null);
             
             if (bottomSheetView == null) {
-                Toast.makeText(this, "Error inflating layout", Toast.LENGTH_SHORT).show();
+                showCategoryFilter(findViewById(R.id.btnFilterIcon));
                 return;
             }
 
@@ -300,7 +338,7 @@ public class AIRecommendationActivity extends AppCompatActivity {
 
             android.widget.Button btnApply = bottomSheetView.findViewById(R.id.btnApplyFilters);
 
-                btnApply.setOnClickListener(v -> {
+            btnApply.setOnClickListener(v -> {
                 try {
                     int selectedId = cgCategories.getCheckedChipId();
                     if (selectedId != -1) {
@@ -310,15 +348,14 @@ public class AIRecommendationActivity extends AppCompatActivity {
                     }
                     bottomSheetDialog.dismiss();
                 } catch (Exception e) {
-                    Toast.makeText(this, "Filter Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    // Fail silently
                 }
             });
 
             bottomSheetDialog.show();
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Bottom Sheet Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            // Fallback to simple popup if bottom sheet fails
+            // Fallback silently to simple popup if bottom sheet dialog theme fails
             showCategoryFilter(findViewById(R.id.btnFilterIcon));
         }
     }

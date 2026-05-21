@@ -81,7 +81,10 @@ public class AIChatActivity extends AppCompatActivity {
         setupClickListeners();
         
         // Add welcome message
-        addBotMessage("Hello! I'm your Florra Assistant. How can I help you with your tile design today?\n\nYou can ask about tiles, track your orders, or even upload a photo to find similar products!");
+        addBotMessage("Hello! I'm your Florra AI Assistant. 🌟\n\nI can help you with:\n" +
+                "🎨 *Tile Design Recommendations* (Matte/Glossy layouts for Bathrooms, Kitchens, Living rooms, etc.)\n" +
+                "📐 *Tile Calculations* (Provide your room size like '10x12' or area to get exact tile & box estimates)\n" +
+                "📦 *Order Tracking* (Provide your Bill Number)\n\nWhat are you designing today?");
     }
 
     private void initializeViews() {

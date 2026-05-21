@@ -50,7 +50,15 @@ public class ProductDetailsActivity extends AppCompatActivity {
         // Get data from intent
         Intent intent = getIntent();
         if (intent != null) {
-            loadProductData(intent);
+            int productId = intent.getIntExtra("productId", -1);
+            if (productId == -1) {
+                productId = intent.getIntExtra("product_id", -1);
+            }
+            if (productId != -1) {
+                fetchProductDetails(productId);
+            } else {
+                loadProductData(intent);
+            }
         }
 
         setupAllClickListeners();
@@ -102,6 +110,91 @@ public class ProductDetailsActivity extends AppCompatActivity {
         }
     }
 
+    private void fetchProductDetails(int productId) {
+        Toast.makeText(this, "Loading product details...", Toast.LENGTH_SHORT).show();
+        
+        com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();
+        apiService.getProductDetail(productId).enqueue(new retrofit2.Callback<Product>() {
+            @Override
+            public void onResponse(retrofit2.Call<Product> call, retrofit2.Response<Product> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    currentProduct = response.body();
+                    
+                    productName.setText(currentProduct.getTileName());
+                    productName.setTextColor(android.graphics.Color.BLACK);
+                    
+                    String price = String.valueOf(currentProduct.getPrice());
+                    String displayPrice = price.startsWith("₹") ? price : "₹" + price;
+                    productPrice.setText(displayPrice);
+                    
+                    String tileNo = currentProduct.getTileNo();
+                    if (tileNo != null && !tileNo.isEmpty()) {
+                        String displayModel = tileNo.startsWith("Product No:") ? tileNo : "Product No: " + tileNo;
+                        productModel.setText(displayModel);
+                    } else {
+                        productModel.setText("");
+                    }
+                    
+                    String stock = currentProduct.getStockStatus();
+                    if ("LOW STOCK".equalsIgnoreCase(stock) || "OUT OF STOCK".equalsIgnoreCase(stock)) {
+                        stockBadgeText.setText(stock);
+                        stockBadgeText.setTextColor(getResources().getColor(R.color.orange_600));
+                        stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
+                    } else {
+                        stockBadgeText.setText("IN STOCK");
+                        stockBadgeText.setTextColor(getResources().getColor(R.color.green_600));
+                        stockBadge.setBackgroundResource(R.drawable.bg_tag_instock);
+                    }
+                    
+                    String category = currentProduct.getCategory();
+                    tagPorcelain.setText(category != null ? category.toUpperCase() : "PORCELAIN");
+                    specMaterial.setText(getValueOrDefault(category, "Porcelain"));
+                    
+                    specFinish.setText(getValueOrDefault(currentProduct.getFinish(), "High Gloss"));
+                    specSize.setText(getValueOrDefault(currentProduct.getSize(), "60x120cm"));
+                    
+                    specThickness.setText(getValueOrDefault(currentProduct.getThickness(), "9mm"));
+                    specCoverage.setText(getValueOrDefault(currentProduct.getCoverage(), "1.44m²/box"));
+                    specPacking.setText("2 Pcs / Box");
+                    
+                    String desc = currentProduct.getDescription();
+                    if (desc == null || desc.isEmpty()) {
+                        desc = getDescriptionForProduct(currentProduct.getTileName());
+                    }
+                    productDescription.setText(desc);
+                    
+                    String imgUrl = currentProduct.getImage();
+                    if (imgUrl != null && !imgUrl.isEmpty()) {
+                        if (!imgUrl.startsWith("http")) {
+                            String baseUrl = com.example.florra_a.network.RetrofitClient.BASE_URL;
+                            if (baseUrl.endsWith("/") && imgUrl.startsWith("/")) {
+                                imgUrl = baseUrl + imgUrl.substring(1);
+                            } else if (!baseUrl.endsWith("/") && !imgUrl.startsWith("/")) {
+                                imgUrl = baseUrl + "/" + imgUrl;
+                            } else {
+                                imgUrl = baseUrl + imgUrl;
+                            }
+                        }
+                        com.bumptech.glide.Glide.with(ProductDetailsActivity.this)
+                            .load(imgUrl)
+                            .placeholder(R.drawable.ic_grid_view)
+                            .error(R.drawable.ic_grid_view)
+                            .into(productImage);
+                    } else {
+                        productImage.setImageResource(R.drawable.ic_grid_view);
+                    }
+                } else {
+                    Toast.makeText(ProductDetailsActivity.this, "Failed to load product details", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<Product> call, Throwable t) {
+                Toast.makeText(ProductDetailsActivity.this, "Error loading product details: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void loadProductData(Intent intent) {
         // Construct Product object from intent data
         currentProduct = new Product();
@@ -147,11 +240,11 @@ public class ProductDetailsActivity extends AppCompatActivity {
              String displayModel = model.startsWith("Product No:") ? model : "Product No: " + model;
              productModel.setText(displayModel);
         } else if (name != null) {
-            // Fallback generated ID if still null
-            String fallbackModel = "FL-" + name.substring(0, Math.min(2, name.length())).toUpperCase() +
-                    "-" + String.format("%03d", (int)(Math.abs(name.hashCode()) % 1000));
-            currentProduct.setTileNo(fallbackModel);
-            productModel.setText("Product No: " + fallbackModel);
+             // Fallback generated ID if still null
+             String fallbackModel = "FL-" + name.substring(0, Math.min(2, name.length())).toUpperCase() +
+                     "-" + String.format("%03d", (int)(Math.abs(name.hashCode()) % 1000));
+             currentProduct.setTileNo(fallbackModel);
+             productModel.setText("Product No: " + fallbackModel);
         } else {
              productModel.setText("");
         }
@@ -174,7 +267,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
         // 5. Material/Category (User wants Category on tag)
         String category = intent.getStringExtra("productCategory");
         if (category == null) category = intent.getStringExtra("productMaterial");
-        
         tagPorcelain.setText(category != null ? category.toUpperCase() : "PORCELAIN");
         specMaterial.setText(getValueOrDefault(category, "Porcelain"));
         currentProduct.setCategory(category);
@@ -206,15 +298,17 @@ public class ProductDetailsActivity extends AppCompatActivity {
         String imageUrl = intent.getStringExtra("productImage");
         currentProduct.setImage(imageUrl);
         setProductImage(imageUrl);
-        
-        // 10. ID fallback (if passed, though usually 0 for manually constructed ones unless from API object)
+
+        // 9.5 Color
+        String color = intent.getStringExtra("productColor");
+        if (color == null) color = intent.getStringExtra("color");
+        currentProduct.setColor(color != null ? color : "neutral");
+
         int id = intent.getIntExtra("productId", 0);
         currentProduct.setId(id);
 
-        // Check favorite status
         checkFavoriteStatus();
         
-        // Fetch similar
         fetchSimilarProducts();
     }
 
@@ -266,8 +360,25 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private void setProductImage(String imageUrl) {
         if (imageUrl != null && !imageUrl.isEmpty()) {
             if (!imageUrl.startsWith("http")) {
+                if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
+                
+                // Prepend media/ if it's missing in relative path
+                if (!imageUrl.startsWith("media/")) {
+                    imageUrl = "media/" + imageUrl;
+                }
                 imageUrl = com.example.florra_a.network.RetrofitClient.BASE_URL + imageUrl;
+            } else {
+                // If it's absolute, replace 127.0.0.1/localhost with our base host IP
+                String baseHost = com.example.florra_a.network.RetrofitClient.BASE_URL
+                        .replace("http://", "")
+                        .replace("https://", "")
+                        .split(":")[0];
+                imageUrl = imageUrl.replace("127.0.0.1", baseHost)
+                                   .replace("localhost", baseHost);
             }
+            
+            android.util.Log.d("ProductDetails", "Loading Product Image URL: " + imageUrl);
+
             com.bumptech.glide.Glide.with(this)
                 .load(imageUrl)
                 .placeholder(R.drawable.tile_placeholder)
@@ -296,6 +407,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 intent.putExtra("productDetails", specSize.getText().toString() + " • " + specFinish.getText().toString());
                 intent.putExtra("stockStatus", stockBadgeText.getText().toString());
                 intent.putExtra("productImage", currentProduct.getImage());
+                intent.putExtra("productCategory", currentProduct.getCategory());
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
@@ -311,6 +423,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 intent.putExtra("productDetails", specSize.getText().toString() + " • " + specFinish.getText().toString());
                 intent.putExtra("stockStatus", stockBadgeText.getText().toString());
                 intent.putExtra("productImage", currentProduct.getImage());
+                intent.putExtra("productCategory", currentProduct.getCategory());
                 intent.putExtra("fromProductDetails", true); // Flag to indicate source
                 startActivity(intent);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

@@ -28,9 +28,6 @@ public class QuotationDetailsActivity extends AppCompatActivity {
     private void setupClickListeners() {
         findViewById(R.id.btnBack).setOnClickListener(v -> onBackPressed());
 
-        findViewById(R.id.btnHelp).setOnClickListener(v ->
-            Toast.makeText(this, "Contact support for help", Toast.LENGTH_SHORT).show());
-
         findViewById(R.id.btnDownload).setOnClickListener(v -> downloadQuotationPDF());
 
         setupBottomNavigation();
@@ -47,23 +44,36 @@ public class QuotationDetailsActivity extends AppCompatActivity {
 
     private void populateData(com.example.florra_a.models.Enquiry enquiry) {
         setTv(R.id.tvEnquiryNumber, "Enquiry #" + enquiry.getId());
-        if (enquiry.getCreatedAt() != null)
-            setTv(R.id.tvDate, enquiry.getCreatedAt().split("T")[0]);
+        
+        String dateString = "-";
+        if (enquiry.getCreatedAt() != null) {
+            String[] parts = enquiry.getCreatedAt().split("T");
+            dateString = parts[0];
+            if (parts.length > 1) {
+                String timePart = parts[1].substring(0, 5); // HH:mm
+                dateString += " • " + timePart;
+            }
+        }
+        setTv(R.id.tvDate, dateString);
+        setTv(R.id.tvTimelineSub1, dateString);
 
         String rawMessage  = enquiry.getMessage();
         String productName = "Enquiry Product";
+        String category    = "-";
         String details     = "";
         String imageUrl    = "";
 
         if (rawMessage != null) {
             for (String line : rawMessage.split("\n")) {
                 if (line.startsWith("Product: "))        productName = line.replace("Product: ", "").trim();
+                else if (line.startsWith("Category: "))   category    = line.replace("Category: ", "").trim();
                 else if (line.startsWith("Product Image: ")) imageUrl = line.replace("Product Image: ", "").trim();
                 else if (line.startsWith("Details: "))   details     = line.replace("Details: ", "").trim();
             }
         }
 
         setTv(R.id.tvProductName, productName);
+        setTv(R.id.tvProductCategory, "Category: " + category);
         setTv(R.id.tvDetails, details);
         findViewById(R.id.tvSize).setVisibility(View.GONE);
 
@@ -78,25 +88,154 @@ public class QuotationDetailsActivity extends AppCompatActivity {
                 .into((android.widget.ImageView) findViewById(R.id.imgProduct));
         }
 
+        String status = enquiry.getStatus();
+        if (status == null) status = "Pending";
+
+        // Dynamic Status Badge
+        android.widget.TextView tvStatus = findViewById(R.id.tvStatusDetails);
+        android.widget.ImageView imgStatus = findViewById(R.id.imgStatusDetails);
+        android.view.View badgeDetails = findViewById(R.id.statusBadgeDetails);
+
+        tvStatus.setText(status);
+        if (status.equalsIgnoreCase("Approved") || status.equalsIgnoreCase("quoted") || status.equalsIgnoreCase("responded")) {
+            badgeDetails.setBackgroundResource(R.drawable.bg_status_approved);
+            tvStatus.setTextColor(android.graphics.Color.WHITE);
+            imgStatus.setImageResource(R.drawable.ic_verified);
+            imgStatus.setColorFilter(android.graphics.Color.WHITE);
+        } else if (status.equalsIgnoreCase("Rejected") || status.equalsIgnoreCase("Cancelled")) {
+            badgeDetails.setBackgroundResource(R.drawable.bg_status_rejected);
+            tvStatus.setTextColor(android.graphics.Color.WHITE);
+            imgStatus.setImageResource(R.drawable.ic_block);
+            imgStatus.setColorFilter(android.graphics.Color.WHITE);
+        } else {
+            badgeDetails.setBackgroundResource(R.drawable.bg_status_pending);
+            tvStatus.setTextColor(getResources().getColor(R.color.slate_600));
+            imgStatus.setImageResource(R.drawable.ic_pending);
+            imgStatus.setColorFilter(getResources().getColor(R.color.slate_600));
+        }
+
+        // Show/Hide Response details based on status
+        boolean isPending = status.equalsIgnoreCase("Pending") || status.equalsIgnoreCase("new");
         String price    = enquiry.getQuotationPrice();
         String boxes    = enquiry.getQuotationBoxes();
         String delivery = enquiry.getQuotationDeliveryTime();
         String notes    = enquiry.getQuotationNotes();
 
-        setTv(R.id.tvPricePerSqft, (price    != null && !price.isEmpty())    ? "₹" + price    : "-");
-        setTv(R.id.tvQuantity,     (boxes    != null && !boxes.isEmpty())     ? boxes + " Boxes" : "-");
-        setTv(R.id.tvDelivery,     (delivery != null && !delivery.isEmpty())  ? delivery        : "-");
-        setTv(R.id.tvNote,         (notes    != null && !notes.isEmpty())     ? notes           : "No notes provided.");
+        if (isPending || price == null || price.isEmpty()) {
+            findViewById(R.id.layoutAdminResponseTitle).setVisibility(View.GONE);
+            findViewById(R.id.cardAdminResponse).setVisibility(View.GONE);
+            findViewById(R.id.btnDownload).setVisibility(View.GONE);
+            findViewById(R.id.cardPendingResponse).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.layoutAdminResponseTitle).setVisibility(View.VISIBLE);
+            findViewById(R.id.cardAdminResponse).setVisibility(View.VISIBLE);
+            findViewById(R.id.btnDownload).setVisibility(View.VISIBLE);
+            findViewById(R.id.cardPendingResponse).setVisibility(View.GONE);
 
-        try {
-            if (price != null && boxes != null) {
+            setTv(R.id.tvPricePerSqft, "₹" + price);
+            setTv(R.id.tvQuantity,     boxes + " Boxes");
+            setTv(R.id.tvDelivery,     (delivery != null && !delivery.isEmpty()) ? delivery : "-");
+            setTv(R.id.tvNote,         (notes != null && !notes.isEmpty()) ? notes : "No notes provided.");
+
+            String adminName = enquiry.getAdminName();
+            if (adminName == null || adminName.trim().isEmpty()) {
+                adminName = "Showroom Manager";
+            }
+            setTv(R.id.tvAdminName, adminName);
+
+            // Extract avatar initials
+            String initials = "SM";
+            try {
+                String[] nameParts = adminName.trim().split("\\s+");
+                if (nameParts.length > 0 && !nameParts[0].isEmpty()) {
+                    String firstInitial = String.valueOf(nameParts[0].charAt(0)).toUpperCase();
+                    String secondInitial = "";
+                    if (nameParts.length > 1 && !nameParts[1].isEmpty()) {
+                        secondInitial = String.valueOf(nameParts[1].charAt(0)).toUpperCase();
+                    }
+                    initials = firstInitial + secondInitial;
+                }
+            } catch (Exception e) {
+                initials = "SM";
+            }
+            setTv(R.id.tvAdminInitials, initials);
+
+            try {
                 double p     = Double.parseDouble(price.replaceAll("[^\\d.]", ""));
                 double b     = Double.parseDouble(boxes.replaceAll("[^\\d.]", ""));
                 double total = p * b * 10;
                 setTv(R.id.tvTotalEstimate, String.format("₹ %,.2f", total));
+            } catch (Exception e) {
+                setTv(R.id.tvTotalEstimate, "₹ -");
             }
-        } catch (Exception e) {
-            setTv(R.id.tvTotalEstimate, "₹ -");
+        }
+
+        // Dynamic History Timeline Visuals
+        android.view.View line1 = findViewById(R.id.lineTimeline1);
+        android.view.View line2 = findViewById(R.id.lineTimeline2);
+        android.view.View bgStep2 = findViewById(R.id.bgTimeline2);
+        android.widget.ImageView imgStep2 = findViewById(R.id.imgTimeline2);
+        android.widget.TextView tvTitle2 = findViewById(R.id.tvTimelineTitle2);
+        android.widget.TextView tvSub2 = findViewById(R.id.tvTimelineSub2);
+
+        android.view.View bgStep3 = findViewById(R.id.bgTimeline3);
+        android.widget.ImageView imgStep3 = findViewById(R.id.imgTimeline3);
+        android.widget.TextView tvTitle3 = findViewById(R.id.tvTimelineTitle3);
+        android.widget.TextView tvSub3 = findViewById(R.id.tvTimelineSub3);
+
+        if (!isPending) {
+            // Reviewed by Admin - Done
+            line1.setBackgroundColor(android.graphics.Color.parseColor("#10B981")); // green_600
+            bgStep2.setBackgroundResource(R.drawable.bg_timeline_green);
+            imgStep2.setImageResource(R.drawable.ic_check);
+            imgStep2.setColorFilter(android.graphics.Color.parseColor("#10B981"));
+            tvTitle2.setTextColor(getResources().getColor(R.color.slate_900));
+            tvSub2.setText("Admin review complete");
+            tvSub2.setTextColor(getResources().getColor(R.color.slate_500));
+
+            // Line 2 - Done
+            line2.setBackgroundColor(android.graphics.Color.parseColor("#10B981"));
+
+            if (status.equalsIgnoreCase("Approved") || status.equalsIgnoreCase("quoted") || status.equalsIgnoreCase("responded")) {
+                // Response Received - Done
+                bgStep3.setBackgroundResource(R.drawable.bg_timeline_primary);
+                imgStep3.setImageResource(R.drawable.ic_mark_email_read);
+                imgStep3.setColorFilter(android.graphics.Color.WHITE);
+                tvTitle3.setText("Response Received");
+                tvTitle3.setTextColor(getResources().getColor(R.color.primary));
+                tvSub3.setText("Quotation ready to download");
+                tvSub3.setTextColor(getResources().getColor(R.color.slate_500));
+            } else {
+                // Cancelled / Rejected - Done
+                bgStep3.setBackgroundResource(R.drawable.bg_grey_circle);
+                imgStep3.setImageResource(R.drawable.ic_block);
+                imgStep3.setColorFilter(getResources().getColor(R.color.slate_400));
+                tvTitle3.setText("Quotation Cancelled");
+                tvTitle3.setTextColor(getResources().getColor(R.color.slate_500));
+                tvSub3.setText("Cancelled by admin");
+                tvSub3.setTextColor(getResources().getColor(R.color.slate_400));
+            }
+        } else {
+            // Awaiting Admin Review - Incomplete
+            line1.setBackgroundColor(android.graphics.Color.parseColor("#E5E7EB")); // gray_200
+            bgStep2.setBackgroundResource(R.drawable.bg_grey_circle);
+            imgStep2.setImageResource(R.drawable.ic_pending);
+            imgStep2.setColorFilter(getResources().getColor(R.color.slate_400));
+            tvTitle2.setTextColor(getResources().getColor(R.color.slate_400));
+            tvSub2.setText("Awaiting admin review");
+            tvSub2.setTextColor(getResources().getColor(R.color.slate_400));
+
+            // Line 2 - Incomplete
+            line2.setBackgroundColor(android.graphics.Color.parseColor("#E5E7EB"));
+
+            // Response Received - Incomplete
+            bgStep3.setBackgroundResource(R.drawable.bg_grey_circle);
+            imgStep3.setImageResource(R.drawable.ic_pending);
+            imgStep3.setColorFilter(getResources().getColor(R.color.slate_400));
+            tvTitle3.setText("Response Received");
+            tvTitle3.setTextColor(getResources().getColor(R.color.slate_400));
+            tvSub3.setText("Waiting for price details");
+            tvSub3.setTextColor(getResources().getColor(R.color.slate_400));
         }
     }
 

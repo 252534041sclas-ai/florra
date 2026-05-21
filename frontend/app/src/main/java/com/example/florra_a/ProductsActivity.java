@@ -157,12 +157,10 @@ public class ProductsActivity extends AppCompatActivity {
         android.widget.PopupMenu popup = new android.widget.PopupMenu(this, v);
         popup.getMenu().add("All");
         popup.getMenu().add("12x12");
+        popup.getMenu().add("2x2 ft");
+        popup.getMenu().add("2x4 ft");
         popup.getMenu().add("12x18");
-        popup.getMenu().add("12x24");
-        popup.getMenu().add("24x24");
-        popup.getMenu().add("24x48");
-        popup.getMenu().add("32x64");
-        popup.getMenu().add("48x48");
+        popup.getMenu().add("12x8");
 
         popup.setOnMenuItemClickListener(item -> {
             String size = item.getTitle().toString();

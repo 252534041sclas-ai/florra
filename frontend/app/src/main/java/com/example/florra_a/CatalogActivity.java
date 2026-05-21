@@ -51,6 +51,42 @@ public class CatalogActivity extends AppCompatActivity {
         fetchProducts(); // Changed to fetch from API
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        syncFavorites();
+    }
+
+    private void syncFavorites() {
+        RetrofitClient.getApiService().getFavorites().enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Product> favoriteList = response.body();
+                    java.util.Set<Integer> favIds = new java.util.HashSet<>();
+                    for (Product p : favoriteList) {
+                        favIds.add(p.getId());
+                    }
+                    
+                    if (allProducts != null) {
+                        for (Product p : allProducts) {
+                            p.setFavorite(favIds.contains(p.getId()));
+                        }
+                    }
+                    
+                    if (tileAdapter != null) {
+                        tileAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                // Ignore failure
+            }
+        });
+    }
+
     private void setupAllClickListeners() {
         // Back button
         ImageView btnBack = findViewById(R.id.btnBack);

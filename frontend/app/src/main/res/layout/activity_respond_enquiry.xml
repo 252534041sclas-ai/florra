@@ -150,6 +150,15 @@
                             android:layout_marginBottom="4dp" />
 
                         <TextView
+                            android:id="@+id/tvProductCategory"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Category: -"
+                            android:textColor="@color/gray_500"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="4dp" />
+
+                        <TextView
                             android:id="@+id/tvProductSize"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

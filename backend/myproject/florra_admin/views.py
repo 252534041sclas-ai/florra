@@ -101,6 +101,7 @@ class ProductCreateView(APIView):
                     for customer in customers:
                         Notification.objects.create(
                             user=customer,
+                            product=product,
                             title="New Arrival! 🚀",
                             message=f"Exciting news! We just added {product.tile_name} to our catalog. Check it out now!",
                             notification_type="system"

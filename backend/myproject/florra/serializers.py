@@ -28,6 +28,8 @@ from florra_admin.models import Product
 class ProductSerializer(serializers.ModelSerializer):
     is_favorite = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
+    thickness = serializers.ReadOnlyField()
+    coverage = serializers.ReadOnlyField()
 
     class Meta:
         model = Product
@@ -75,6 +77,8 @@ class FavoriteSerializer(serializers.ModelSerializer):
     description = serializers.CharField(source="product.description", read_only=True)
     image = serializers.ImageField(source="product.image", read_only=True)
     is_favorite = serializers.BooleanField(default=True, read_only=True)
+    thickness = serializers.CharField(source="product.thickness", read_only=True)
+    coverage = serializers.CharField(source="product.coverage", read_only=True)
 
     class Meta:
         model = Favorite
@@ -91,6 +95,8 @@ class FavoriteSerializer(serializers.ModelSerializer):
             "description",
             "image",
             "is_favorite",
+            "thickness",
+            "coverage",
         ]
 
 
@@ -100,6 +106,8 @@ from .models import Notification
 
 class NotificationSerializer(serializers.ModelSerializer):
     time_ago = serializers.SerializerMethodField()
+    product_id = serializers.SerializerMethodField()
+    product_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Notification
@@ -110,10 +118,20 @@ class NotificationSerializer(serializers.ModelSerializer):
             "notification_type",
             "is_read",
             "time_ago",
+            "product_id",
+            "product_image",
         ]
 
     def get_time_ago(self, obj):
         from django.utils.timesince import timesince
         return timesince(obj.created_at) + " ago"
+
+    def get_product_id(self, obj):
+        return obj.product.id if obj.product else None
+
+    def get_product_image(self, obj):
+        if obj.product and obj.product.image:
+            return obj.product.image.url
+        return None
 
 

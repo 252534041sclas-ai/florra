@@ -36,6 +36,18 @@ public class AboutFlorraActivity extends AppCompatActivity {
         SharedPrefManager pref = SharedPrefManager.getInstance(this);
         String role = pref.getRole();
 
+        // 0. Toggle Customer Specific Benefits ONLY if logged in as customer or guest
+        TextView tvCustomerBenefitsHeader = findViewById(R.id.tvCustomerBenefitsHeader);
+        View layoutCustomerBenefits = findViewById(R.id.layoutCustomerBenefits);
+
+        if ("admin".equalsIgnoreCase(role) || "staff".equalsIgnoreCase(role)) {
+            if (tvCustomerBenefitsHeader != null) tvCustomerBenefitsHeader.setVisibility(View.GONE);
+            if (layoutCustomerBenefits != null) layoutCustomerBenefits.setVisibility(View.GONE);
+        } else {
+            if (tvCustomerBenefitsHeader != null) tvCustomerBenefitsHeader.setVisibility(View.VISIBLE);
+            if (layoutCustomerBenefits != null) layoutCustomerBenefits.setVisibility(View.VISIBLE);
+        }
+
         // 1. Show Admin & Showroom Features for both Admins and Staff
         TextView tvAdminFeaturesHeader = findViewById(R.id.tvAdminFeaturesHeader);
         View cardShopMgmt = findViewById(R.id.cardShopMgmt);

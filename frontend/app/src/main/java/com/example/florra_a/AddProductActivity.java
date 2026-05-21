@@ -138,7 +138,7 @@ public class AddProductActivity extends AppCompatActivity {
         spinnerCategory.setSelection(0);
 
         // Size spinner
-        String[] sizes = {"Select", "600x600 mm", "600x1200 mm", "300x300 mm", "800x800 mm"};
+        String[] sizes = {"Select", "12x12", "2x2 ft", "2x4 ft", "12x18", "12x8"};
         ArrayAdapter<String> sizeAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_spinner_item,

@@ -54,6 +54,9 @@ public interface ApiService {
     @retrofit2.http.GET("api/admin/products/")
     Call<java.util.List<com.example.florra_a.models.Product>> getProducts();
 
+    @retrofit2.http.GET("api/products/{id}/")
+    Call<com.example.florra_a.models.Product> getProductDetail(@retrofit2.http.Path("id") int id);
+
     // === BILL ENDPOINTS ===
     @retrofit2.http.POST("api/admin/bills/")
     Call<okhttp3.ResponseBody> saveBill(@Body com.example.florra_a.models.Bill bill);
@@ -81,6 +84,12 @@ public interface ApiService {
     );
     @retrofit2.http.GET("api/customer/notifications/")
     Call<java.util.List<com.example.florra_a.models.Notification>> getNotifications();
+
+    @retrofit2.http.PATCH("api/customer/notifications/")
+    Call<okhttp3.ResponseBody> markNotificationAsRead(@Body java.util.Map<String, Integer> body);
+
+    @retrofit2.http.POST("api/customer/notifications/mark-all-read/")
+    Call<okhttp3.ResponseBody> markAllNotificationsAsRead();
 
     @retrofit2.http.Multipart
     @retrofit2.http.POST("api/ai/scan-tile/")

@@ -184,6 +184,7 @@ public class FavoritesActivity extends AppCompatActivity implements FavoritesAda
                     Product first = favoritesList.get(0);
                     intent.putExtra("productName", first.getTileName());
                     intent.putExtra("productImage", first.getImage());
+                    intent.putExtra("productCategory", first.getCategory());
                     startActivity(intent);
                 } else {
                     Toast.makeText(this, "No items to request quotation for", Toast.LENGTH_SHORT).show();
