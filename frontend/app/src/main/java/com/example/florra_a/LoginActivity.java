@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     private ImageView btnToggleCustomerPassword, btnToggleAdminPassword, logoIcon;
     private EditText edtCustomerEmail, edtCustomerPassword, edtAdminEmail, edtAdminPassword;
     private LinearLayout customerLoginLayout, adminLoginLayout, orDivider, adminFooter;
+    private View btnGoogleSignIn;
 
     // State
     private boolean isCustomerPasswordVisible = false;
@@ -120,6 +121,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // These might not exist in your XML
         orDivider = findViewById(R.id.orDivider);
+        btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
         //adminFooter = findViewById(R.id.adminFooter);
 
 
@@ -331,6 +333,17 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
+
+        // Google Sign-In button click
+        if (btnGoogleSignIn != null) {
+            btnGoogleSignIn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showGoogleAccountChooser();
+                }
+            });
+        }
+
         // Secret Gesture: Long Press + Swipe Down on Logo
         if (logoIcon != null) {
             logoIcon.setOnTouchListener(new View.OnTouchListener() {
@@ -502,6 +515,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Safely handle optional views
         if (orDivider != null) orDivider.setVisibility(View.VISIBLE);
+        if (btnGoogleSignIn != null) btnGoogleSignIn.setVisibility(View.VISIBLE);
         if (btnCreateAccount != null) btnCreateAccount.setVisibility(View.VISIBLE);
         if (adminFooter != null) adminFooter.setVisibility(View.GONE);
 
@@ -535,6 +549,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // Safely handle optional views
         if (orDivider != null) orDivider.setVisibility(View.GONE);
+        if (btnGoogleSignIn != null) btnGoogleSignIn.setVisibility(View.GONE);
         if (btnCreateAccount != null) btnCreateAccount.setVisibility(View.GONE);
         if (adminFooter != null) adminFooter.setVisibility(View.VISIBLE);
 
@@ -549,6 +564,127 @@ public class LoginActivity extends AppCompatActivity {
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    private void showGoogleAccountChooser() {
+        com.google.android.material.bottomsheet.BottomSheetDialog dialog = 
+            new com.google.android.material.bottomsheet.BottomSheetDialog(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_google_accounts, null);
+        dialog.setContentView(view);
+
+        View layoutAccount1 = view.findViewById(R.id.layoutAccount1);
+        View layoutAccount2 = view.findViewById(R.id.layoutAccount2);
+        View layoutUseAnother = view.findViewById(R.id.layoutUseAnother);
+
+        if (layoutAccount1 != null) {
+            layoutAccount1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    loginCustomerWithGoogle("akash@gmail.com", "Akash");
+                }
+            });
+        }
+
+        if (layoutAccount2 != null) {
+            layoutAccount2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    loginCustomerWithGoogle("user@florra.com", "Florra Guest");
+                }
+            });
+        }
+
+        if (layoutUseAnother != null) {
+            layoutUseAnother.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                    showCustomGoogleAccountDialog();
+                }
+            });
+        }
+
+        dialog.show();
+    }
+
+    private void showCustomGoogleAccountDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Google Account");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        input.setHint("email@gmail.com");
+
+        LinearLayout container = new LinearLayout(this);
+        container.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        // Margins in density independent pixels
+        float scale = getResources().getDisplayMetrics().density;
+        int verticalMargin = (int) (12 * scale + 0.5f);
+        int horizontalMargin = (int) (24 * scale + 0.5f);
+        params.setMargins(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
+        input.setLayoutParams(params);
+        container.addView(input);
+        builder.setView(container);
+
+        builder.setPositiveButton("Sign in", new android.content.DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(android.content.DialogInterface dialog, int which) {
+                String email = input.getText().toString().trim();
+                if (!email.isEmpty() && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    String name = email;
+                    if (email.contains("@")) {
+                        name = email.split("@")[0];
+                    }
+                    if (name.length() > 0) {
+                        name = name.substring(0, 1).toUpperCase() + name.substring(1);
+                    }
+                    loginCustomerWithGoogle(email, name);
+                } else {
+                    Toast.makeText(LoginActivity.this, "Please enter a valid Google email", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+    private void loginCustomerWithGoogle(String email, String fullName) {
+        progressDialog.setMessage("Signing in with Google...");
+        progressDialog.show();
+
+        com.example.florra_a.models.GoogleLoginRequest request = new com.example.florra_a.models.GoogleLoginRequest(email, fullName);
+        RetrofitClient.getApiService().loginGoogle(request).enqueue(new Callback<AuthResponse>() {
+            @Override
+            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful() && response.body() != null) {
+                    saveUserData(response.body().getEmail(), response.body().getFullName(), response.body().getToken(), false, response.body().getProfileImage());
+                    navigateAfterLogin(false);
+                } else {
+                    String errorMessage = "Google Sign-In Failed";
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMessage = response.errorBody().string();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(LoginActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AuthResponse> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(LoginActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

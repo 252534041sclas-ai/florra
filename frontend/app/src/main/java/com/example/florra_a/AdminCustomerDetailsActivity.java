@@ -91,9 +91,16 @@ public class AdminCustomerDetailsActivity extends AppCompatActivity {
 
         // Setup Enquiry Recycler
         rvEnquiries.setLayoutManager(new LinearLayoutManager(this));
-        enquiryAdapter = new EnquiryAdapter(     customerEnquiries, enquiry -> {
-            // Handle enquiry click if needed
-            Toast.makeText(this, "Enquiry clicked", Toast.LENGTH_SHORT).show();
+        enquiryAdapter = new EnquiryAdapter(customerEnquiries, new EnquiryAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Enquiry enquiry) {
+                Toast.makeText(AdminCustomerDetailsActivity.this, "Enquiry clicked", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onRejectClick(Enquiry enquiry) {
+                Toast.makeText(AdminCustomerDetailsActivity.this, "Reject clicked", Toast.LENGTH_SHORT).show();
+            }
         });
         rvEnquiries.setAdapter(enquiryAdapter);
         

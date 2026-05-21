@@ -107,8 +107,40 @@ public class EnquiriesActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+
+            @Override
+            public void onRejectClick(com.example.florra_a.models.Enquiry enquiry) {
+                rejectEnquiry(enquiry);
+            }
         });
         recyclerView.setAdapter(adapter);
+    }
+
+    private void rejectEnquiry(com.example.florra_a.models.Enquiry enquiry) {
+        if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
+        
+        java.util.Map<String, String> body = new java.util.HashMap<>();
+        body.put("status", "Rejected");
+
+        com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();
+        apiService.updateEnquiryStatus(enquiry.getId(), body).enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
+            @Override
+            public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                if (response.isSuccessful()) {
+                    Toast.makeText(EnquiriesActivity.this, "Enquiry Rejected", Toast.LENGTH_SHORT).show();
+                    fetchEnquiries(); // Reload the list
+                } else {
+                    Toast.makeText(EnquiriesActivity.this, "Failed to reject", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                Toast.makeText(EnquiriesActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void setupNavigation() {

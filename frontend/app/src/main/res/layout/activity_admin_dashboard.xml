@@ -68,19 +68,17 @@
                     android:layout_marginEnd="12dp" />
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    app:cardCornerRadius="18dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:cardCornerRadius="20dp"
                     app:cardElevation="0dp"
                     app:cardBackgroundColor="#33FFFFFF">
-                    <TextView
+                    <ImageView
+                        android:id="@+id/ivDashboardProfile"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="SJ"
-                        android:textColor="@color/white"
-                        android:gravity="center"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_profile_placeholder" />
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
         </LinearLayout>

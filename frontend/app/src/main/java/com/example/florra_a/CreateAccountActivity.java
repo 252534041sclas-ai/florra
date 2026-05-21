@@ -14,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.florra_a.models.AuthResponse;
@@ -29,7 +28,7 @@ public class CreateAccountActivity extends AppCompatActivity {
 
     // Views
     private ImageButton btnBack, btnTogglePassword, btnToggleConfirmPassword;
-    private Button btnHelp, btnCreateAccount;
+    private Button btnCreateAccount;
     private TextView btnTerms, btnPrivacy, btnLogin, btnSendOtp;
     private EditText edtFullName, edtEmail, edtMobile, edtPassword, edtConfirmPassword, edtOtp;
     private CheckBox chkTerms;
@@ -50,14 +49,16 @@ public class CreateAccountActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(android.graphics.Color.WHITE);
         }
 
-        // Enable edge-to-edge
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        // Keep system windows fitted (no edge-to-edge issues)
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
 
-        // Handle notch and status bar
+        // Handle status bar icons
         WindowInsetsControllerCompat windowInsetsController =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
-        windowInsetsController.setAppearanceLightStatusBars(false);
-        windowInsetsController.setAppearanceLightNavigationBars(false);
+        if (windowInsetsController != null) {
+            windowInsetsController.setAppearanceLightStatusBars(true);
+            windowInsetsController.setAppearanceLightNavigationBars(true);
+        }
 
         setContentView(R.layout.activity_create_account);
 
@@ -71,7 +72,6 @@ public class CreateAccountActivity extends AppCompatActivity {
     private void initViews() {
         // Buttons
         btnBack = findViewById(R.id.btnBack);
-        btnHelp = findViewById(R.id.btnHelp);
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
         btnTogglePassword = findViewById(R.id.btnTogglePassword);
         btnToggleConfirmPassword = findViewById(R.id.btnToggleConfirmPassword);
@@ -104,14 +104,6 @@ public class CreateAccountActivity extends AppCompatActivity {
             }
         });
 
-        // Help button
-        btnHelp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(CreateAccountActivity.this, "Help clicked", Toast.LENGTH_SHORT).show();
-                // TODO: Open help section
-            }
-        });
 
         // Toggle password visibility
         btnTogglePassword.setOnClickListener(new View.OnClickListener() {

@@ -22,6 +22,9 @@ public interface ApiService {
     @POST("api/customer/login/")
     Call<AuthResponse> loginCustomer(@Body LoginRequest request);
 
+    @POST("api/customer/google-login/")
+    Call<AuthResponse> loginGoogle(@Body com.example.florra_a.models.GoogleLoginRequest request);
+
     @POST("api/admin/login/")
     Call<AuthResponse> loginAdmin(@Body LoginRequest request);
 
@@ -72,6 +75,12 @@ public interface ApiService {
 
     @retrofit2.http.POST("api/admin/enquiries/respond/")
     Call<com.example.florra_a.models.Enquiry> respondToEnquiry(@Body com.example.florra_a.models.Enquiry enquiry);
+
+    @retrofit2.http.PUT("api/admin/enquiries/{id}/update/")
+    Call<okhttp3.ResponseBody> updateEnquiryStatus(
+        @retrofit2.http.Path("id") int id,
+        @retrofit2.http.Body java.util.Map<String, String> body
+    );
 
     @retrofit2.http.GET("api/admin/enquiries/")
     Call<java.util.List<com.example.florra_a.models.Enquiry>> getEnquiries();

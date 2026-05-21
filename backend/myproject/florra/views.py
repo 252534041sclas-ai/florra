@@ -107,6 +107,42 @@ class CustomerLoginView(APIView):
             return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class GoogleLoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        full_name = request.data.get("full_name")
+
+        if not email:
+            return Response({"message": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not full_name:
+            full_name = email.split("@")[0].capitalize()
+
+        # Get or create customer user
+        user, created = CustomerUser.objects.get_or_create(
+            email=email,
+            defaults={
+                "full_name": full_name,
+                "is_active": True
+            }
+        )
+        if created:
+            user.set_unusable_password()
+            user.save()
+
+        from .models import CustomerToken
+        token, _ = CustomerToken.objects.get_or_create(user=user)
+        return Response({
+            "token": token.key,
+            "email": user.email,
+            "full_name": user.full_name,
+            "user_type": "customer",
+            "profile_image": user.profile_image.url if user.profile_image else None
+        })
+
+
 class ResetPasswordOTPView(APIView):
     permission_classes = [AllowAny]
 

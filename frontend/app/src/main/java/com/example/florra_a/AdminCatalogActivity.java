@@ -11,7 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.florra_a.models.InventoryResponse;
+import com.example.florra_a.adapters.TileAdapter;
 import com.example.florra_a.models.Product;
 import com.example.florra_a.network.ApiService;
 import com.example.florra_a.network.RetrofitClient;
@@ -230,6 +230,15 @@ public class AdminCatalogActivity extends AppCompatActivity {
         // In XML btnAllTiles is already a child of the container in some layouts, but here it's inside
         categoryContainer.addView(btnAllTiles);
 
+        // Deactivate All Tiles initially if another filter is selected
+        if (btnAllTiles != null && !selectedFilter.equalsIgnoreCase("all")) {
+            btnAllTiles.setBackgroundResource(R.drawable.bg_filter_inactive);
+            TextView tv = (TextView) btnAllTiles.getChildAt(0);
+            if (tv != null) {
+                tv.setTextColor(getResources().getColor(R.color.slate_600));
+            }
+        }
+
         for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
             LinearLayout btn = createCategoryButton(category);
             btn.setOnClickListener(filterClickListener);
@@ -304,7 +313,18 @@ public class AdminCatalogActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.recyclerViewTiles);
         if (recyclerView != null) {
-            tileAdapter = new TileAdapter(this, new ArrayList<>());
+            tileAdapter = new TileAdapter(this, new ArrayList<>(), new TileAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(Product product) {
+                    openAdminProductDetails(product);
+                }
+                @Override
+                public void onBookmarkClick(Product product) {}
+                @Override
+                public void onItemLongClick(Product product) {}
+                @Override
+                public void onAddToCartClick(Product product) {}
+            });
             recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             recyclerView.setAdapter(tileAdapter);
             

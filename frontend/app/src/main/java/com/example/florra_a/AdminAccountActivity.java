@@ -109,7 +109,7 @@ public class AdminAccountActivity extends AppCompatActivity {
 
             // Shop Management Cards
             cardEditShop = findViewById(R.id.cardEditShop);
-            cardBusinessInfo = findViewById(R.id.cardBusinessInfo);
+            // cardBusinessInfo removed (no longer in layout)
             cardManageStaff = findViewById(R.id.cardManageStaff);
 
             // System & Support Cards
@@ -211,18 +211,39 @@ public class AdminAccountActivity extends AppCompatActivity {
                         .transform(new CircleTransform())
                         .into(ivProfile);
             } else {
-                // Premium dynamic letter-avatar fallback if no profile image is present
+                // Generate letter avatar locally — no internet needed
                 String fullName = prefManager.getFullName();
                 if (fullName == null || fullName.trim().isEmpty()) {
-                    fullName = "User";
+                    fullName = "Admin";
                 }
-                String dynamicAvatarUrl = "https://ui-avatars.com/api/?name=" + Uri.encode(fullName) + "&background=random&size=128";
-                Picasso.get()
-                        .load(dynamicAvatarUrl)
-                        .placeholder(R.drawable.ic_profile_placeholder)
-                        .error(R.drawable.ic_profile_placeholder)
-                        .transform(new CircleTransform())
-                        .into(ivProfile);
+                // Get initials (up to 2 letters)
+                String[] parts = fullName.trim().split("\\s+");
+                String initials;
+                if (parts.length >= 2) {
+                    initials = String.valueOf(parts[0].charAt(0)).toUpperCase()
+                             + String.valueOf(parts[1].charAt(0)).toUpperCase();
+                } else {
+                    initials = String.valueOf(parts[0].charAt(0)).toUpperCase();
+                }
+                // Draw letter avatar on canvas
+                int size = 128;
+                android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888);
+                android.graphics.Canvas avatarCanvas = new android.graphics.Canvas(bitmap);
+                android.graphics.Paint bgPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+                bgPaint.setColor(android.graphics.Color.parseColor("#1E293B"));
+                avatarCanvas.drawCircle(size / 2f, size / 2f, size / 2f, bgPaint);
+                android.graphics.Paint textPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+                textPaint.setColor(android.graphics.Color.WHITE);
+                textPaint.setTextSize(initials.length() > 1 ? 44f : 52f);
+                textPaint.setTextAlign(android.graphics.Paint.Align.CENTER);
+                textPaint.setTypeface(android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD));
+                android.graphics.Rect bounds = new android.graphics.Rect();
+                textPaint.getTextBounds(initials, 0, initials.length(), bounds);
+                float textY = size / 2f - bounds.exactCenterY();
+                avatarCanvas.drawText(initials, size / 2f, textY, textPaint);
+                if (ivProfile != null) {
+                    ivProfile.setImageBitmap(bitmap);
+                }
             }
         } catch (Exception e) {
             Toast.makeText(this, "Error loading profile image", Toast.LENGTH_SHORT).show();
@@ -297,9 +318,7 @@ public class AdminAccountActivity extends AppCompatActivity {
             });
         }
 
-        if (cardBusinessInfo != null) {
-            cardBusinessInfo.setOnClickListener(v -> Toast.makeText(AdminAccountActivity.this, "Business Information", Toast.LENGTH_SHORT).show());
-        }
+
 
         if (cardManageStaff != null) {
             String role = SharedPrefManager.getInstance(this).getRole();

@@ -154,6 +154,15 @@ public class CatalogActivity extends AppCompatActivity {
         // In XML btnAllTiles is the first child of the container.
         categoryContainer.addView(btnAllTiles);
 
+        // Deactivate All Tiles initially if another filter is selected
+        if (btnAllTiles != null && !selectedFilter.equalsIgnoreCase("all")) {
+            btnAllTiles.setBackgroundResource(R.drawable.bg_filter_inactive);
+            TextView tv = (TextView) btnAllTiles.getChildAt(0);
+            if (tv != null) {
+                tv.setTextColor(getResources().getColor(R.color.slate_600));
+            }
+        }
+
         for (String category : com.example.florra_a.utils.Constants.CATEGORIES) {
             LinearLayout btn = createCategoryButton(category);
             btn.setOnClickListener(filterClickListener);

@@ -18,6 +18,7 @@ public class EnquiryAdapter extends RecyclerView.Adapter<EnquiryAdapter.EnquiryV
 
     public interface OnItemClickListener {
         void onItemClick(Enquiry enquiry);
+        void onRejectClick(Enquiry enquiry);
     }
 
     public EnquiryAdapter(List<Enquiry> enquiries, OnItemClickListener listener) {
@@ -49,7 +50,7 @@ public class EnquiryAdapter extends RecyclerView.Adapter<EnquiryAdapter.EnquiryV
     }
 
     static class EnquiryViewHolder extends RecyclerView.ViewHolder {
-        TextView tvStatus, tvTimeAgo, tvCustomerName, tvEnquiryText, tvDetailInfo, tvAction;
+        TextView tvStatus, tvTimeAgo, tvCustomerName, tvEnquiryText, tvDetailInfo, tvAction, tvRejectAction;
         ImageView ivTileImage;
 
         public EnquiryViewHolder(@NonNull View itemView) {
@@ -60,35 +61,71 @@ public class EnquiryAdapter extends RecyclerView.Adapter<EnquiryAdapter.EnquiryV
             tvEnquiryText = itemView.findViewById(R.id.tvEnquiryText);
             tvDetailInfo = itemView.findViewById(R.id.tvDetailInfo);
             tvAction = itemView.findViewById(R.id.tvAction);
+            tvRejectAction = itemView.findViewById(R.id.tvRejectAction);
             ivTileImage = itemView.findViewById(R.id.ivTileImage);
         }
 
         public void bind(final Enquiry enquiry, final OnItemClickListener listener) {
             tvStatus.setText(capitalize(enquiry.getStatus()));
             tvTimeAgo.setText(formatDate(enquiry.getCreatedAt()));
-            tvCustomerName.setText(enquiry.getCustomerName());
-            tvEnquiryText.setText(enquiry.getMessage());
+            String formattedId = String.format("#%04d", enquiry.getId());
+            // Extract first name from full name
+            String firstName = "";
+            if (enquiry.getCustomerName() != null && !enquiry.getCustomerName().isEmpty()) {
+                String[] parts = enquiry.getCustomerName().split(" ");
+                firstName = parts.length > 0 ? parts[0] : enquiry.getCustomerName();
+            }
+            tvCustomerName.setText(firstName + " - " + formattedId);
+            // Hide placeholder 'New Quotation Request' text
+            String message = enquiry.getMessage();
+            if (message != null && message.trim().equalsIgnoreCase("New Quotation Request")) {
+                tvEnquiryText.setText("");
+            } else {
+                tvEnquiryText.setText(message);
+            }
 
-            // Reference or Phone as detail
-            String detail = enquiry.getReference() != null && !enquiry.getReference().isEmpty() 
-                            ? enquiry.getReference() : enquiry.getPhone();
-            tvDetailInfo.setText(detail);
-
+            // Show phone number (mobile) and make it clickable
+            String phone = enquiry.getPhone() != null && !enquiry.getPhone().isEmpty() ? enquiry.getPhone() : "-";
+            tvDetailInfo.setText(phone);
+            if (!phone.equals("-")) {
+                tvDetailInfo.setOnClickListener(v -> {
+                    android.content.Intent dialIntent = new android.content.Intent(android.content.Intent.ACTION_DIAL);
+                    dialIntent.setData(android.net.Uri.parse("tel:" + phone));
+                    v.getContext().startActivity(dialIntent);
+                });
+            } else {
+                tvDetailInfo.setOnClickListener(null);
+            }
             // Hide image as it's not in the model
             if (ivTileImage != null) {
                 ivTileImage.setVisibility(View.GONE);
             }
 
-            // Status Colors
+            // Status Colors and Actions visibility
             int bgRes = R.drawable.bg_status_new; // Default
+            boolean isNew = false;
             switch (enquiry.getStatus().toLowerCase()) {
-                case "new": bgRes = R.drawable.bg_status_new; break;
+                case "new": 
+                    bgRes = R.drawable.bg_status_new; 
+                    isNew = true;
+                    break;
                 case "quoted": bgRes = R.drawable.bg_status_quoted; break;
                 case "site_visit": 
                 case "site visit": bgRes = R.drawable.bg_status_site_visit; break;
                 case "resolved": bgRes = R.drawable.bg_status_resolved; break;
+                case "rejected": bgRes = R.drawable.bg_status_rejected; break;
             }
             tvStatus.setBackgroundResource(bgRes);
+
+            // Show reject button only for new enquiries
+            if (tvRejectAction != null) {
+                if (isNew) {
+                    tvRejectAction.setVisibility(View.VISIBLE);
+                    tvRejectAction.setOnClickListener(v -> listener.onRejectClick(enquiry));
+                } else {
+                    tvRejectAction.setVisibility(View.GONE);
+                }
+            }
 
             itemView.setOnClickListener(v -> listener.onItemClick(enquiry));
             

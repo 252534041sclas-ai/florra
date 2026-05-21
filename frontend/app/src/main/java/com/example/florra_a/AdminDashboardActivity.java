@@ -40,6 +40,9 @@
 
             setContentView(R.layout.activity_admin_dashboard);
 
+            // Load profile image in header
+            loadDashboardProfile();
+
             // Show toast
             Toast.makeText(this, "Admin Dashboard", Toast.LENGTH_SHORT).show();
 
@@ -438,6 +441,54 @@
         @Override
         protected void onResume() {
             super.onResume();
+            loadDashboardProfile();
             updateDashboardData();
+        }
+
+        private void loadDashboardProfile() {
+            ImageView ivDashboardProfile = findViewById(R.id.ivDashboardProfile);
+            if (ivDashboardProfile == null) return;
+
+            SharedPrefManager prefManager = SharedPrefManager.getInstance(this);
+            String profileImageUrl = prefManager.getProfileImage();
+
+            if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                // Has a real profile image — load with Picasso
+                String fullUrl = profileImageUrl.startsWith("http") ? profileImageUrl
+                        : com.example.florra_a.network.RetrofitClient.BASE_URL + profileImageUrl;
+                com.squareup.picasso.Picasso.get()
+                        .load(fullUrl)
+                        .placeholder(R.drawable.ic_profile_placeholder)
+                        .error(R.drawable.ic_profile_placeholder)
+                        .into(ivDashboardProfile);
+            } else {
+                // No profile image — draw letter avatar locally
+                String fullName = prefManager.getFullName();
+                if (fullName == null || fullName.trim().isEmpty()) fullName = "Admin";
+                String[] parts = fullName.trim().split("\\s+");
+                String initials = parts.length >= 2
+                        ? String.valueOf(parts[0].charAt(0)).toUpperCase() + String.valueOf(parts[1].charAt(0)).toUpperCase()
+                        : String.valueOf(parts[0].charAt(0)).toUpperCase();
+
+                int size = 128;
+                android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888);
+                android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
+
+                android.graphics.Paint bgPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+                bgPaint.setColor(android.graphics.Color.parseColor("#334155"));
+                canvas.drawCircle(size / 2f, size / 2f, size / 2f, bgPaint);
+
+                android.graphics.Paint textPaint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+                textPaint.setColor(android.graphics.Color.WHITE);
+                textPaint.setTextSize(initials.length() > 1 ? 44f : 52f);
+                textPaint.setTextAlign(android.graphics.Paint.Align.CENTER);
+                textPaint.setTypeface(android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD));
+
+                android.graphics.Rect bounds = new android.graphics.Rect();
+                textPaint.getTextBounds(initials, 0, initials.length(), bounds);
+                canvas.drawText(initials, size / 2f, size / 2f - bounds.exactCenterY(), textPaint);
+
+                ivDashboardProfile.setImageBitmap(bitmap);
+            }
         }
     }
