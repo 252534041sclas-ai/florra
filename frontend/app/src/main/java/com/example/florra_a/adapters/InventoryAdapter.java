@@ -105,13 +105,19 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Prod
                     android.graphics.Color.parseColor("#D4D4D8"))); // zinc_300 for placeholder
             }
             
-            String status = product.getStockStatus();
-            if (status == null) status = "In Stock";
+            int stock = product.getStock();
+            String status;
+            if (stock == 0) {
+                status = "Out of Stock";
+            } else if (stock >= 10) {
+                status = "In Stock";
+            } else {
+                status = "Low Stock";
+            }
             tvStockStatus.setText(status.toUpperCase());
 
             // Button Text Logic
             String btnText = "UPDATE";
-            if ("Low Stock".equals(status)) btnText = "ORDER";
             if ("Empty".equalsIgnoreCase(status) || "Out of Stock".equalsIgnoreCase(status)) btnText = "RESTOCK";
             btnAction.setText(btnText);
 
@@ -121,19 +127,25 @@ public class InventoryAdapter extends RecyclerView.Adapter<InventoryAdapter.Prod
             int red700 = android.graphics.Color.parseColor("#b91c1c");
             int zinc600 = android.graphics.Color.parseColor("#52525b");
 
+            int primaryColor = tvProductName.getCurrentTextColor();
+
             if (!product.isActive()) {
                 tvStockStatus.setText("FROZEN");
                 tvStockStatus.setBackgroundResource(R.drawable.bg_zinc_badge); // Assuming this exists or using a generic one
                 tvStockStatus.setTextColor(zinc600);
+                tvStockCount.setTextColor(zinc600);
             } else if ("In Stock".equalsIgnoreCase(status)) {
                 tvStockStatus.setBackgroundResource(R.drawable.bg_green_badge);
                 tvStockStatus.setTextColor(green700);
+                tvStockCount.setTextColor(primaryColor);
             } else if ("Low Stock".equalsIgnoreCase(status)) {
                 tvStockStatus.setBackgroundResource(R.drawable.bg_amber_badge);
                 tvStockStatus.setTextColor(orange500);
+                tvStockCount.setTextColor(orange500);
             } else {
                 tvStockStatus.setBackgroundResource(R.drawable.bg_red_badge);
                 tvStockStatus.setTextColor(red700);
+                tvStockCount.setTextColor(red700);
             }
 
             cardProduct.setOnClickListener(v -> listener.onItemClick(product));

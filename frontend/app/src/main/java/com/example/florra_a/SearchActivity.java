@@ -376,6 +376,8 @@ public class SearchActivity extends AppCompatActivity {
     private void openProductDetails(Product product) {
         try {
             Intent intent = new Intent(SearchActivity.this, ProductDetailsActivity.class);
+            intent.putExtra("productId", product.getId());
+            intent.putExtra("rawStock", product.getStock());
             intent.putExtra("productName", product.getTileName());
             intent.putExtra("productPrice", String.valueOf(product.getPrice()));
             intent.putExtra("productStock", product.getStockStatus());

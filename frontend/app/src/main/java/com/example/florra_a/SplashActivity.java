@@ -47,7 +47,7 @@ public class SplashActivity extends AppCompatActivity {
             if (customLogoPath != null && !customLogoPath.isEmpty()) {
                 java.io.File imgFile = new java.io.File(customLogoPath);
                 if (imgFile.exists()) {
-                    com.bumptech.glide.Glide.with(this).load(imgFile).into(ivSplashLogo);
+                    com.bumptech.glide.Glide.with(this).load(imgFile).circleCrop().into(ivSplashLogo);
                 }
             }
         }

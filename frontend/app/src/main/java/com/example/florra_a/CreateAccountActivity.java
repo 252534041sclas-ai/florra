@@ -29,8 +29,8 @@ public class CreateAccountActivity extends AppCompatActivity {
     // Views
     private ImageButton btnBack, btnTogglePassword, btnToggleConfirmPassword;
     private Button btnCreateAccount;
-    private TextView btnTerms, btnPrivacy, btnLogin, btnSendOtp;
-    private EditText edtFullName, edtEmail, edtMobile, edtPassword, edtConfirmPassword, edtOtp;
+    private TextView btnTerms, btnPrivacy, btnLogin;
+    private EditText edtFullName, edtEmail, edtMobile, edtPassword, edtConfirmPassword;
     private CheckBox chkTerms;
 
     // State
@@ -90,9 +90,6 @@ public class CreateAccountActivity extends AppCompatActivity {
 
         // Checkbox
         chkTerms = findViewById(R.id.chkTerms);
-        
-        edtOtp = findViewById(R.id.edtOtp);
-        btnSendOtp = findViewById(R.id.btnSendOtp);
     }
 
     private void setupClickListeners() {
@@ -183,50 +180,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                 String email = edtEmail.getText().toString().trim();
                 String mobile = edtMobile.getText().toString().trim();
                 String password = edtPassword.getText().toString().trim();
-                String otp = edtOtp.getText().toString().trim();
-
-                if (otp.isEmpty()) {
-                    edtOtp.setError("OTP required");
-                    return;
-                }
-
-                registerCustomer(fullName, email, mobile, password, otp);
-            }
-        });
-        
-        // Send OTP
-        btnSendOtp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String email = edtEmail.getText().toString().trim();
-                if (email.isEmpty()) {
-                    edtEmail.setError("Enter email first");
-                    return;
-                }
-                
-                sendOtp(email);
-            }
-        });
-    }
-
-    private void sendOtp(String email) {
-        Toast.makeText(this, "Sending OTP...", Toast.LENGTH_SHORT).show();
-        com.example.florra_a.models.OtpRequest request = new com.example.florra_a.models.OtpRequest(email, "register");
-        
-        RetrofitClient.getApiService().sendOtp(request).enqueue(new Callback<okhttp3.ResponseBody>() {
-            @Override
-            public void onResponse(Call<okhttp3.ResponseBody> call, Response<okhttp3.ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    Toast.makeText(CreateAccountActivity.this, "OTP Sent! Check your email", Toast.LENGTH_LONG).show();
-                    edtOtp.requestFocus();
-                } else {
-                    Toast.makeText(CreateAccountActivity.this, "Failed to send OTP", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<okhttp3.ResponseBody> call, Throwable t) {
-                 Toast.makeText(CreateAccountActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                registerCustomer(fullName, email, mobile, password, "000000");
             }
         });
     }

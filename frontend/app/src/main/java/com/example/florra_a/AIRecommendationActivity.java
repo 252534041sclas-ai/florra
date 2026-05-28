@@ -166,7 +166,7 @@ public class AIRecommendationActivity extends AppCompatActivity {
             @Override
             public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(AIRecommendationActivity.this, "Updated favorites", Toast.LENGTH_SHORT).show();
+                    // Toast removed
                 }
             }
 

@@ -113,6 +113,7 @@ public class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAd
             Intent intent = new Intent(context, ProductDetailsActivity.class);
             intent.putExtra("productId", product.getId());
             intent.putExtra("product_id", product.getId());
+            intent.putExtra("rawStock", product.getStock());
             intent.putExtra("productName", product.getTileName());
             intent.putExtra("tileName", product.getTileName());
             intent.putExtra("productPrice", String.valueOf(product.getPrice()));

@@ -546,6 +546,11 @@ class AIScanView(APIView):
                 data = ProductSerializer(product, context={'request': request}).data
                 data['similarity_score'] = round(combined_score, 3)
                 
+                # Strict validation: If the CNN shape/texture score is too low, it's probably not a tile.
+                # If the combined score is also very low, reject it.
+                if float(score) < 0.50 or combined_score < 0.60:
+                    continue
+                
                 if combined_score > 0.88:
                     data['match_type'] = "EXACT MATCH"
                 elif combined_score > 0.75:

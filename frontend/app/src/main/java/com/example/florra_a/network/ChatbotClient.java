@@ -7,10 +7,12 @@ public class ChatbotClient {
 
     // Assuming running on same machine/IP as Main API for now. 
     // You can change port here if needed.
-    public static final String BASE_URL = "http://192.168.31.56:8000/";
+    public static final String BASE_URL = "http://192.168.1.32:8000/";
     private static Retrofit retrofit = null;
 
     public static ChatbotApiService getApiService() {
+
+
         if (retrofit == null) {
             okhttp3.logging.HttpLoggingInterceptor logging = new okhttp3.logging.HttpLoggingInterceptor();
             logging.setLevel(okhttp3.logging.HttpLoggingInterceptor.Level.BODY);

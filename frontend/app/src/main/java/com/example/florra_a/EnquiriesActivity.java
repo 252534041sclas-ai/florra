@@ -257,7 +257,8 @@ public class EnquiriesActivity extends AppCompatActivity {
                 String name = e.getCustomerName() != null ? e.getCustomerName().toLowerCase() : "";
                 String message = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
                 String id = String.valueOf(e.getId());
-                matchesSearch = name.contains(query) || message.contains(query) || id.contains(query);
+                String formattedId = String.format("#%04d", e.getId()).toLowerCase();
+                matchesSearch = name.contains(query) || message.contains(query) || id.contains(query) || formattedId.contains(query);
             }
             
             if (matchesStatus && matchesSearch) {

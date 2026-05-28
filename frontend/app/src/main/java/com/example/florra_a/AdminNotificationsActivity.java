@@ -525,8 +525,21 @@ public class AdminNotificationsActivity extends AppCompatActivity {
 
         // Load product image with Glide
         if (p.getImage() != null && !p.getImage().isEmpty()) {
+            String imageUrl = p.getImage();
+            if (!imageUrl.startsWith("http")) {
+                if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
+                imageUrl = com.example.florra_a.network.RetrofitClient.BASE_URL + imageUrl;
+            } else {
+                 String baseHost = com.example.florra_a.network.RetrofitClient.BASE_URL
+                         .replace("http://", "")
+                         .replace("https://", "")
+                         .split(":")[0];
+                 imageUrl = imageUrl.replace("127.0.0.1", baseHost)
+                                    .replace("localhost", baseHost);
+            }
+
             com.bumptech.glide.Glide.with(this)
-                .load(p.getImage())
+                .load(imageUrl)
                 .placeholder(R.drawable.bg_filter_inactive)
                 .centerCrop()
                 .into(ivSelectedProduct);
@@ -535,12 +548,23 @@ public class AdminNotificationsActivity extends AppCompatActivity {
             ivPreviewImage.setPadding(0, 0, 0, 0);
             ivPreviewImage.setImageTintList(null);
             com.bumptech.glide.Glide.with(this)
-                .load(p.getImage())
+                .load(imageUrl)
                 .centerCrop()
                 .into(ivPreviewImage);
         }
 
         cardSelectedProduct.setVisibility(android.view.View.VISIBLE);
+        
+        // Fetch product name into the message
+        String currentMsg = etMessage.getText().toString();
+        String productTag = "🟩 Product: " + p.getTileName() + (p.getSize() != null ? " (" + p.getSize() + ")" : "");
+        if (!currentMsg.contains(p.getTileName())) {
+            if (!currentMsg.isEmpty() && !currentMsg.endsWith("\n")) {
+                currentMsg += "\n\n";
+            }
+            etMessage.setText(currentMsg + productTag);
+            etMessage.setSelection(etMessage.getText().length());
+        }
     }
 
     private void clearSelectedProduct() {
@@ -574,14 +598,11 @@ public class AdminNotificationsActivity extends AppCompatActivity {
 
         Map<String, String> body = new HashMap<>();
         body.put("title", title);
-        // Append product tag to message if a product is selected
+        // Only add product ID/name fields, do not duplicate message append since it's already in the text box
+        body.put("message", message);
         if (selectedProduct != null) {
-            body.put("message", message + "\n\n🟩 Product: " + selectedProduct.getTileName() +
-                    (selectedProduct.getSize() != null ? " (" + selectedProduct.getSize() + ")" : ""));
             body.put("product_id", String.valueOf(selectedProduct.getId()));
             body.put("product_name", selectedProduct.getTileName());
-        } else {
-            body.put("message", message);
         }
         body.put("type", type);
 

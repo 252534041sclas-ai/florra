@@ -60,7 +60,7 @@ public class EditShopProfileActivity extends AppCompatActivity {
                             os.close();
                             is.close();
                             selectedLogoPath = logoFile.getAbsolutePath();
-                            Glide.with(this).load(logoFile).into(ivShopLogo);
+                            loadLogoIntoView(logoFile);
                         } catch (Exception e) {
                             Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
                         }
@@ -148,7 +148,7 @@ public class EditShopProfileActivity extends AppCompatActivity {
         if (selectedLogoPath != null && ivShopLogo != null) {
             File logoFile = new File(selectedLogoPath);
             if (logoFile.exists()) {
-                Glide.with(this).load(logoFile).into(ivShopLogo);
+                loadLogoIntoView(logoFile);
             }
         }
     }
@@ -272,6 +272,27 @@ public class EditShopProfileActivity extends AppCompatActivity {
         }
 
         successDialog.show();
+    }
+
+    private void loadLogoIntoView(File logoFile) {
+        if (ivShopLogo != null) {
+            // Remove the XML color tint so the logo displays in full color
+            ivShopLogo.setColorFilter(null);
+            
+            // Expand ImageView size to fill the full 96dp circle
+            android.view.ViewGroup.LayoutParams params = ivShopLogo.getLayoutParams();
+            if (params != null) {
+                params.width = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+                params.height = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+                ivShopLogo.setLayoutParams(params);
+            }
+            
+            // Load and crop circle beautifully
+            Glide.with(this)
+                 .load(logoFile)
+                 .circleCrop()
+                 .into(ivShopLogo);
+        }
     }
 
     @Override

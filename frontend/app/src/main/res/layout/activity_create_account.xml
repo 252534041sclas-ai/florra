@@ -145,54 +145,7 @@
                         android:inputType="textEmailAddress"
                         android:layout_marginBottom="20dp" />
     
-                    <!-- OTP Layout (inserted) -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginBottom="16dp">
-                        
-                         <LinearLayout
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:orientation="horizontal"
-                             android:gravity="center_vertical">
-                             
-                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Email OTP"
-                                android:textColor="@color/primary"
-                                android:textSize="14sp"
-                                android:layout_marginStart="4dp"
-                                android:layout_weight="1"/>
-                                
-                             <TextView
-                                android:id="@+id/btnSendOtp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Send OTP"
-                                android:textColor="@color/primary"
-                                android:textSize="14sp"
-                                android:textStyle="bold"
-                                android:clickable="true"
-                                android:padding="8dp"/>
-                         </LinearLayout>
 
-                        <EditText
-                            android:id="@+id/edtOtp"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:hint="Enter 6-digit OTP"
-                            android:textColor="@color/primary"
-                            android:textColorHint="@color/slate_400"
-                            android:textSize="16sp"
-                            android:background="@drawable/bg_input_field"
-                            android:paddingHorizontal="16dp"
-                            android:maxLines="1"
-                            android:inputType="number"
-                            android:maxLength="6" />
-                    </LinearLayout>
 
 
                     <!-- Mobile Number -->

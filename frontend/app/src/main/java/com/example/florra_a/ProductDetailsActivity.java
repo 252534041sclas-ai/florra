@@ -50,14 +50,48 @@ public class ProductDetailsActivity extends AppCompatActivity {
         // Get data from intent
         Intent intent = getIntent();
         if (intent != null) {
-            int productId = intent.getIntExtra("productId", -1);
-            if (productId == -1) {
-                productId = intent.getIntExtra("product_id", -1);
+            // Handle Deep Link
+            android.net.Uri data = intent.getData();
+            boolean handledDeepLink = false;
+            if (data != null) {
+                String scheme = data.getScheme();
+                String host = data.getHost();
+                String path = data.getPath();
+                String idStr = null;
+
+                if ("florra".equals(scheme)) {
+                    if ("product".equals(host)) {
+                        if (path != null && path.length() > 1) {
+                            idStr = path.substring(1).replace("/", "");
+                        } else {
+                            idStr = data.getQueryParameter("id");
+                        }
+                    }
+                } else if (path != null && path.startsWith("/product/")) {
+                    idStr = path.substring("/product/".length()).replace("/", "");
+                }
+
+                if (idStr != null) {
+                    try {
+                        int productId = Integer.parseInt(idStr);
+                        fetchProductDetails(productId);
+                        handledDeepLink = true;
+                    } catch (NumberFormatException e) {
+                        // ignore and fallback
+                    }
+                }
             }
-            if (productId != -1) {
-                fetchProductDetails(productId);
-            } else {
-                loadProductData(intent);
+
+            if (!handledDeepLink) {
+                int productId = intent.getIntExtra("productId", -1);
+                if (productId == -1) {
+                    productId = intent.getIntExtra("product_id", -1);
+                }
+                if (productId != -1) {
+                    fetchProductDetails(productId);
+                } else {
+                    loadProductData(intent);
+                }
             }
         }
 
@@ -111,7 +145,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
     }
 
     private void fetchProductDetails(int productId) {
-        Toast.makeText(this, "Loading product details...", Toast.LENGTH_SHORT).show();
         
         com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();
         apiService.getProductDetail(productId).enqueue(new retrofit2.Callback<Product>() {
@@ -135,15 +168,23 @@ public class ProductDetailsActivity extends AppCompatActivity {
                         productModel.setText("");
                     }
                     
-                    String stock = currentProduct.getStockStatus();
-                    if ("LOW STOCK".equalsIgnoreCase(stock) || "OUT OF STOCK".equalsIgnoreCase(stock)) {
-                        stockBadgeText.setText(stock);
+                    int stockVal = currentProduct.getStock();
+                    String stockText;
+                    if (stockVal == 0) {
+                        stockText = "OUT OF STOCK";
+                        stockBadgeText.setText(stockText);
+                        stockBadgeText.setTextColor(getResources().getColor(R.color.red_600));
+                        stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
+                    } else if (stockVal < 10) {
+                        stockText = "LOW STOCK (" + stockVal + " BOXES)";
+                        stockBadgeText.setText(stockText);
                         stockBadgeText.setTextColor(getResources().getColor(R.color.orange_600));
                         stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
                     } else {
-                        stockBadgeText.setText("IN STOCK");
-                        stockBadgeText.setTextColor(getResources().getColor(R.color.green_600));
-                        stockBadge.setBackgroundResource(R.drawable.bg_tag_instock);
+                        stockText = "IN STOCK";
+                        stockBadgeText.setText(stockText);
+                        stockBadgeText.setTextColor(getResources().getColor(R.color.emerald_700));
+                        stockBadge.setBackgroundResource(R.drawable.bg_tag_stock);
                     }
                     
                     String category = currentProduct.getCategory();
@@ -164,25 +205,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
                     productDescription.setText(desc);
                     
                     String imgUrl = currentProduct.getImage();
-                    if (imgUrl != null && !imgUrl.isEmpty()) {
-                        if (!imgUrl.startsWith("http")) {
-                            String baseUrl = com.example.florra_a.network.RetrofitClient.BASE_URL;
-                            if (baseUrl.endsWith("/") && imgUrl.startsWith("/")) {
-                                imgUrl = baseUrl + imgUrl.substring(1);
-                            } else if (!baseUrl.endsWith("/") && !imgUrl.startsWith("/")) {
-                                imgUrl = baseUrl + "/" + imgUrl;
-                            } else {
-                                imgUrl = baseUrl + imgUrl;
-                            }
-                        }
-                        com.bumptech.glide.Glide.with(ProductDetailsActivity.this)
-                            .load(imgUrl)
-                            .placeholder(R.drawable.ic_grid_view)
-                            .error(R.drawable.ic_grid_view)
-                            .into(productImage);
-                    } else {
-                        productImage.setImageResource(R.drawable.ic_grid_view);
-                    }
+                    setProductImage(imgUrl);
+                    
+                    checkFavoriteStatus();
+                    fetchSimilarProducts();
                 } else {
                     Toast.makeText(ProductDetailsActivity.this, "Failed to load product details", Toast.LENGTH_SHORT).show();
                 }
@@ -250,18 +276,59 @@ public class ProductDetailsActivity extends AppCompatActivity {
         }
 
         // 4. Stock
+        int stockVal = intent.getIntExtra("rawStock", -1);
+        if (stockVal == -1) {
+            stockVal = intent.getIntExtra("productStockCount", -1);
+        }
+        
         String stock = intent.getStringExtra("productStock");
         if (stock == null) stock = intent.getStringExtra("tileStock");
-        currentProduct.setStockStatus(stock != null ? stock : "IN STOCK"); // Store simple string
+        if (stock == null) stock = intent.getStringExtra("stockStatus");
         
-        if ("LOW STOCK".equalsIgnoreCase(stock) || "OUT OF STOCK".equalsIgnoreCase(stock)) {
-            stockBadgeText.setText(stock);
+        if (stockVal == -1 && stock != null) {
+            try {
+                if (stock.toUpperCase().contains("OUT OF STOCK")) {
+                    stockVal = 0;
+                } else if (stock.toUpperCase().contains("LOW STOCK")) {
+                    String digits = stock.replaceAll("[^0-9]", "");
+                    if (!digits.isEmpty()) {
+                        stockVal = Integer.parseInt(digits);
+                    } else {
+                        stockVal = 5;
+                    }
+                } else if (stock.toUpperCase().contains("IN STOCK")) {
+                    stockVal = 15;
+                }
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+        
+        if (stockVal != -1) {
+            currentProduct.setStock(stockVal);
+            if (stockVal == 0) {
+                stock = "OUT OF STOCK";
+            } else if (stockVal < 10) {
+                stock = "LOW STOCK (" + stockVal + " BOXES)";
+            } else {
+                stock = "IN STOCK";
+            }
+        }
+        
+        currentProduct.setStockStatus(stock != null ? stock : "IN STOCK");
+        
+        if (stockVal == 0) {
+            stockBadgeText.setText("OUT OF STOCK");
+            stockBadgeText.setTextColor(getResources().getColor(R.color.red_600));
+            stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
+        } else if (stockVal < 10 && stockVal != -1) {
+            stockBadgeText.setText("LOW STOCK (" + stockVal + " BOXES)");
             stockBadgeText.setTextColor(getResources().getColor(R.color.orange_600));
             stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
         } else {
             stockBadgeText.setText("IN STOCK");
-            stockBadgeText.setTextColor(getResources().getColor(R.color.green_600));
-            stockBadge.setBackgroundResource(R.drawable.bg_tag_instock);
+            stockBadgeText.setTextColor(getResources().getColor(R.color.emerald_700));
+            stockBadge.setBackgroundResource(R.drawable.bg_tag_stock);
         }
 
         // 5. Material/Category (User wants Category on tag)
@@ -381,7 +448,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
             com.bumptech.glide.Glide.with(this)
                 .load(imageUrl)
-                .placeholder(R.drawable.tile_placeholder)
                 .error(R.drawable.tile_placeholder)
                 .centerCrop()
                 .into(productImage);
@@ -527,39 +593,64 @@ public class ProductDetailsActivity extends AppCompatActivity {
     }
 
     private void fetchSimilarProducts() {
-        // ... (Existing logic for fetching similar products) ...
-        // Re-implementing briefly to keep context valid
-        String category = currentProduct.getCategory() != null ? currentProduct.getCategory() : "all";
-        
+        if (currentProduct == null) return;
+
+        String targetCategory = currentProduct.getCategory();
+
         androidx.recyclerview.widget.RecyclerView recyclerSimilar = findViewById(R.id.recyclerSimilarProducts);
         recyclerSimilar.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(this, 2));
         TextView tvNoSimilarProducts = findViewById(R.id.tvNoSimilarProducts);
 
         com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();
-        apiService.getInventory(null, category, null).enqueue(new retrofit2.Callback<com.example.florra_a.models.InventoryResponse>() {
+        // Fetch all products by passing null for category to the backend
+        apiService.getInventory(null, null, null).enqueue(new retrofit2.Callback<com.example.florra_a.models.InventoryResponse>() {
             @Override
             public void onResponse(retrofit2.Call<com.example.florra_a.models.InventoryResponse> call, retrofit2.Response<com.example.florra_a.models.InventoryResponse> response) {
                 if (response.isSuccessful() && response.body() != null && response.body().getProducts() != null) {
                     List<Product> allProducts = response.body().getProducts();
-                    List<Product> similarProducts = new ArrayList<>();
+                    List<Product> sameCategoryProducts = new ArrayList<>();
+                    List<Product> otherCategoryProducts = new ArrayList<>();
+
+                    int currentId = currentProduct.getId();
                     String currentName = currentProduct.getTileName();
-                    
+
                     for (Product p : allProducts) {
-                         if (currentName != null && !currentName.equalsIgnoreCase(p.getTileName())) {
-                             similarProducts.add(p);
-                         }
+                        // Exclude the current product
+                        if (p.getId() == currentId) continue;
+                        if (currentName != null && currentName.equalsIgnoreCase(p.getTileName())) continue;
+
+                        // Sort into same category vs others
+                        if (targetCategory != null && targetCategory.equalsIgnoreCase(p.getCategory())) {
+                            sameCategoryProducts.add(p);
+                        } else {
+                            otherCategoryProducts.add(p);
+                        }
                     }
-                    
+
+                    List<Product> similarProducts = new ArrayList<>();
+                    // 1. Add same category products
+                    similarProducts.addAll(sameCategoryProducts);
+
+                    // 2. Fallback: Add other category products to fill the list if we have fewer than 4 items
+                    if (similarProducts.size() < 4) {
+                        for (Product p : otherCategoryProducts) {
+                            similarProducts.add(p);
+                            if (similarProducts.size() >= 4) {
+                                break;
+                            }
+                        }
+                    }
+
                     if (similarProducts.isEmpty()) {
                         tvNoSimilarProducts.setVisibility(View.VISIBLE);
                         recyclerSimilar.setVisibility(View.GONE);
                     } else {
                         tvNoSimilarProducts.setVisibility(View.GONE);
                         recyclerSimilar.setVisibility(View.VISIBLE);
-                        
+
                         // Use TileAdapter as requested
                         com.example.florra_a.TileAdapter adapter = new com.example.florra_a.TileAdapter(ProductDetailsActivity.this, similarProducts);
-                        
+
                         // Set click listener for similar products to reload the activity with the new product
                         adapter.setOnItemClickListener(new com.example.florra_a.TileAdapter.OnItemClickListener() {
                             @Override
@@ -579,7 +670,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                                 intent.putExtra("productImage", product.getImage());
                                 intent.putExtra("productDescription", product.getDescription());
                                 intent.putExtra("productTileNo", product.getTileNo());
-                                
+
                                 startActivity(intent);
                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                                 finish();
@@ -592,16 +683,40 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
                             @Override
                             public void onAddToCartClick(Product product) {
-                                // Add to cart logic if needed, or simple toast
                                 Toast.makeText(ProductDetailsActivity.this, "Added to cart: " + product.getTileName(), Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void onBookmarkClick(Product product) {
-                                // Handle bookmark
+                                com.example.florra_a.network.ApiService apiService = com.example.florra_a.network.RetrofitClient.getApiService();
+                                if (product.isFavorite()) {
+                                    java.util.Map<String, Integer> map = new java.util.HashMap<>();
+                                    map.put("product_id", product.getId());
+                                    apiService.addToFavorites(map).enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
+                                        @Override
+                                        public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
+                                            if (response.isSuccessful()) {
+                                                Toast.makeText(ProductDetailsActivity.this, "Added to Favorites", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                        @Override
+                                        public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {}
+                                    });
+                                } else {
+                                    apiService.removeFromFavorites(product.getId()).enqueue(new retrofit2.Callback<okhttp3.ResponseBody>() {
+                                        @Override
+                                        public void onResponse(retrofit2.Call<okhttp3.ResponseBody> call, retrofit2.Response<okhttp3.ResponseBody> response) {
+                                            if (response.isSuccessful()) {
+                                                Toast.makeText(ProductDetailsActivity.this, "Removed from Favorites", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                        @Override
+                                        public void onFailure(retrofit2.Call<okhttp3.ResponseBody> call, Throwable t) {}
+                                    });
+                                }
                             }
                         });
-                        
+
                         recyclerSimilar.setAdapter(adapter);
                     }
                 } else {

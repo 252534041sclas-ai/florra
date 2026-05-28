@@ -129,7 +129,8 @@ public class GenerateBillActivity extends AppCompatActivity {
         rvBillItems.setAdapter(billItemAdapter);
 
         // Set initial Bill No and Date
-        tvBillNo.setText("FL-" + System.currentTimeMillis());
+        int randomBillNo = 1000 + new java.util.Random().nextInt(9000);
+        tvBillNo.setText("FL-" + randomBillNo);
         tvDate.setText(new java.text.SimpleDateFormat("dd MMM, yyyy", java.util.Locale.getDefault()).format(new java.util.Date()));
     }
 

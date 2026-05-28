@@ -104,8 +104,116 @@ public class InventoryActivity extends AppCompatActivity {
 
             @Override
             public void onActionClick(Product product) {
-                // TODO: Handle action (Order/Restock)
-                Toast.makeText(InventoryActivity.this, "Action: " + product.getStockStatus(), Toast.LENGTH_SHORT).show();
+                // Custom programmatic dialog layout for maximum compatibility and zero XML dependency
+                android.widget.LinearLayout layout = new android.widget.LinearLayout(InventoryActivity.this);
+                layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+                layout.setPadding(48, 40, 48, 20);
+
+                // Description text
+                TextView tvDesc = new TextView(InventoryActivity.this);
+                tvDesc.setText("Adjust stock for this product. You can type the quantity or use the buttons below.");
+                tvDesc.setTextColor(getResources().getColor(R.color.zinc_600));
+                tvDesc.setTextSize(14);
+                tvDesc.setPadding(0, 0, 0, 32);
+                layout.addView(tvDesc);
+
+                // Row for decrement, edittext, increment
+                android.widget.LinearLayout row = new android.widget.LinearLayout(InventoryActivity.this);
+                row.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+                row.setGravity(android.view.Gravity.CENTER);
+
+                // Decrement Button
+                Button btnDec = new Button(InventoryActivity.this);
+                btnDec.setText("-");
+                btnDec.setTextSize(20);
+                btnDec.setTextColor(getResources().getColor(android.R.color.white));
+                btnDec.setBackgroundResource(R.drawable.bg_primary_button); // premium primary styling
+                
+                // Adjust layout params for a neat circular/square look
+                android.widget.LinearLayout.LayoutParams btnParams = new android.widget.LinearLayout.LayoutParams(
+                        120, 120);
+                btnDec.setLayoutParams(btnParams);
+
+                // EditText for Input
+                EditText etStock = new EditText(InventoryActivity.this);
+                etStock.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+                etStock.setText(String.valueOf(product.getStock()));
+                etStock.setGravity(android.view.Gravity.CENTER);
+                etStock.setTextSize(22);
+                etStock.setPadding(20, 10, 20, 10);
+                android.widget.LinearLayout.LayoutParams editParams = new android.widget.LinearLayout.LayoutParams(
+                        200, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+                editParams.setMargins(32, 0, 32, 0);
+                etStock.setLayoutParams(editParams);
+
+                // Increment Button
+                Button btnInc = new Button(InventoryActivity.this);
+                btnInc.setText("+");
+                btnInc.setTextSize(20);
+                btnInc.setTextColor(getResources().getColor(android.R.color.white));
+                btnInc.setBackgroundResource(R.drawable.bg_primary_button);
+                btnInc.setLayoutParams(btnParams);
+
+                row.addView(btnDec);
+                row.addView(etStock);
+                row.addView(btnInc);
+                layout.addView(row);
+
+                // Button click handlers
+                btnDec.setOnClickListener(vDec -> {
+                    try {
+                        int current = Integer.parseInt(etStock.getText().toString());
+                        if (current > 0) {
+                            etStock.setText(String.valueOf(current - 1));
+                        }
+                    } catch (NumberFormatException e) {
+                        etStock.setText("0");
+                    }
+                });
+
+                btnInc.setOnClickListener(vInc -> {
+                    try {
+                        int current = Integer.parseInt(etStock.getText().toString());
+                        etStock.setText(String.valueOf(current + 1));
+                    } catch (NumberFormatException e) {
+                        etStock.setText("1");
+                    }
+                });
+
+                // Show Dialog
+                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(InventoryActivity.this);
+                builder.setTitle(product.getTileName())
+                       .setView(layout)
+                       .setPositiveButton("SAVE", null) // Set to null first to override dismiss behaviour on validation
+                       .setNegativeButton("CANCEL", (dialog, which) -> dialog.dismiss());
+
+                androidx.appcompat.app.AlertDialog dialog = builder.create();
+                dialog.show();
+
+                // Style the dialog buttons beautifully to match the app theme
+                Button positiveButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE);
+                Button negativeButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE);
+                if (positiveButton != null) {
+                    positiveButton.setTextColor(getResources().getColor(R.color.emerald_700));
+                    positiveButton.setOnClickListener(vSave -> {
+                        String input = etStock.getText().toString().trim();
+                        if (input.isEmpty()) {
+                            Toast.makeText(InventoryActivity.this, "Please enter a valid stock amount", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        
+                        try {
+                            int newStock = Integer.parseInt(input);
+                            dialog.dismiss();
+                            updateProductStockOnServer(product, newStock);
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(InventoryActivity.this, "Invalid stock format", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                if (negativeButton != null) {
+                    negativeButton.setTextColor(getResources().getColor(R.color.slate_900));
+                }
             }
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -204,5 +312,52 @@ public class InventoryActivity extends AppCompatActivity {
                 Log.e("InventoryActivity", "API call failed", t);
             }
         });
+    }
+
+    private void updateProductStockOnServer(Product product, int newStock) {
+        final android.app.ProgressDialog progressDialog = new android.app.ProgressDialog(this);
+        progressDialog.setMessage("Updating stock for " + product.getTileName() + "...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        java.util.Map<String, okhttp3.RequestBody> textFields = new java.util.HashMap<>();
+        textFields.put("tile_name", createPartFromString(product.getTileName()));
+        textFields.put("tile_no", createPartFromString(product.getTileNo()));
+        textFields.put("brand_name", createPartFromString(product.getBrandName()));
+        textFields.put("category", createPartFromString(product.getCategory()));
+        textFields.put("size", createPartFromString(product.getSize()));
+        textFields.put("finish", createPartFromString(product.getFinish()));
+        textFields.put("color", createPartFromString(product.getColor()));
+        textFields.put("thickness", createPartFromString(product.getThickness()));
+        textFields.put("coverage", createPartFromString(product.getCoverage()));
+        textFields.put("warehouse", createPartFromString(product.getWarehouse()));
+        textFields.put("price", createPartFromString(product.getPrice()));
+        textFields.put("stock", createPartFromString(String.valueOf(newStock)));
+        textFields.put("description", createPartFromString(product.getDescription()));
+        textFields.put("is_active", createPartFromString(String.valueOf(product.isActive())));
+
+        ApiService apiService = RetrofitClient.getApiService();
+        apiService.updateProduct(product.getId(), textFields, null).enqueue(new Callback<Product>() {
+            @Override
+            public void onResponse(Call<Product> call, Response<Product> response) {
+                progressDialog.dismiss();
+                if (response.isSuccessful()) {
+                    Toast.makeText(InventoryActivity.this, "Stock updated successfully!", Toast.LENGTH_SHORT).show();
+                    fetchInventoryData(); // Refresh the list and stats immediately!
+                } else {
+                    Toast.makeText(InventoryActivity.this, "Failed to update stock: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Product> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(InventoryActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private okhttp3.RequestBody createPartFromString(String value) {
+        return okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), value != null ? value : "");
     }
 }

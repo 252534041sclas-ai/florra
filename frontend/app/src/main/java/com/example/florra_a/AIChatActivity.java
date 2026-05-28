@@ -56,6 +56,7 @@ public class AIChatActivity extends AppCompatActivity {
     private RecyclerView rvChatMessages;
     private ChatAdapter chatAdapter;
     private List<ChatMessage> messageList;
+    private java.util.Set<Integer> favoriteIds = new java.util.HashSet<>();
 
     private LinearLayout actionSimilar, actionCompare, actionQuote, actionStock;
     
@@ -101,6 +102,39 @@ public class AIChatActivity extends AppCompatActivity {
         actionQuote = findViewById(R.id.actionQuote);
         actionStock = findViewById(R.id.actionStock);
         ivImagePreview = findViewById(R.id.ivImagePreview);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        syncFavorites();
+    }
+
+    private void syncFavorites() {
+        com.example.florra_a.network.RetrofitClient.getApiService().getFavorites().enqueue(new Callback<List<com.example.florra_a.models.Product>>() {
+            @Override
+            public void onResponse(Call<List<com.example.florra_a.models.Product>> call, Response<List<com.example.florra_a.models.Product>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    favoriteIds.clear();
+                    for (com.example.florra_a.models.Product p : response.body()) {
+                        favoriteIds.add(p.getId());
+                    }
+                    if (messageList != null) {
+                        for (ChatMessage msg : messageList) {
+                            if (msg.getProducts() != null) {
+                                for (com.example.florra_a.models.Product p : msg.getProducts()) {
+                                    p.setFavorite(favoriteIds.contains(p.getId()));
+                                }
+                            }
+                        }
+                    }
+                    if (chatAdapter != null) chatAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<com.example.florra_a.models.Product>> call, Throwable t) {}
+        });
     }
 
     private void setupRecyclerView() {
@@ -237,6 +271,9 @@ public class AIChatActivity extends AppCompatActivity {
     private void addBotResponse(String text, List<com.example.florra_a.models.Product> products) {
         ChatMessage botMsg = new ChatMessage(text, false);
         if (products != null && !products.isEmpty()) {
+            for (com.example.florra_a.models.Product p : products) {
+                p.setFavorite(favoriteIds.contains(p.getId()));
+            }
             botMsg.setProducts(products);
         }
         messageList.add(botMsg);

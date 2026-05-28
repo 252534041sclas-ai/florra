@@ -157,9 +157,7 @@
                 cardLowStock.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(AdminDashboardActivity.this, InventoryActivity.class);
-                        // Filter for low stock items
-                        intent.putExtra("filter", "low_stock");
+                        Intent intent = new Intent(AdminDashboardActivity.this, SavedBillsActivity.class);
                         startActivity(intent);
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
@@ -374,7 +372,7 @@
                     .show();
         }
 
-        // Optional: Update dashboard data dynamically
+            // Optional: Update dashboard data dynamically
         private void updateDashboardData() {
             com.example.florra_a.network.ApiService apiService = 
                 com.example.florra_a.network.RetrofitClient.getApiService();
@@ -384,11 +382,16 @@
                 @Override
                 public void onResponse(retrofit2.Call<com.example.florra_a.models.InventoryResponse> call, 
                                        retrofit2.Response<com.example.florra_a.models.InventoryResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        com.example.florra_a.models.InventoryResponse.InventoryStats stats = response.body().getStats();
-                        if (stats != null) {
-                            android.widget.TextView tvTotal = findViewById(R.id.tvTotalTilesCount);
-                            if (tvTotal != null) tvTotal.setText(String.format("%,d Tiles", stats.getTotal()));
+                    if (response.isSuccessful() && response.body() != null && response.body().getStats() != null) {
+                        int total = response.body().getStats().getTotal();
+                        android.widget.TextView tvCatalog = findViewById(R.id.tvTotalTilesCount);
+                        if (tvCatalog != null) tvCatalog.setText(total + " Products");
+                        
+                        // Update Recent Activity 3
+                        View card3 = findViewById(R.id.cardActivityStockUpdated);
+                        if (card3 instanceof android.widget.LinearLayout) {
+                            android.widget.TextView tv = (android.widget.TextView) ((android.widget.LinearLayout)card3).getChildAt(0);
+                            tv.setText("Inventory Synced (" + total + " Items)");
                         }
                     }
                 }
@@ -405,6 +408,21 @@
                         int count = response.body().size();
                         android.widget.TextView tvEnquiries = findViewById(R.id.tvEnquiriesCount);
                         if (tvEnquiries != null) tvEnquiries.setText(count + " Enquiries");
+                        
+                        // Update Recent Activity 1
+                        if (count > 0) {
+                            // Backend returns newest last or first, we just pick the last one as a fallback or the first.
+                            // Let's pick the last element in the list just in case it's appended
+                            com.example.florra_a.models.Enquiry latest = response.body().get(count - 1);
+                            View card1 = findViewById(R.id.cardActivityNewEnquiry);
+                            if (card1 instanceof android.widget.LinearLayout) {
+                                android.widget.TextView tv = (android.widget.TextView) ((android.widget.LinearLayout)card1).getChildAt(0);
+                                tv.setText("New Enquiry: " + latest.getCustomerName());
+                            }
+                        } else {
+                            View card1 = findViewById(R.id.cardActivityNewEnquiry);
+                            if (card1 != null) card1.setVisibility(View.GONE);
+                        }
                     }
                 }
                 @Override
@@ -424,12 +442,24 @@
                         // Calculate Revenue (MTD) - Simple sum for demo
                         double revenue = 0;
                         for (com.example.florra_a.models.Bill bill : response.body()) {
-                            revenue += bill  .getGrandTotal();
+                            revenue += bill.getGrandTotal();
                         }
-                        android.widget.TextView tvRev = findViewById(R.id.tvRevenueMtd);
-                        if (tvRev != null) {
-                            if (revenue >= 100000) tvRev.setText(String.format("₹%.1fL", revenue / 100000.0));
-                            else tvRev.setText("₹" + java.text.NumberFormat.getNumberInstance().format(revenue));
+                        android.widget.TextView tvRevenue = findViewById(R.id.tvRevenueMtd);
+                        if (tvRevenue != null) {
+                            tvRevenue.setText("₹" + String.format(java.util.Locale.getDefault(), "%,.0f", revenue));
+                        }
+                        
+                        // Update Recent Activity 2
+                        if (count > 0) {
+                            com.example.florra_a.models.Bill latest = response.body().get(count - 1);
+                            View card2 = findViewById(R.id.cardActivityQuotationApproved);
+                            if (card2 instanceof android.widget.LinearLayout) {
+                                android.widget.TextView tv = (android.widget.TextView) ((android.widget.LinearLayout)card2).getChildAt(0);
+                                tv.setText("Bill Generated: " + latest.getBillNo());
+                            }
+                        } else {
+                            View card2 = findViewById(R.id.cardActivityQuotationApproved);
+                            if (card2 != null) card2.setVisibility(View.GONE);
                         }
                     }
                 }

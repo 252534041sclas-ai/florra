@@ -45,7 +45,15 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         
         // Stock logic
         int stock = product.getStock();
-        holder.textStock.setText(stock > 0 ? "In Stock (" + stock + ")" : "Out of Stock");
+        String stockText;
+        if (stock == 0) {
+            stockText = "Out of Stock";
+        } else if (stock < 20) {
+            stockText = "Low Stock (" + stock + ")";
+        } else {
+            stockText = "In Stock (" + stock + ")";
+        }
+        holder.textStock.setText(stockText);
         
         if (stock == 0) {
            holder.stockContainer.setBackgroundResource(R.drawable.bg_stock_out);
@@ -127,7 +135,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             intent.putExtra("product_color", product.getColor()); // New
             intent.putExtra("product_price", product.getPrice());
             intent.putExtra("product_stock", String.valueOf(product.getStock()));
-            intent.putExtra("product_status", product.getStockStatus()); // New
+            int stockQty = product.getStock();
+            String derivedStatus;
+            if (stockQty <= 0) derivedStatus = "Out of Stock";
+            else if (stockQty < 20) derivedStatus = "Low Stock";
+            else derivedStatus = "In Stock";
+            intent.putExtra("product_status", derivedStatus);
             intent.putExtra("product_description", product.getDescription());
             intent.putExtra("product_image", product.getImage());
             intent.putExtra("product_is_active", product.isActive()); // New

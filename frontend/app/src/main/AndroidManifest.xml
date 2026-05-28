@@ -138,8 +138,26 @@
         <!-- Product Details Activity -->
         <activity
             android:name=".ProductDetailsActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="florra.com" />
+                <data android:host="www.florra.com" />
+                <data android:pathPrefix="/product/" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="florra" />
+                <data android:host="product" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".FavoritesActivity"

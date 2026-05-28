@@ -25,19 +25,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import android.widget.ImageView;
-import android.widget.TextView;
-import com.bumptech.glide.Glide;
-
 public class ManageStaffActivity extends AppCompatActivity {
 
     private ImageButton btnBack;
     private ImageButton btnAddStaff;
     private EditText etSearch;
     private RecyclerView rvStaff;
-private ImageView ivProfile;
-private TextView tvProfileName;
-private TextView tvProfileEmail;
     
     private StaffAdapter adapter;
     private List<StaffMember> staffList = new ArrayList<>();
@@ -70,10 +63,6 @@ private TextView tvProfileEmail;
         btnAddStaff = findViewById(R.id.btnAddStaff);
         etSearch = findViewById(R.id.etSearch);
         rvStaff = findViewById(R.id.rvStaff);
-        // New profile views
-        ivProfile = findViewById(R.id.ivProfile);
-        tvProfileName = findViewById(R.id.tvProfileName);
-        tvProfileEmail = findViewById(R.id.tvProfileEmail);
     }
 
     private void setupRecyclerView() {

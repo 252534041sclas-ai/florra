@@ -135,26 +135,32 @@ public class RequestQuotationActivity extends AppCompatActivity {
                     stockBadge.setTextColor(getResources().getColor(R.color.green_800));
                 }
             }
-            
             // Load product image
             if (productImage != null && !productImage.isEmpty()) {
-                 if (!productImage.startsWith("http")) {
-                    // Prepend base URL if relative path
-                    String fullUrl = com.example.florra_a.network.RetrofitClient.BASE_URL + productImage;
-                    com.bumptech.glide.Glide.with(this)
-                        .load(fullUrl)
-                        .placeholder(R.drawable.tile_placeholder)
-                        .error(R.drawable.tile_placeholder)
-                        .centerCrop()
-                        .into(imgProduct);
+                String imageUrl = productImage;
+                if (!imageUrl.startsWith("http")) {
+                    if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
+                    if (!imageUrl.startsWith("media/")) {
+                        imageUrl = "media/" + imageUrl;
+                    }
+                    imageUrl = com.example.florra_a.network.RetrofitClient.BASE_URL + imageUrl;
                 } else {
-                    com.bumptech.glide.Glide.with(this)
-                        .load(productImage)
-                        .placeholder(R.drawable.tile_placeholder)
-                        .error(R.drawable.tile_placeholder)
-                        .centerCrop()
-                        .into(imgProduct);
+                    String baseHost = com.example.florra_a.network.RetrofitClient.BASE_URL
+                            .replace("http://", "")
+                            .replace("https://", "")
+                            .split(":")[0];
+                    imageUrl = imageUrl.replace("127.0.0.1", baseHost)
+                                       .replace("localhost", baseHost);
                 }
+
+                com.bumptech.glide.Glide.with(this)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.tile_placeholder)
+                    .error(R.drawable.tile_placeholder)
+                    .centerCrop()
+                    .into(imgProduct);
+            } else {
+                imgProduct.setImageResource(R.drawable.tile_placeholder);
             }
 
             // Total Area

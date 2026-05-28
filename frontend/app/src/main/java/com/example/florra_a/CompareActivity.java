@@ -177,11 +177,27 @@ public class CompareActivity extends AppCompatActivity {
 
     private void loadImage(String url, ImageView imageView) {
         if (url != null && !url.isEmpty()) {
-            if (!url.startsWith("http")) {
-                url = RetrofitClient.BASE_URL + url;
+            String imageUrl = url;
+            if (!imageUrl.startsWith("http")) {
+                if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
+
+                // Prepend media/ if it's missing in relative path
+                if (!imageUrl.startsWith("media/")) {
+                    imageUrl = "media/" + imageUrl;
+                }
+                imageUrl = RetrofitClient.BASE_URL + imageUrl;
+            } else {
+                // If it's absolute, replace 127.0.0.1/localhost with our base host IP
+                String baseHost = RetrofitClient.BASE_URL
+                        .replace("http://", "")
+                        .replace("https://", "")
+                        .split(":")[0];
+                imageUrl = imageUrl.replace("127.0.0.1", baseHost)
+                                   .replace("localhost", baseHost);
             }
+
             Glide.with(this)
-                .load(url)
+                .load(imageUrl)
                 .placeholder(R.drawable.tile_placeholder)
                 .error(R.drawable.tile_placeholder)
                 .centerCrop()

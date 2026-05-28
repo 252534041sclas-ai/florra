@@ -11,7 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.florra_a.adapters.TileAdapter;
+import com.example.florra_a.models.InventoryResponse;
 import com.example.florra_a.models.Product;
 import com.example.florra_a.network.ApiService;
 import com.example.florra_a.network.RetrofitClient;
@@ -313,18 +313,7 @@ public class AdminCatalogActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.recyclerViewTiles);
         if (recyclerView != null) {
-            tileAdapter = new TileAdapter(this, new ArrayList<>(), new TileAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(Product product) {
-                    openAdminProductDetails(product);
-                }
-                @Override
-                public void onBookmarkClick(Product product) {}
-                @Override
-                public void onItemLongClick(Product product) {}
-                @Override
-                public void onAddToCartClick(Product product) {}
-            });
+            tileAdapter = new TileAdapter(this, new ArrayList<>());
             recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
             recyclerView.setAdapter(tileAdapter);
             
@@ -437,7 +426,13 @@ public class AdminCatalogActivity extends AppCompatActivity {
         intent.putExtra("product_color", product.getColor());
         intent.putExtra("product_price", product.getPrice());
         intent.putExtra("product_stock", String.valueOf(product.getStock()));
-        intent.putExtra("product_status", product.getStockStatus());
+        int stockQty = product.getStock();
+        String derivedStatus;
+        if (stockQty <= 0) derivedStatus = "Out of Stock";
+        else if (stockQty < 20) derivedStatus = "Low Stock";
+        else derivedStatus = "In Stock";
+        
+        intent.putExtra("product_status", derivedStatus);
         intent.putExtra("product_description", product.getDescription());
         intent.putExtra("product_image", product.getImage());
         intent.putExtra("product_is_active", product.isActive());

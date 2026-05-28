@@ -83,6 +83,14 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
                 if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
                 if (!imageUrl.startsWith("media/")) imageUrl = "media/" + imageUrl;
                 imageUrl = RetrofitClient.BASE_URL + imageUrl;
+            } else {
+                // Handle absolute URLs if any, replacing localhost/127.0.0.1 with actual IP
+                String baseHost = RetrofitClient.BASE_URL
+                        .replace("http://", "")
+                        .replace("https://", "")
+                        .split(":")[0];
+                imageUrl = imageUrl.replace("127.0.0.1", baseHost)
+                                   .replace("localhost", baseHost);
             }
             Glide.with(context)
                 .load(imageUrl)
@@ -112,6 +120,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.View
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailsActivity.class);
             intent.putExtra("productId",          product.getId());
+            intent.putExtra("rawStock",           product.getStock());
             intent.putExtra("tileName",           product.getTileName());
             intent.putExtra("tilePrice",          String.valueOf(product.getPrice()));
             intent.putExtra("tileSize",           product.getSize());

@@ -35,8 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView btnForgotPassword, btnForgotPasswordAdmin, btnContactSupport;
     private ImageView btnToggleCustomerPassword, btnToggleAdminPassword, logoIcon;
     private EditText edtCustomerEmail, edtCustomerPassword, edtAdminEmail, edtAdminPassword;
-    private LinearLayout customerLoginLayout, adminLoginLayout, orDivider, adminFooter;
-    private View btnGoogleSignIn;
+    private LinearLayout customerLoginLayout, adminLoginLayout, adminFooter;
 
     // State
     private boolean isCustomerPasswordVisible = false;
@@ -120,9 +119,7 @@ public class LoginActivity extends AppCompatActivity {
         adminLoginLayout = findViewById(R.id.adminLoginLayout);
 
         // These might not exist in your XML
-        orDivider = findViewById(R.id.orDivider);
-        btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
-        //adminFooter = findViewById(R.id.adminFooter);
+        // adminFooter = findViewById(R.id.adminFooter);
 
 
         // Login button
@@ -158,7 +155,7 @@ public class LoginActivity extends AppCompatActivity {
             if (customLogoPath != null && !customLogoPath.isEmpty()) {
                 java.io.File imgFile = new java.io.File(customLogoPath);
                 if (imgFile.exists()) {
-                    com.bumptech.glide.Glide.with(this).load(imgFile).into(logoIcon);
+                    com.bumptech.glide.Glide.with(this).load(imgFile).circleCrop().into(logoIcon);
                 }
             }
         }
@@ -334,15 +331,6 @@ public class LoginActivity extends AppCompatActivity {
             });
         }
 
-        // Google Sign-In button click
-        if (btnGoogleSignIn != null) {
-            btnGoogleSignIn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showGoogleAccountChooser();
-                }
-            });
-        }
 
         // Secret Gesture: Long Press + Swipe Down on Logo
         if (logoIcon != null) {
@@ -439,7 +427,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 progressDialog.dismiss();
                 if (response.isSuccessful() && response.body() != null) {
-                    saveUserData(response.body().getEmail(), response.body().getFullName(), response.body().getToken(), true, response.body().getRole(), null, response.body().isCanAccessBilling(), response.body().isCanAccessReports(), response.body().isCanAccessPredictions());
+                    saveUserData(response.body().getEmail(), response.body().getFullName(), response.body().getToken(), true, response.body().getRole(), response.body().getProfileImage(), response.body().isCanAccessBilling(), response.body().isCanAccessReports(), response.body().isCanAccessPredictions());
                     navigateAfterLogin(true);
                 } else {
                     String errorMessage = "Admin Login Failed";
@@ -514,8 +502,6 @@ public class LoginActivity extends AppCompatActivity {
         if (adminLoginLayout != null) adminLoginLayout.setVisibility(View.GONE);
 
         // Safely handle optional views
-        if (orDivider != null) orDivider.setVisibility(View.VISIBLE);
-        if (btnGoogleSignIn != null) btnGoogleSignIn.setVisibility(View.VISIBLE);
         if (btnCreateAccount != null) btnCreateAccount.setVisibility(View.VISIBLE);
         if (adminFooter != null) adminFooter.setVisibility(View.GONE);
 
@@ -548,8 +534,6 @@ public class LoginActivity extends AppCompatActivity {
         if (adminLoginLayout != null) adminLoginLayout.setVisibility(View.VISIBLE);
 
         // Safely handle optional views
-        if (orDivider != null) orDivider.setVisibility(View.GONE);
-        if (btnGoogleSignIn != null) btnGoogleSignIn.setVisibility(View.GONE);
         if (btnCreateAccount != null) btnCreateAccount.setVisibility(View.GONE);
         if (adminFooter != null) adminFooter.setVisibility(View.VISIBLE);
 

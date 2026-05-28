@@ -777,8 +777,8 @@ class InventoryView(APIView):
 
         # 📊 Inventory stats (SAFE – no 500)
         total = products.count()
-        in_stock = products.filter(stock__gte=50).count()
-        low_stock = products.filter(stock__gt=0, stock__lt=50).count()
+        in_stock = products.filter(stock__gte=20).count()
+        low_stock = products.filter(stock__gt=0, stock__lt=20).count()
         empty = products.filter(stock=0).count()
 
         serializer = InventoryProductSerializer(products, many=True)
@@ -787,6 +787,7 @@ class InventoryView(APIView):
             "stats": {
                 "total": total,
                 "in_stock": in_stock,
+                "low_stock": low_stock,
                 "empty": empty
             },
             "products": serializer.data
@@ -857,6 +858,7 @@ class AdminNotificationCreateView(APIView):
         title = request.data.get('title', '').strip()
         message = request.data.get('message', '').strip()
         notif_type = request.data.get('type', 'system').strip()
+        product_id = request.data.get('product_id')
 
         if not title or not message:
             return Response(
@@ -865,6 +867,15 @@ class AdminNotificationCreateView(APIView):
             )
 
         try:
+            # Fetch product if provided
+            from florra.models import Product
+            product_instance = None
+            if product_id:
+                try:
+                    product_instance = Product.objects.get(id=product_id)
+                except Product.DoesNotExist:
+                    pass
+
             # Save to AdminNotification log
             notification = AdminNotification.objects.create(
                 title=title,
@@ -883,6 +894,7 @@ class AdminNotificationCreateView(APIView):
                     message=message,
                     notification_type=notif_type,
                     is_read=False,
+                    product=product_instance
                 )
                 created_count += 1
 

@@ -80,6 +80,14 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
                  if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
                  if (!imageUrl.startsWith("media/")) imageUrl = "media/" + imageUrl;
                  imageUrl = RetrofitClient.BASE_URL + imageUrl;
+             } else {
+                 // Handle absolute URLs if any, replacing localhost/127.0.0.1 with actual IP
+                 String baseHost = RetrofitClient.BASE_URL
+                          .replace("http://", "")
+                          .replace("https://", "")
+                          .split(":")[0];
+                 imageUrl = imageUrl.replace("127.0.0.1", baseHost)
+                                    .replace("localhost", baseHost);
              }
              
             Glide.with(context)
@@ -214,6 +222,7 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ProductDetailsActivity.class);
             intent.putExtra("productId", product.getId());
+            intent.putExtra("rawStock", product.getStock());
             intent.putExtra("tileName", product.getTileName());
             intent.putExtra("tilePrice", String.valueOf(product.getPrice()));
             intent.putExtra("tileSize", product.getSize());
@@ -221,7 +230,7 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
             intent.putExtra("productMaterial", product.getCategory()); // mapped to category
             intent.putExtra("productDescription", product.getDescription());
             intent.putExtra("productImage", product.getImage()); 
-            intent.putExtra("stockStatus", product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK");
+            intent.putExtra("stockStatus", product.getStockStatus() != null ? product.getStockStatus() : (product.getStock() > 0 ? "IN STOCK" : "OUT OF STOCK"));
             intent.putExtra("productTileNo", product.getTileNo());
             
             context.startActivity(intent);

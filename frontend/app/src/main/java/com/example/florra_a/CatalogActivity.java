@@ -557,6 +557,7 @@ public class CatalogActivity extends AppCompatActivity {
 
             // Pass known data with standardized keys
             intent.putExtra("productId", product.getId());
+            intent.putExtra("rawStock", product.getStock());
             intent.putExtra("tileName", product.getTileName());
             intent.putExtra("tilePrice", String.valueOf(product.getPrice()));
             intent.putExtra("productName", product.getTileName());

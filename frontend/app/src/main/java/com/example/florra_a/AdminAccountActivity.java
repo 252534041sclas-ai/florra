@@ -402,7 +402,10 @@ public class AdminAccountActivity extends AppCompatActivity {
 
         if (btnAccount != null) {
             btnAccount.setOnClickListener(v -> {
-                // Already on Account
+                // Navigate to Admin Account screen
+                Intent intent = new Intent(AdminAccountActivity.this, AdminAccountActivity.class);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
         }
 

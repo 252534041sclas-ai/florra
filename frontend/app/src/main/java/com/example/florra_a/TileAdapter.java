@@ -131,27 +131,23 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         if (category == null) category = product.getFinish();
         holder.tileFinish.setText(category != null ? category.toUpperCase() : "PORCELAIN");
 
-        // Stock Status or Match Score
-        if (product.getSimilarityScore() > 0) {
-            int percentage = (int) (product.getSimilarityScore() * 100);
-            if (percentage > 100) percentage = 100;
-            holder.stockBadgeText.setText(percentage + "% MATCH");
-            holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.green_800));
-            holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_green);
+        // Stock logic based on quantity
+        int stock = product.getStock();
+        String stockText;
+        if (stock == 0) {
+            stockText = "Out of Stock";
+            holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.red_600));
+            holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
+        } else if (stock < 10) {
+            stockText = "Low Stock";
+            holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.orange_600));
+            holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
         } else {
-            String stockStatus = product.getStockStatus();
-            if (stockStatus == null) stockStatus = "IN STOCK"; // Default
-            holder.stockBadgeText.setText(stockStatus);
-
-            // Set stock color
-            if ("LOW STOCK".equalsIgnoreCase(stockStatus) || "OUT OF STOCK".equalsIgnoreCase(stockStatus)) {
-                holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.orange_600));
-                holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_low_stock);
-            } else {
-                holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.green_600));
-                holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_stock);
-            }
+            stockText = "In Stock";
+            holder.stockBadgeText.setTextColor(context.getResources().getColor(R.color.emerald_700));
+            holder.stockBadge.setBackgroundResource(R.drawable.bg_tag_stock);
         }
+        holder.stockBadgeText.setText(stockText);
 
         // Load image using Glide
         String imageUrl = product.getImage();
@@ -168,6 +164,14 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
                 }
                 
                 imageUrl = RetrofitClient.BASE_URL + imageUrl;
+            } else {
+                // Handle absolute URLs if any, replacing localhost/127.0.0.1 with actual IP
+                String baseHost = RetrofitClient.BASE_URL
+                        .replace("http://", "")
+                        .replace("https://", "")
+                        .split(":")[0];
+                imageUrl = imageUrl.replace("127.0.0.1", baseHost)
+                                   .replace("localhost", baseHost);
             }
             Glide.with(context)
                 .load(imageUrl)
@@ -218,39 +222,54 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
 
         // Handle bookmark button click
         if (holder.btnBookmark != null) {
-            // Update UI based on state
             ImageView heartIcon = (ImageView) holder.btnBookmark.getChildAt(0);
-            if (product.isFavorite()) {
-                heartIcon.setImageResource(R.drawable.ic_favorite_filled);
-                heartIcon.setColorFilter(context.getResources().getColor(R.color.red_600));
-            } else {
-                heartIcon.setImageResource(R.drawable.ic_favorite_border);
+            boolean isAdmin = context instanceof AdminCatalogActivity;
+
+            if (isAdmin) {
+                // Admin mode: replace heart icon with share icon
+                heartIcon.setImageResource(R.drawable.ic_share);
                 heartIcon.setColorFilter(context.getResources().getColor(R.color.slate_600));
-            }
 
-            holder.btnBookmark.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Toggle state
-                    boolean newState = !product.isFavorite();
-                    product.setFavorite(newState);
-                    
-                    // Update UI immediately
-                    if (newState) {
-                        heartIcon.setImageResource(R.drawable.ic_favorite_filled);
-                        heartIcon.setColorFilter(context.getResources().getColor(R.color.red_600));
-                    } else {
-                        heartIcon.setImageResource(R.drawable.ic_favorite_border);
-                        heartIcon.setColorFilter(context.getResources().getColor(R.color.slate_600));
+                holder.btnBookmark.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        shareProductSpecifications(product);
                     }
-
-                    if (onItemClickListener != null) {
-                        onItemClickListener.onBookmarkClick(product);
-                    } else {
-                        Toast.makeText(context, newState ? "Added to Favorites" : "Removed from Favorites", Toast.LENGTH_SHORT).show();
-                    }
+                });
+            } else {
+                // Customer mode: normal favorite toggling
+                if (product.isFavorite()) {
+                    heartIcon.setImageResource(R.drawable.ic_favorite_filled);
+                    heartIcon.setColorFilter(context.getResources().getColor(R.color.red_600));
+                } else {
+                    heartIcon.setImageResource(R.drawable.ic_favorite_border);
+                    heartIcon.setColorFilter(context.getResources().getColor(R.color.slate_600));
                 }
-            });
+
+                holder.btnBookmark.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Toggle state
+                        boolean newState = !product.isFavorite();
+                        product.setFavorite(newState);
+                        
+                        // Update UI immediately
+                        if (newState) {
+                            heartIcon.setImageResource(R.drawable.ic_favorite_filled);
+                            heartIcon.setColorFilter(context.getResources().getColor(R.color.red_600));
+                        } else {
+                            heartIcon.setImageResource(R.drawable.ic_favorite_border);
+                            heartIcon.setColorFilter(context.getResources().getColor(R.color.slate_600));
+                        }
+
+                        if (onItemClickListener != null) {
+                            onItemClickListener.onBookmarkClick(product);
+                        } else {
+                            Toast.makeText(context, newState ? "Added to Favorites" : "Removed from Favorites", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
         }
         
         // Handle select button click
@@ -288,6 +307,70 @@ public class TileAdapter extends RecyclerView.Adapter<TileAdapter.ViewHolder> {
         } catch (Exception e) {
             Toast.makeText(context, "Cannot open product details", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void shareProductSpecifications(Product product) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("✨ *").append(product.getTileName()).append("* Spec Sheet ✨\n\n");
+        
+        if (product.getTileNo() != null && !product.getTileNo().isEmpty()) {
+            sb.append("🔹 *Tile No:* ").append(product.getTileNo()).append("\n");
+        }
+        if (product.getBrandName() != null && !product.getBrandName().isEmpty()) {
+            sb.append("🔹 *Brand:* ").append(product.getBrandName()).append("\n");
+        }
+        if (product.getCategory() != null && !product.getCategory().isEmpty()) {
+            sb.append("🔹 *Category:* ").append(product.getCategory()).append("\n");
+        }
+        if (product.getSize() != null && !product.getSize().isEmpty()) {
+            sb.append("🔹 *Size:* ").append(product.getSize()).append("\n");
+        }
+        if (product.getFinish() != null && !product.getFinish().isEmpty()) {
+            sb.append("🔹 *Finish:* ").append(product.getFinish()).append("\n");
+        }
+        if (product.getColor() != null && !product.getColor().isEmpty()) {
+            sb.append("🔹 *Color:* ").append(product.getColor()).append("\n");
+        }
+        sb.append("💵 *Price:* ₹").append(product.getPrice()).append("/sq.ft\n");
+        
+        int stock = product.getStock();
+        String stockStatus = stock == 0 ? "Out of Stock" : (stock < 10 ? "Low Stock (" + stock + " boxes)" : "In Stock (" + stock + " boxes)");
+        sb.append("📦 *Stock Status:* ").append(stockStatus).append("\n\n");
+        
+        if (product.getDescription() != null && !product.getDescription().isEmpty()) {
+            sb.append("📝 *Description:* ").append(product.getDescription()).append("\n\n");
+        }
+
+        String imageUrl = product.getImage();
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            if (!imageUrl.startsWith("http")) {
+                if (imageUrl.startsWith("/")) imageUrl = imageUrl.substring(1);
+                if (!imageUrl.startsWith("media/")) {
+                    imageUrl = "media/" + imageUrl;
+                }
+                imageUrl = com.example.florra_a.network.RetrofitClient.BASE_URL + imageUrl;
+            } else {
+                // Handle absolute URLs if any, replacing localhost/127.0.0.1 with actual IP
+                String baseHost = com.example.florra_a.network.RetrofitClient.BASE_URL
+                        .replace("http://", "")
+                        .replace("https://", "")
+                        .split(":")[0];
+                imageUrl = imageUrl.replace("127.0.0.1", baseHost)
+                                   .replace("localhost", baseHost);
+            }
+            sb.append("🖼️ *Product Image:* ").append(imageUrl).append("\n\n");
+        }
+
+        sb.append("🔗 *Open in App:* florra://product/").append(product.getId()).append("\n");
+        sb.append("🌐 *Web Link:* https://florra.com/product/").append(product.getId()).append("\n\n");
+
+        sb.append("Shared via Florra Admin Catalog");
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, product.getTileName() + " Specs");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+        context.startActivity(Intent.createChooser(shareIntent, "Share Tile Specifications"));
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

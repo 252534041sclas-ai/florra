@@ -248,6 +248,18 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
         // Stock
         if (currentStock != null && !currentStock.isEmpty()) {
             tvStockQuantity.setText(currentStock);
+            try {
+                int stockNum = Integer.parseInt(currentStock);
+                if (stockNum <= 0) {
+                    currentStockStatus = "Out of Stock";
+                } else if (stockNum < 10) {
+                    currentStockStatus = "Low Stock";
+                } else {
+                    currentStockStatus = "In Stock";
+                }
+            } catch (Exception e) {
+                // Keep existing status if not parseable
+            }
         }
 
         if (currentStockStatus != null && !currentStockStatus.isEmpty()) {
@@ -329,25 +341,21 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
         View greenDot = ((View)tvStockStatus.getParent()).findViewById(R.id.viewStockDot);
         if (greenDot != null) greenDot.setVisibility(View.VISIBLE);
 
-        switch (currentStockStatus) {
-            case "In Stock":
-                tvStockStatus.setBackgroundResource(R.drawable.bg_stock_in);
-                tvStockStatus.setTextColor(getResources().getColor(R.color.emerald_700));
-                if (greenDot != null) greenDot.setBackgroundResource(R.drawable.bg_green_dot);
-                break;
-            case "Low Stock":
-                tvStockStatus.setBackgroundResource(R.drawable.bg_stock_low);
-                tvStockStatus.setTextColor(getResources().getColor(R.color.amber_700));
-                if (greenDot != null) greenDot.setBackgroundResource(R.drawable.bg_amber_dot);
-                break;
-            case "Out of Stock":
-                tvStockStatus.setBackgroundResource(R.drawable.bg_stock_out);
-                tvStockStatus.setTextColor(getResources().getColor(R.color.zinc_500));
-                if (greenDot != null) greenDot.setBackgroundResource(R.drawable.bg_gray_dot);
-                break;
-            default:
-                tvStockStatus.setBackgroundResource(R.drawable.bg_stock_in);
-                tvStockStatus.setTextColor(getResources().getColor(R.color.emerald_700));
+        if ("In Stock".equalsIgnoreCase(currentStockStatus)) {
+            tvStockStatus.setBackgroundResource(R.drawable.bg_stock_in);
+            tvStockStatus.setTextColor(getResources().getColor(R.color.emerald_700));
+            if (greenDot != null) greenDot.setBackgroundResource(R.drawable.bg_green_dot);
+        } else if ("Low Stock".equalsIgnoreCase(currentStockStatus)) {
+            tvStockStatus.setBackgroundResource(R.drawable.bg_stock_low);
+            tvStockStatus.setTextColor(getResources().getColor(R.color.orange_600));
+            if (greenDot != null) greenDot.setBackgroundResource(R.drawable.bg_amber_dot);
+        } else if ("Out of Stock".equalsIgnoreCase(currentStockStatus)) {
+            tvStockStatus.setBackgroundResource(R.drawable.bg_stock_out);
+            tvStockStatus.setTextColor(getResources().getColor(R.color.red_600));
+            if (greenDot != null) greenDot.setBackgroundResource(R.drawable.bg_gray_dot);
+        } else {
+            tvStockStatus.setBackgroundResource(R.drawable.bg_stock_in);
+            tvStockStatus.setTextColor(getResources().getColor(R.color.emerald_700));
         }
     }
 
@@ -547,7 +555,7 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
                     try {
                         int stockNum = Integer.parseInt(currentStock);
                         if (stockNum <= 0) currentStockStatus = "Out of Stock";
-                        else if (stockNum < 20) currentStockStatus = "Low Stock";
+                        else if (stockNum < 10) currentStockStatus = "Low Stock";
                         else currentStockStatus = "In Stock";
                     } catch (Exception e) {
                         currentStockStatus = "In Stock";
@@ -560,10 +568,13 @@ public class AdminProductDetailsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        // Optional: Add slide animation
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+@Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh product data in case it changed while this activity was paused
+        if (currentProductId != -1) {
+            // Re-fetch latest data if needed; for now reload from intent extras or server.
+            loadProductData();
+        }
     }
 }

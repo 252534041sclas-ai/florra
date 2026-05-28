@@ -185,6 +185,7 @@ public class PreviewBillActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     isSaved = true;
                     Toast.makeText(PreviewBillActivity.this, "Bill Saved Successfully", Toast.LENGTH_SHORT).show();
+                    decrementStockForBillItems();
                     action.run();
                 } else {
                     String errorMsg = "Save Failed: " + response.code();
@@ -378,5 +379,116 @@ public class PreviewBillActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+    }
+
+    private void decrementStockForBillItems() {
+        if (billItems == null || billItems.isEmpty()) return;
+
+        Toast.makeText(this, "Updating inventory stock...", Toast.LENGTH_SHORT).show();
+
+        ApiService apiService = RetrofitClient.getApiService();
+        apiService.getProducts().enqueue(new Callback<java.util.List<com.example.florra_a.models.Product>>() {
+            @Override
+            public void onResponse(Call<java.util.List<com.example.florra_a.models.Product>> call, Response<java.util.List<com.example.florra_a.models.Product>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    java.util.List<com.example.florra_a.models.Product> productsList = response.body();
+                    
+                    // Count how many products we need to update
+                    java.util.List<com.example.florra_a.models.Product> productsToUpdate = new java.util.ArrayList<>();
+                    java.util.List<Integer> newStockValues = new java.util.ArrayList<>();
+                    
+                    for (BillItem item : billItems) {
+                        com.example.florra_a.models.Product matchedProduct = null;
+                        for (com.example.florra_a.models.Product prod : productsList) {
+                            if (item.getTileNo() != null && !item.getTileNo().isEmpty() && prod.getTileNo() != null) {
+                                if (prod.getTileNo().equalsIgnoreCase(item.getTileNo())) {
+                                    matchedProduct = prod;
+                                    break;
+                                }
+                            }
+                            if (prod.getTileName() != null && prod.getTileName().equalsIgnoreCase(item.getItemName())) {
+                                matchedProduct = prod;
+                                break;
+                            }
+                        }
+
+                        if (matchedProduct != null) {
+                            int currentStock = matchedProduct.getStock();
+                            int newStock = Math.max(0, currentStock - item.getQuantity());
+                            productsToUpdate.add(matchedProduct);
+                            newStockValues.add(newStock);
+                        }
+                    }
+
+                    if (productsToUpdate.isEmpty()) {
+                        Log.d("PreviewBill", "No matching products found in inventory to update stock.");
+                        return;
+                    }
+
+                    final int totalToUpdate = productsToUpdate.size();
+                    final int[] completedCount = {0};
+                    final int[] successCount = {0};
+
+                    for (int i = 0; i < totalToUpdate; i++) {
+                        final com.example.florra_a.models.Product product = productsToUpdate.get(i);
+                        final int newStock = newStockValues.get(i);
+
+                        java.util.Map<String, okhttp3.RequestBody> textFields = new java.util.HashMap<>();
+                        textFields.put("tile_name", createPartFromString(product.getTileName()));
+                        textFields.put("tile_no", createPartFromString(product.getTileNo()));
+                        textFields.put("brand_name", createPartFromString(product.getBrandName()));
+                        textFields.put("category", createPartFromString(product.getCategory()));
+                        textFields.put("size", createPartFromString(product.getSize()));
+                        textFields.put("finish", createPartFromString(product.getFinish()));
+                        textFields.put("color", createPartFromString(product.getColor()));
+                        textFields.put("thickness", createPartFromString(product.getThickness()));
+                        textFields.put("coverage", createPartFromString(product.getCoverage()));
+                        textFields.put("warehouse", createPartFromString(product.getWarehouse()));
+                        textFields.put("price", createPartFromString(product.getPrice()));
+                        textFields.put("stock", createPartFromString(String.valueOf(newStock)));
+                        textFields.put("description", createPartFromString(product.getDescription()));
+                        textFields.put("is_active", createPartFromString(String.valueOf(product.isActive())));
+
+                        apiService.updateProduct(product.getId(), textFields, null).enqueue(new Callback<com.example.florra_a.models.Product>() {
+                            @Override
+                            public void onResponse(Call<com.example.florra_a.models.Product> call, Response<com.example.florra_a.models.Product> response) {
+                                completedCount[0]++;
+                                if (response.isSuccessful()) {
+                                    successCount[0]++;
+                                    Log.d("PreviewBill", "Updated stock for " + product.getTileName() + " to " + newStock);
+                                } else {
+                                    Log.e("PreviewBill", "Failed to update stock for " + product.getTileName() + ": " + response.code());
+                                }
+                                checkIfAllCompleted(completedCount[0], successCount[0], totalToUpdate);
+                            }
+
+                            @Override
+                            public void onFailure(Call<com.example.florra_a.models.Product> call, Throwable t) {
+                                completedCount[0]++;
+                                Log.e("PreviewBill", "Error updating stock for " + product.getTileName() + ": " + t.getMessage());
+                                checkIfAllCompleted(completedCount[0], successCount[0], totalToUpdate);
+                            }
+                        });
+                    }
+                } else {
+                    Log.e("PreviewBill", "Failed to fetch products for stock update");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<java.util.List<com.example.florra_a.models.Product>> call, Throwable t) {
+                Log.e("PreviewBill", "Error fetching products: " + t.getMessage());
+            }
+
+            private void checkIfAllCompleted(int completed, int success, int total) {
+                if (completed == total) {
+                    Toast.makeText(PreviewBillActivity.this, "Stock levels updated: " + success + " of " + total + " products updated", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private okhttp3.RequestBody createPartFromString(String value) {
+        return okhttp3.RequestBody.create(okhttp3.MediaType.parse("text/plain"), value != null ? value : "");
     }
 }
