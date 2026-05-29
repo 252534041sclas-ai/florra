@@ -440,24 +440,52 @@ class SalesPredictionView(APIView):
         else:
             m, c = 0, 0
 
+        # 3.5 Day-Of-Week Seasonality Logic
+        dow_sales = {i: 0.0 for i in range(7)}
+        dow_counts = {i: 0 for i in range(7)}
+        for i in range(30):
+            day = last_30_days + timedelta(days=i)
+            dow = day.weekday()
+            dow_sales[dow] += y_values[i]
+            dow_counts[dow] += 1
+            
+        dow_avg = {i: (dow_sales[i] / dow_counts[i] if dow_counts[i] > 0 else 0) for i in range(7)}
+        overall_avg = sum(y_values) / len(y_values) if len(y_values) > 0 else 1
+        if overall_avg == 0: overall_avg = 1
+        
+        # Multipliers based on weekday vs weekend behavior
+        dow_multiplier = {i: (dow_avg[i] / overall_avg if dow_avg[i] > 0 else 1.0) for i in range(7)}
+        for k in dow_multiplier:
+            dow_multiplier[k] = max(0.6, min(1.8, dow_multiplier[k])) # Clamp seasonality
+
         # 4. Leading Indicators (Enquiry Correlation)
         enquiry_count = Enquiry.objects.filter(created_at__date__gte=last_30_days).count()
         conversion_boost = 1.0
         if enquiry_count > 0:
             # If enquiries are 2x higher than usual (baseline 10), boost prediction
-            conversion_boost = 1.0 + min(0.15, (enquiry_count / 50.0))
+            conversion_boost = 1.0 + min(0.20, (enquiry_count / 40.0))
 
-        # Predict Next 30 Days with Boost
+        # Predict Next 30 Days with Boost and Seasonality
         predicted_revenue = 0
+        future_y_values = []
         for i in range(30, 60): 
-            pred_daily = (m * i + c) * conversion_boost
-            if pred_daily < 0: pred_daily = 0
+            future_day = last_30_days + timedelta(days=i)
+            dow = future_day.weekday()
+            
+            base_pred_daily = (m * i + c)
+            if base_pred_daily < 0: base_pred_daily = 0
+            
+            # Apply seasonality and boost
+            pred_daily = base_pred_daily * dow_multiplier[dow] * conversion_boost
             predicted_revenue += pred_daily
+            future_y_values.append(pred_daily)
 
         # Fallback: Minimum baseline prediction
         current_avg_daily = sum(y_values) / 30 if y_values else 0
         if predicted_revenue < (current_avg_daily * 20): 
             predicted_revenue = current_avg_daily * 30 * 1.10 # Assume 10% growth if math fails
+            # Reset future values for charts
+            future_y_values = [(predicted_revenue / 30) for _ in range(30)]
 
         # Growth Percentage
         current_30d_revenue = sum(y_values)
@@ -472,10 +500,10 @@ class SalesPredictionView(APIView):
             round(sum(y_values[20:30]) / 10)
         ]
         
-        # Smooth future points
+        # Smooth future points using real seasonality-adjusted future values
         future_points = [
-            round((m * 40 + c) * conversion_boost),
-            round((m * 55 + c) * conversion_boost)
+            round(sum(future_y_values[0:15]) / 15),
+            round(sum(future_y_values[15:30]) / 15)
         ]
         
         chart_data = {

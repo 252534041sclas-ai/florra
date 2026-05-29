@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/chatbot_light_bg">
 
     <!-- Header -->
@@ -139,6 +140,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:clipToPadding="false"
+            android:visibility="gone"
             android:layout_marginBottom="12dp">
 
             <LinearLayout
@@ -304,6 +306,7 @@
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:src="@drawable/ic_mic"
+                        android:visibility="gone"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         app:tint="@color/text_secondary"/>
 
@@ -312,6 +315,7 @@
                         android:layout_width="36dp"
                         android:layout_height="36dp"
                         android:src="@drawable/ic_add_photo"
+                        android:visibility="gone"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         app:tint="@color/text_secondary"/>
                 </LinearLayout>

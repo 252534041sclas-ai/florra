@@ -215,6 +215,6 @@ public class HelpSupportActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        openAccountScreen();
+        super.onBackPressed();
     }
 }

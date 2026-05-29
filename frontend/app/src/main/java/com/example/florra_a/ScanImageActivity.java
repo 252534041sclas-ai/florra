@@ -233,7 +233,7 @@ public class ScanImageActivity extends AppCompatActivity {
         editor.putString("scan_results_1", resultsJson);
         
         editor.apply();
-        Toast.makeText(this, "Scan history updated", Toast.LENGTH_SHORT).show();
+        // Toast removed: Toast.makeText(this, "Scan history updated", Toast.LENGTH_SHORT).show();
         loadRecentScans();
     }
 
@@ -390,7 +390,21 @@ public class ScanImageActivity extends AppCompatActivity {
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     }
                 } else {
-                    Toast.makeText(ScanImageActivity.this, "Failed to get recommendations", Toast.LENGTH_SHORT).show();
+                    String errorMessage = "Failed to get recommendations";
+                    try {
+                        if (response.errorBody() != null) {
+                            String errorJson = response.errorBody().string();
+                            if (errorJson.contains("message")) {
+                                // Simple extraction for message
+                                int start = errorJson.indexOf("\"message\":\"") + 11;
+                                int end = errorJson.indexOf("\"", start);
+                                if (start > 10 && end > start) {
+                                    errorMessage = errorJson.substring(start, end);
+                                }
+                            }
+                        }
+                    } catch (Exception e) {}
+                    Toast.makeText(ScanImageActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                 }
             }
 

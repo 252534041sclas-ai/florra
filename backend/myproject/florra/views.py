@@ -475,6 +475,28 @@ class AIScanView(APIView):
 
         image_file = request.FILES.get('image')
         
+        # 0. Zero-Shot Validation via FastAPI backend (Extremely Fast)
+        try:
+            import requests, io
+            image_file.seek(0)
+            
+            # Send heavily resized image to FastAPI to save network and CLIP processing time
+            img_val = Image.open(image_file).convert('RGB')
+            img_val.thumbnail((256, 256))
+            val_bytes = io.BytesIO()
+            img_val.save(val_bytes, format='JPEG')
+            val_bytes.seek(0)
+            
+            files = {'file': (image_file.name, val_bytes, 'image/jpeg')}
+            # Send to FastAPI on port 8000
+            resp = requests.post("http://127.0.0.1:8000/customer/validate_image", files=files, timeout=3)
+            if resp.status_code == 200:
+                if not resp.json().get("is_tile", True):
+                    return Response({"message": "This doesn't look like a tile! Please upload a clear photo of a tile."}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logging.error(f"Zero-shot validation failed or skipped: {e}")
+            pass
+        
         # 1. Extract average RGB color from query image for color-guided matching
         avg_rgb = None
         try:
@@ -489,7 +511,7 @@ class AIScanView(APIView):
 
         # 2. Run CNN texture/shape matcher
         try:
-            results = find_similar_tiles(image_file, top_k=10) # Retrieve top 10 candidates to ensure variety
+            results = find_similar_tiles(image_file, top_k=50) # Retrieve top 50 candidates to allow color filtering
             logging.info(f"Matcher returned {len(results)} results")
         except Exception as e:
             logging.error(f"Matcher failed: {e}")
@@ -539,8 +561,8 @@ class AIScanView(APIView):
                     color_score = 1.0 - (dist / 442.0)
                     logging.info(f"  -> Product '{product.tile_name}' (Color: {prod_color}) RGB Dist: {dist:.1f}, Color Score: {color_score:.3f}")
 
-                # Fuse: 30% ResNet texture/shape + 70% pure color similarity!
-                combined_score = 0.3 * float(score) + 0.7 * color_score
+                # Fuse: 15% ResNet texture/shape + 85% pure color similarity!
+                combined_score = 0.15 * float(score) + 0.85 * color_score
                 logging.info(f"  -> Combined score for '{product.tile_name}': {combined_score:.3f} (CNN: {score:.3f}, Color: {color_score:.3f})")
 
                 data = ProductSerializer(product, context={'request': request}).data
@@ -548,7 +570,7 @@ class AIScanView(APIView):
                 
                 # Strict validation: If the CNN shape/texture score is too low, it's probably not a tile.
                 # If the combined score is also very low, reject it.
-                if float(score) < 0.50 or combined_score < 0.60:
+                if float(score) < 0.40 or combined_score < 0.60:
                     continue
                 
                 if combined_score > 0.88:

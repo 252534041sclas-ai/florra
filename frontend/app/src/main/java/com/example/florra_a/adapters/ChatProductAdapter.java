@@ -15,7 +15,14 @@ import com.bumptech.glide.Glide;
 import com.example.florra_a.ProductDetailsActivity;
 import com.example.florra_a.R;
 import com.example.florra_a.models.Product;
+import com.example.florra_a.network.ApiService;
 import com.example.florra_a.network.RetrofitClient;
+import java.util.HashMap;
+import java.util.Map;
+import android.widget.Toast;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.util.List;
 
@@ -72,6 +79,49 @@ public class ChatProductAdapter extends RecyclerView.Adapter<ChatProductAdapter.
             heartIcon.setImageResource(R.drawable.ic_favorite_border);
             heartIcon.setColorFilter(holder.itemView.getContext().getResources().getColor(R.color.slate_600));
         }
+
+        holder.btnFavorite.setOnClickListener(v -> {
+            boolean newState = !product.isFavorite();
+            product.setFavorite(newState);
+            
+            // Update UI immediately
+            if (newState) {
+                heartIcon.setImageResource(R.drawable.ic_favorite_filled);
+                heartIcon.setColorFilter(holder.itemView.getContext().getResources().getColor(R.color.red_600));
+            } else {
+                heartIcon.setImageResource(R.drawable.ic_favorite_border);
+                heartIcon.setColorFilter(holder.itemView.getContext().getResources().getColor(R.color.slate_600));
+            }
+
+            // Sync with backend
+            ApiService apiService = RetrofitClient.getApiService();
+            Map<String, Integer> map = new HashMap<>();
+            map.put("product_id", product.getId());
+            
+            if (newState) {
+                apiService.addToFavorites(map).enqueue(new Callback<okhttp3.ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<okhttp3.ResponseBody> call, Response<okhttp3.ResponseBody> response) {
+                        if (!response.isSuccessful()) {
+                            Toast.makeText(holder.itemView.getContext(), "Failed to sync favorite", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<okhttp3.ResponseBody> call, Throwable t) {}
+                });
+            } else {
+                apiService.removeFromFavorites(product.getId()).enqueue(new Callback<okhttp3.ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<okhttp3.ResponseBody> call, Response<okhttp3.ResponseBody> response) {
+                        if (!response.isSuccessful()) {
+                            Toast.makeText(holder.itemView.getContext(), "Failed to sync favorite", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<okhttp3.ResponseBody> call, Throwable t) {}
+                });
+            }
+        });
 
         holder.itemView.setOnClickListener(v -> {
             Context context = v.getContext();

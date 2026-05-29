@@ -3,7 +3,7 @@ import re
 import math
 from fastapi import FastAPI, UploadFile, File, Query
 from pydantic import BaseModel
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, util
 import faiss
 import pickle
 import numpy as np
@@ -17,7 +17,7 @@ app = FastAPI()
 MODEL_NAME = "sentence-transformers/clip-ViT-L-14"
 INDEX_FILE = "vectorstore/products.index"
 META_FILE = "vectorstore/products.pkl"
-DJANGO_BASE_URL = "http://127.0.0.1:8000/api"
+DJANGO_BASE_URL = "http://127.0.0.1:8001/api"
 
 # FAQ Store (Dramatically Expanded and Showroom Trained)
 FAQS = {
@@ -82,20 +82,28 @@ model = None
 index = None
 metadata = []
 
+# Zero-shot classification labels
+CLASSIFICATION_LABELS = [
+    "a photo of a ceramic floor tile, wall tile, marble, vitrified tile, or wood plank flooring",
+    "a photo of a person, face, dog, cat, animal, car, nature, or random object"
+]
+classification_vecs = None
+
 def load_resources():
-    global model, index, metadata
+    global model, index, metadata, classification_vecs
     if model is None:
-        print(f"🔄 Loading CLIP model: {MODEL_NAME}...")
+        print(f"Loading CLIP model: {MODEL_NAME}...")
         model = SentenceTransformer(MODEL_NAME)
+        classification_vecs = model.encode(CLASSIFICATION_LABELS)
     
     if index is None:
-        print("📂 Loading index...")
+        print("Loading index...")
         try:
             index = faiss.read_index(INDEX_FILE)
             with open(META_FILE, "rb") as f:
                 metadata = pickle.load(f)
         except Exception as e:
-            print(f"⚠️ Index not found: {e}. Search will fail.")
+            print(f"Warning: Index not found: {e}. Search will fail.")
 
 # Load on startup (or lazy load)
 load_resources()
@@ -143,8 +151,25 @@ def get_django_data(endpoint, params=None):
         if resp.status_code == 200:
             return resp.json()
     except Exception as e:
-        print(f"❌ Django API Error: {e}")
+        print(f"Django API Error: {e}")
     return None
+
+def enrich_products_with_django(products):
+    if not products:
+        return products
+    django_products = get_django_data("products/")
+    if django_products:
+        dp_map = {dp['id']: dp for dp in django_products}
+        for p in products:
+            pid = p.get('id')
+            if pid in dp_map:
+                dp = dp_map[pid]
+                sim_score = p.get('similarity_score')
+                match_type = p.get('match_type')
+                p.update(dp)
+                if sim_score is not None: p['similarity_score'] = sim_score
+                if match_type is not None: p['match_type'] = match_type
+    return products
 
 def parse_calculation_query(message):
     message = message.lower().strip()
@@ -177,48 +202,65 @@ def parse_calculation_query(message):
 def classify_intent(message):
     message = message.lower().strip()
     
-    # 0. Greetings
-    if any(k in message for k in ["hi", "hello", "hey", "vanakkam", "vanakam", "good morning", "good evening", "how are you", "yo"]):
+    # 0. Polite & Greetings
+    if any(k in message for k in ["thank you", "thanks", "nandri"]):
+        return "polite_thanks"
+    if any(k in message for k in ["bye", "goodbye", "poitu varen", "see you"]):
+        return "polite_bye"
+    if any(k in message for k in ["hi", "hello", "hey", "vanakkam", "vanakam", "good morning", "good evening", "how are you", "yo", "greetings"]):
         if not any(k in message for k in ["tile", "floor", "wall", "bathroom", "kitchen"]):
             return "greeting"
-            
+
     if any(k in message for k in ["match", "similar", "iddhu mari", "idhupola", "photo", "image", "upload"]):
         return "visual_search_hint"
 
-    # 1. Order Tracking
+    # 1. Product Info / Specs
+    if any(k in message for k in ["size", "color", "available", "price", "how much", "cost", "vilai", "rate", "latest", "premium", "budget"]):
+        if any(k in message for k in ["calculate", "room", "area", "sqft", "box"]):
+            if re.search(r'\d+', message) or parse_calculation_query(message) is not None:
+                return "calculate_price"
+        if any(k in message for k in ["latest", "premium", "budget", "cheap"]):
+            return "search_products"
+        return "product_info"
+
+    # 2. Quotation / Enquiry
+    if any(k in message for k in ["quote", "quotation", "enquiry", "request", "kodu"]):
+        if "status" in message or "check" in message or "update" in message:
+            return "check_quote"
+        return "request_quote"
+
+    # 3. Order Tracking
     if any(k in message for k in ["order", "track", "delivery", "bill", "invoice", "yenga", "enga", "status", "varum"]):
         return "track_order"
-    
-    # 2. Quotation Status
-    if any(k in message for k in ["quote", "quotation", "enquiry", "status", "update", "kodu"]):
-        return "check_quote"
-    
-    # 3. Price Estimation / Area Calc
-    if any(k in message for k in ["cost", "how much", "price", "sqft", "sq ft", "room", "calculate", "calc", "vilai", "rate", "evlo", "evvalavu", "box", "dimension"]):
+
+    # 4. Showroom Info & Contact
+    if any(k in message for k in ["showroom", "address", "where", "location", "contact", "phone", "call", "business hour", "timing", "open", "close", "service"]):
+        return "faq_showroom"
+
+    # 5. Comparisons
+    if any(k in message for k in ["compare", "difference", "better", "vs", "versus"]):
+        return "faq_compare"
+
+    # 6. Price Estimation / Area Calc
+    if any(k in message for k in ["sqft", "sq ft", "room", "calculate", "calc", "evlo", "evvalavu", "box", "dimension", "quantity"]):
         if re.search(r'\d+', message) or parse_calculation_query(message) is not None:
             return "calculate_price"
-        return "search_products"
-    
-    # 4. FAQs
-    if any(k in message for k in ["return", "policy", "contact", "address", "phone", "install", "panna", "idham", "edam", "ponnu"]):
+
+    # 7. FAQs
+    if any(k in message for k in ["return", "policy", "install", "clean", "maintain", "spacer", "grout", "panna", "idham", "edam", "ponnu"]):
         return "faq"
-    
-    # 5. Recommendations / Tile Design / Room Specific Advice
-    if any(k in message for k in ["suggest", "recommend", "best", "bathroom", "kitchen", "hall", "living", "bedroom", "pannu", "nalla", "design", "pattern", "color", "style"]):
+
+    # 8. Tile Recommendations & Help
+    if any(k in message for k in ["suggest", "recommend", "best", "idea", "help", "suit", "white wall", "modern", "design", "bathroom", "kitchen", "hall", "living", "bedroom", "nalla", "pattern", "style"]):
         return "recommendations"
-        
+
+    # 9. Tile Browsing
+    if any(k in message for k in ["show", "browse", "looking for", "floor", "wall"]):
+        return "search_products"
+
     return "search_products"
 
-def format_product_list(products, prefix=""):
-    if not products:
-        return "I couldn't find any matching tiles right now. 😊"
-    
-    reply = prefix + "\n\n"
-    for p in products:
-        price_str = f"₹{p['price']}/sqft" if 'price' in p and p['price'] else "Price on request"
-        texture_str = f"{p['finish']}" if 'finish' in p else "Natural"
-        reply += f"✨ *{p['name']}* ({p['category']})\n   {texture_str} | {price_str} | Size: {p['size']}\n"
-    return reply
+
 
 # --- PERSONALITY & RULES (from training guidelines) ---
 ASSISTANT_PERSONALITY = {
@@ -238,6 +280,10 @@ def get_personality_response(intent, products=None, query=""):
     query = query.lower()
     
     # 1. GREETINGS & INTRO
+    if intent == "polite_thanks":
+        return "You're very welcome! Let me know if you need any more help. I'm always here. 😊"
+    if intent == "polite_bye":
+        return "Goodbye! Have a wonderful day. Looking forward to helping you again with your dream home! 👋"
     if intent == "greeting":
         if "hello" in query:
             return "Hello! 👋 Welcome to Florra Tiles. Are you designing your dream home? I am here to help you!"
@@ -245,11 +291,7 @@ def get_personality_response(intent, products=None, query=""):
             return "Welcome! 🙏 Florra Tiles warmly welcomes you. Which room are you selecting tiles for today?"
         
         # Proactive suggestion on simple Hi
-        trending_reply = "Hi there! 😊 I'm your Florra AI Assistant. Here to help you with tile selections, layouts, and calculations.\n\nCheck out our currently trending top-rated designs: \n\n"
-        if products:
-            trending_reply += format_product_list(products)
-        else:
-            trending_reply += "✨ *Carrara White Marble* (Floor)\n✨ *Rustic Oak Plank* (Living)\n✨ *Satin Grey Matte* (Floor)"
+        trending_reply = "Hi there! 😊 I'm your Florra AI Assistant. Here to help you with tile selections, layouts, and calculations.\n\nCheck out our currently trending top-rated designs below!"
         trending_reply += "\n\nWhich area are you designing? Bathroom, Kitchen, Living Room, or Bedroom?"
         return trending_reply
 
@@ -362,7 +404,16 @@ def get_personality_response(intent, products=None, query=""):
             )
         return "I can calculate the exact tiles and boxes you need! 📐 Please provide your room dimensions (e.g. *10x12*) or total square footage (e.g. *250 sqft*)."
 
-    # 6. FAQ & SERVICES
+    if intent == "faq_showroom":
+        return "📍 *Florra Tiles Showroom Information*:\n\n• **Address**: Avinashi Road, Coimbatore.\n• **Business Hours**: 10:00 AM to 8:00 PM everyday (including Sundays!)\n• **Contact**: +91 98765 43210 (Call or WhatsApp)\n• **Delivery**: We deliver within 3-5 business days across Tamil Nadu.\n• **Services**: Tile sales, site measurement, delivery, and installation support.\n\nVisit us anytime to experience our tiles in person! 🏬"
+
+    if intent == "faq_compare":
+        if "glossy" in query and "matte" in query:
+            return "💡 *Glossy vs Matte Tiles*:\n\n• **Glossy Tiles** have a highly polished, mirror-like finish. They reflect light beautifully, making rooms look larger and brighter. Best for living rooms and wall highlights.\n• **Matte Tiles** have a non-reflective, slightly textured surface. They offer excellent grip, hide smudges well, and are perfect for bathrooms, kitchens, and high-traffic floors."
+        if "ceramic" in query and "vitrified" in query:
+            return FAQS["vitrified_vs_ceramic"]
+        return "When comparing tiles, you must consider the application! Vitrified tiles are dense and perfect for floors, while lighter ceramic tiles are amazing for walls. Glossy finishes add luxury to living rooms, while matte finishes add safety to wet areas. Let me know which two tiles you'd like to compare!"
+
     if intent == "faq":
         query_clean = query.lower()
         if any(k in query_clean for k in ["delivery", "time", "eppo"]):
@@ -401,20 +452,29 @@ def get_personality_response(intent, products=None, query=""):
     if intent == "track_order":
         return "Absolutely! To track your order status, please enter your **Bill Number** or Invoice ID. 📦"
 
-    # 7. RECOMMENDATIONS & SEARCH SHOWCASE (FALLBACKS)
     if intent == "recommendations":
-        reply = "🌟 Based on your style preferences, here are our trending premium tile selections: \n\n"
-        reply += format_product_list(products) if products else "• Carrara Marble\n• Satin Grey\n• Oak Wood"
-        reply += "\nCould you tell me your target budget or size preferences to refine this?"
+        if "white wall" in query or "light wall" in query:
+            return "For white or light-colored walls, you have two stunning design choices! ✨\n\n• **Seamless Look**: Match them with light grey or ivory floor tiles to make the room look incredibly spacious.\n• **High Contrast**: Use dark charcoal, rich wooden planks, or mocha floor tiles for a spectacular, modern contrast.\n\nWould you like to see our dark contrast tiles or light seamless tiles?"
+            
+        reply = "🌟 Based on your style preferences, here are our trending premium tile selections!\n\n"
+        reply += "Could you tell me your target budget or size preferences to refine this?"
         return reply
+
+    if intent == "product_info":
+        return "Our tiles come in various standard sizes (e.g., 2x2 ft, 2x4 ft, 12x12 inch, 4x8 ft) and a huge variety of colors! 🎨\n\nPrices range from very budget-friendly (₹45/sq.ft) to ultra-premium luxury slabs. If you like a specific tile, just ask me for its exact price or size availability!"
+
+    if intent == "request_quote":
+        return "It's super easy to get a formal quotation! 📄\n\nSimply browse the tiles you love, tap on any tile to open its details, and press the **'Ask Quote'** button. Our sales team will receive your enquiry instantly and get back to you with the best discounted pricing!"
+
+    if intent == "check_quote":
+        return "I can help you check your quotation status! Please provide your Enquiry ID or Phone Number used for the quote."
 
     if intent == "search_products":
         if not products:
             return "I couldn't find any exact matches for that in our current inventory. 😅 Would you like to try a different color, style, or finish?"
         
-        reply = "Certainly! Here are the matches from our current inventory: \n\n"
-        reply += format_product_list(products)
-        reply += "\nWould you like to compare these or request a quote for any of them?"
+        reply = "Certainly! Here are the matches from our current inventory!\n\n"
+        reply += "Would you like to compare these or request a quote for any of them?"
         return reply
 
     return "I am here to help you! Please ask me anything about tile designs, sizes, dynamic calculators, quotations, or order statuses. 😊"
@@ -425,7 +485,7 @@ def chat(req: ChatRequest):
         return {"reply": "Initializing... Please wait a moment. 😊"}
 
     intent = classify_intent(req.message)
-    print(f"🤖 Personality Intent: {intent} for: {req.message}")
+    print(f"Personality Intent: {intent} for: {req.message}")
 
     # For search/recommendations or generic Hi, get some products
     products = []
@@ -435,9 +495,24 @@ def chat(req: ChatRequest):
         vec = model.encode([search_query])
         k_val = 12 if intent != "greeting" else 4
         products = search_index(vec, k=k_val)
+        products = enrich_products_with_django(products)
 
     reply = get_personality_response(intent, products, req.message)
     return {"reply": reply, "products": products}
+
+@app.post("/customer/validate_image")
+async def validate_image(file: UploadFile = File(...)):
+    if not model or classification_vecs is None:
+        return {"is_tile": True}
+        
+    content = await file.read()
+    image = Image.open(io.BytesIO(content)).convert('RGB')
+    image.thumbnail((256, 256))
+    img_vec = model.encode(image)
+    
+    sims = util.cos_sim(img_vec, classification_vecs)[0]
+    is_tile = bool(sims[0] + 0.02 >= sims[1])
+    return {"is_tile": is_tile}
 
 @app.post("/customer/search_image")
 async def search_image(file: UploadFile = File(...), message: str = Query(None)):
@@ -448,6 +523,11 @@ async def search_image(file: UploadFile = File(...), message: str = Query(None))
     image = Image.open(io.BytesIO(content))
     img_vec = model.encode(image)
     
+    # Zero-shot classification to reject non-tile images
+    sims = util.cos_sim(img_vec, classification_vecs)[0]
+    if sims[1] > sims[0] + 0.02: # +0.02 threshold to be slightly biased towards accepting ambiguous ones
+        return {"reply": "This doesn't look like a tile! 😅 Please upload a clear photo of a floor or wall tile you want to match."}
+    
     if message and len(message.strip()) > 1:
         text_vec = model.encode([message])[0]
         final_vec = (img_vec * 0.7) + (text_vec * 0.3)
@@ -456,6 +536,7 @@ async def search_image(file: UploadFile = File(...), message: str = Query(None))
         
     final_vec = np.expand_dims(final_vec, axis=0)
     products = search_index(final_vec, k=12)
+    products = enrich_products_with_django(products)
     
     if not products:
         return {"reply": "I've analyzed your photo, but I couldn't find an exact match in our current inventory. 😅 Would you like to view some similar trending patterns?"}

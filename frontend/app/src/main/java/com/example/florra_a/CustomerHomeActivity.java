@@ -325,7 +325,6 @@ public class CustomerHomeActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Log.d("DEBUG", "Chatbot button clicked!");
-                    Toast.makeText(CustomerHomeActivity.this, "Opening AI Assistant...", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(CustomerHomeActivity.this, AIChatActivity.class);
                     startActivity(intent);
                 }
